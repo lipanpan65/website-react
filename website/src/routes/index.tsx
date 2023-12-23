@@ -25,10 +25,9 @@ import {
 
 
 import AppLayout from '../components/AppLayout'
+import Article from '../pages/user/article'
 
-
-
-const menuMap = [
+export const routeMap: any = [
   {
     id: "1",
     name: "首页",
@@ -69,11 +68,20 @@ const Routes = () => {
     [
       {
         path: '/',
-        element: <Navigate to='/user/article/overview' />,
+        element: <Navigate to='/user/article' />,
       },
       {
-        path: '/user/article/overview',
-        element: <AppLayout />
+        path: '/user/article',
+        element: <AppLayout />,
+        children: [
+          {
+            path: '/user/article',
+            element: <Navigate to='/user/article/overview' />
+          }, {
+            path: '/user/article/overview',
+            element: <Article />
+          }
+        ]
       }
       // {
       //   path: "/login",

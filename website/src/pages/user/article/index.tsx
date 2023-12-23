@@ -15,14 +15,21 @@ import * as React from 'react'
 //   } from 'antd'
 
 
-const app = () => {
-  
+const Article: React.FC = () => {
+
+  return (
+    <React.Fragment>
+      ArticleApp
+    </React.Fragment>
+  )
+
 }
 
+export default Article
 
 
 
 
-  
+
 
 
