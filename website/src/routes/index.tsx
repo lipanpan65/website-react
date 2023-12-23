@@ -27,6 +27,11 @@ import {
 import AppLayout from '../components/AppLayout'
 import Article from '../pages/user/article'
 
+
+
+import EditArticle from '../pages/operator/article/editor'
+
+
 export const routeMap: any = [
   {
     id: "1",
@@ -80,6 +85,10 @@ const Routes = () => {
           }, {
             path: '/user/article/overview',
             element: <Article />
+          },
+          {
+            path: '/user/article/edit',
+            element: <EditArticle />
           }
         ]
       }
