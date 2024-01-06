@@ -27,7 +27,6 @@ const items = new Array(5).fill(null).map((_, index) => ({
 
 const matchPath = (menuUrl: any, curPath: any) => curPath.indexOf(menuUrl) === 0
 
-
 const getLeftActive = (func: any, curPath: any, parent = []) => {
   console.log("getLeftActive func curPath parent", func, curPath, parent)
   let active: any;
@@ -56,7 +55,6 @@ const getLeftActive = (func: any, curPath: any, parent = []) => {
   })
   return active;
 }
-
 
 const App: React.FC = () => {
   const {

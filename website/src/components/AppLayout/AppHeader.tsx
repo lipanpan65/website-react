@@ -1,6 +1,7 @@
 import * as React from 'react'
 
 import {
+  Button,
   Row,
   Col,
   Menu,
@@ -8,8 +9,6 @@ import {
 } from 'antd'
 
 const { Header } = Layout
-
-
 
 const AppHeader: any = (props: any) => {
   let { funcs = [], active = {} } = props,
@@ -28,7 +27,11 @@ const AppHeader: any = (props: any) => {
   console.log("items===>", items)
   return (
     <React.Fragment>
-      <Header style={{ display: 'flex', alignItems: 'center' }}>
+      <Header style={{
+        display: 'flex',
+        alignItems: 'center',
+        // border: '1px solid red'
+      }}>
         <div className="demo-logo" />
         <Menu
           theme="dark"
@@ -36,8 +39,12 @@ const AppHeader: any = (props: any) => {
           items={items}
           style={{ flex: 1, minWidth: 0 }}
         ></Menu>
+        <div><Button type='primary' onClick={() => alert('路由跳转') }>写文章</Button></div>
       </Header>
-
+      <Row>
+        <Col flex={4}></Col>
+        <Col flex={1}></Col>
+      </Row>
       {/* <Row>
         <Col span={22}>
           </Menu>
