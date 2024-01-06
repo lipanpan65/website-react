@@ -8,6 +8,19 @@ pnpm install react-router-dom --save
 
 ```
 
+```
+master:主分支，也成为线上分支，主要用来版本发布的（生产环境部署）。
+dev：开发分支，该分支保存了开发的最新代码。
+release：可以认为是master分支的测试版，也可认为预发布分支，比如某个功能开发完成或者某个bug修复完成后，测试成功以后就可以将feature/hotfix分支合并到release分支上，到了发布日期就合并到master分支，进行版本发布。
+feature：具体功能的开发分支。
+hotfix：线程bug修复分支。
+————————————————
+版权声明：本文为CSDN博主「Yu_志强」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/qq_50876039/article/details/130749387
+```
+
+
+
 
 ## Available Scripts
 

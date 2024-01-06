@@ -21,8 +21,8 @@ const initialState = {
   article: {
     id: null,
     title: null,
-    text: null,
-    html: null
+    content: null,
+    content_html: null
   }
 };
 
@@ -32,18 +32,19 @@ const reducer = (state: any, action: any) => {
   switch (action.type) {
     case 'CREATE':
       return { count: state.count + 1 };
-    case 'decrement':
-      return { count: state.count - 1 };
     case 'UPDATE':
-      // console.log("update===>", state)
-      const { text, html } = action.payload
-      let { article } = state
-      article.text = text
-      article.html = html
-      return { article: article }
+      const { content, content_html } = action.payload
+      state.article.content = content
+      state.article.content_html = content_html
+      console.log("update===>", state)
+      return { article: state.article }
     case 'UPDATE_TITLE':
       const { title } = action.payload
       state.article.title = title
+      return { article: state.article }
+    case "UPDATE_ID":
+      const { id } = action.payload
+      state.article.id = id
       return { article: state.article }
     default:
       return state
@@ -66,34 +67,71 @@ const EditorArticle: React.FC = () => {
 
   console.log("state===>", state)
 
+  const createArticle = () => {
+    const { article: { title, content, content_html } } = state
+    if (title || content || content_html) {
+      request({
+        url: `/api/user/v1/article/`, method: 'POST', data: {
+          title, content, content_html
+        }
+      }).then((r: any) => {
+        console.log('createArticle===>', r)
+        const { status, data } = r
+        dispatch({ type: 'UPDATE_ID', payload: { id: data.id } })
+      }).catch((e) => {
+        console.log('createArticle.err===>', e)
+      }).finally(() => {
+      })
+    }
+    return
+  }
+
   const updateArticle = () => {
     console.log("updateArticle.state===>", state)
-    // request({ ...state }).then((r: any) => {
+    const { article } = state
+    request({ url: `/api/user/v1/article/${article.id}/`, method: 'PUT', data: { ...article } }).then((r: any) => {
+      console.log('updateArticle===>', r)
+    }).catch((e) => {
+      console.log('updateArticle.err===>', e)
+    }).finally(() => {
 
-    // }).catch((e) => {
-
-    // }).finally(() => {
-    
-    // })
+    })
   }
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      console.log("state.article===>", state.article)
+      if (!state.article.id) {
+        createArticle()
+      } else if (state.article.id) {
+        updateArticle()
+      }
+    }, 5000 * 2);
+    return () => clearInterval(interval)
+  }, [])
 
   const onChange = (e: any) => {
     const title = e.target.value
     dispatch({ type: 'UPDATE_TITLE', payload: { title } })
   }
 
-  React.useEffect(() => {
-    // console.log("发送请求", state)
-    updateArticle()
-  }, [state])
+  // React.useEffect(() => {
+  //   updateArticle()
+  // }, [state])
+
+
 
   const handleEditorChange = ({ html, text }: any) => {
-    // console.log("handleEditorChange===>", html)
-    // console.log("handleEditorChange===>", text)
+    console.log("handleEditorChange===>", html)
+    console.log("handleEditorChange===>", text)
     // const newValue = text.replace(/\d/g, "");
     // setContent(text);
     // setHtml(html)
-    dispatch({ type: 'UPDATE', payload: { html, text } })
+    // const { article } = state
+    // if (!article.id) {
+    //   console.log('创建')
+    // }
+    dispatch({ type: 'UPDATE', payload: { content_html: html, content: text } })
   };
 
   return (
@@ -117,7 +155,7 @@ const EditorArticle: React.FC = () => {
         <div className="bootom">
           <MdEditor
             // ref={mdEditor}
-            value={state.article.text || ""}
+            value={state.article.content || ""}
             // value={content}
             style={{ height: "500px" }}
             onChange={handleEditorChange}
