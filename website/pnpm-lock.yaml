@@ -47,6 +47,9 @@ dependencies:
   markdown-it:
     specifier: ^14.0.0
     version: 14.0.0
+  mockjs:
+    specifier: ^1.1.0
+    version: 1.1.0
   moment:
     specifier: ^2.29.4
     version: 2.29.4
@@ -7397,6 +7400,13 @@ packages:
     hasBin: true
     dependencies:
       minimist: 1.2.8
+
+  /mockjs@1.1.0:
+    resolution: {integrity: sha512-eQsKcWzIaZzEZ07NuEyO4Nw65g0hdWAyurVol1IPl1gahRwY+svqzfgfey8U8dahLwG44d6/RwEzuK52rSa/JQ==}
+    hasBin: true
+    dependencies:
+      commander: 8.3.0
+    dev: false
 
   /moment@2.29.4:
     resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
