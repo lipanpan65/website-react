@@ -6,9 +6,15 @@ import originAxios from 'axios'
 import { message } from 'antd'
 
 
-console.log('REACT 运行环境--->',process.env.NODE_ENV)
+console.log('REACT 运行环境--->', process.env.NODE_ENV)
 
-console.log('REACT 运行环境--->',process.env)
+console.log('REACT 运行环境--->', process.env)
+
+
+const getBaseurl = () => {
+
+}
+
 
 const httpStatesHandler = ((error: any) => {
   let response_message = '';
@@ -19,7 +25,6 @@ const httpStatesHandler = ((error: any) => {
       case 401:
         response_message = '您未登录，或者登录已经超时，请先登录！';
         window.location.href = '/'
-        // clearCookie()
         break;
       case 403: response_message = '您没有权限操作！';
         window.location.href = '/'
@@ -43,6 +48,18 @@ const httpStatesHandler = ((error: any) => {
 
 const request = (cfg: any, options?: any) => {
 
+  // let cfg: any = {
+  //   url,
+  //   method,
+  //   data: data ?? {}
+  // }
+
+  // console.log('cfg--->',cfg)
+
+  // if (method.toUpperCase() === 'GET') {
+  //   cfg.params = data ?? {}
+  //   console.log('cfg get--->',cfg)
+  // }
   return new Promise((resolve, reject) => {
     // 创建实例
     const instance = originAxios.create({
