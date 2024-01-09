@@ -26,7 +26,7 @@ import {
 
 import AppLayout from '../components/AppLayout'
 import Article from '../pages/user/article'
-
+import ArticleDetail from '../pages/user/article/detail'
 
 
 import EditArticle from '../pages/operator/article/editor'
@@ -85,6 +85,10 @@ const Routes = () => {
           }, {
             path: '/user/article/overview',
             element: <Article />
+          },
+          {
+            path: '/user/article/detail/:id',
+            element: <ArticleDetail />
           },
           {
             path: '/user/article/edit',

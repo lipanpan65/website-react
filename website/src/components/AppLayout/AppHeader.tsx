@@ -8,9 +8,21 @@ import {
   Layout
 } from 'antd'
 
+import {
+  Link, NavLink, useNavigate,
+  // NavLink,
+} from "react-router-dom"
+
+
 const { Header } = Layout
 
+// const toReditArticle
+
+
 const AppHeader: any = (props: any) => {
+
+  const navigate = useNavigate()
+
   let { funcs = [], active = {} } = props,
     selectedKeys = [active.id];
 
@@ -22,6 +34,9 @@ const AppHeader: any = (props: any) => {
       icon: v.icon
     }
   })
+
+
+
 
   console.log("AppHeader.props===>", props)
   console.log("items===>", items)
@@ -39,7 +54,7 @@ const AppHeader: any = (props: any) => {
           items={items}
           style={{ flex: 1, minWidth: 0 }}
         ></Menu>
-        <div><Button type='primary' onClick={() => alert('路由跳转') }>写文章</Button></div>
+        <div><Button type='primary' onClick={() => navigate(`/user/article/edit`)}>写文章</Button></div>
       </Header>
       <Row>
         <Col flex={4}></Col>

@@ -1,9 +1,9 @@
 import * as React from 'react'
 
-// import {
-//     Link,
-//     NavLink,
-//   } from "react-router-dom"  
+import {
+  Link,
+  // NavLink,
+} from "react-router-dom"
 
 import {
   List
@@ -23,25 +23,33 @@ import { postsMock } from '../../../mock';
 
 const rowKeyF = (record: { id: number }): number => record.id
 const showTotal = (total: any) => `共${total}条记录`
+const articleTitle = (article: any) => <Link to={`/user/article/detail/${article.id}`}>{article.title ?? '无标题'}</Link>
+
+// const TabTitle = (i: any, t: any) => (<span>{i}{t}</span>)
+
 // 接口返回的数据
 const initialState = {
   loading: false,
-  data: []
+  data: [],
+  page: {
+    total: 0,
+    current: 0,
+    pageSize: 5
+  }
 };
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
-    case 'CREATE':
-      return state
     case 'READ':
-      return state
+      return {
+        loading: true,
+        ...state
+      }
     case 'READ_DONE':
-      console.log('READ_DONE===>', action)
-      const { payload } = action
-      console.log('READ_DONE===>', state)
+      const { payload: { data, page } } = action
       return {
         ...state,
-        ...payload
+        data, page
       }
     default:
       return state
@@ -50,19 +58,12 @@ const reducer = (state: any, action: any) => {
 
 const Article: React.FC = () => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
-  // const [loading, setLoading] = React.useState<any>(false)
-  // const [data, setData] = React.useState<any>([])
-  const [pagination, setPagination] = React.useState<any>({
-    total: 0,
-    current: 0,
-    pageSize: 5,
-    showTotal
-  })
-
-  console.log('postsMock--->', postsMock)
+  // console.log('postsMock--->', postsMock)
+  // console.log('state--->', state)
 
   const onChange = (page: any, pageSize: any) => {
-    console.log('onChange===>', page, pageSize)
+    // console.log('onChange===>', page, pageSize)
+    getArticleList({ page, pageSize })
   }
 
   const getArticleList = (params?: any): any => {
@@ -71,18 +72,21 @@ const Article: React.FC = () => {
       method: 'GET',
       params: params || {}
     }).then((response: any) => {
-      console.log('getArticleList===>', response)
+      // console.log('getArticleList===>', response)
       const { status, statusText } = response
       if (status === 200 && statusText === 'OK') {
-        console.log('data===>', response.data)
-        dispatch({ type: 'READ_DONE', payload: { data: response.data } })
+        const { page, data } = response.data
+        dispatch({ type: 'READ_DONE', payload: { data, page } })
       }
     })
   }
 
-  React.useEffect(() => getArticleList(), [])
+  React.useEffect(()=>{
+    console.log('分页发生变化')
+    // getArticleList()
+  },[state.page])
 
-  // console.log('Article',state)
+  React.useEffect(() => getArticleList(), [])
 
   return (
     <React.Fragment>
@@ -91,7 +95,8 @@ const Article: React.FC = () => {
         itemLayout="horizontal"
         dataSource={state.data}
         pagination={{
-          ...pagination,
+          ...state.page,
+          showTotal,
           showSizeChanger: false,
           onChange // function(page, pageSize)
         }}
@@ -100,7 +105,7 @@ const Article: React.FC = () => {
           <List.Item>
             <List.Item.Meta
               // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
-              title={<a href="https://ant.design">{item.title}</a>}
+              title={articleTitle(item)}
               description={item.content}
             />
           </List.Item>
