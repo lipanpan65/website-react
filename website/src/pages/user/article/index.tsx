@@ -18,6 +18,8 @@ import {
 // import request from '@/utils/request'
 import request from '../../../utils/request';
 
+// 导入本地的开发环境
+import { postsMock } from '../../../mock';
 
 const rowKeyF = (record: { id: number }): number => record.id
 const showTotal = (total: any) => `共${total}条记录`
@@ -56,6 +58,8 @@ const Article: React.FC = () => {
     pageSize: 5,
     showTotal
   })
+
+  console.log('postsMock--->', postsMock)
 
   const onChange = (page: any, pageSize: any) => {
     console.log('onChange===>', page, pageSize)

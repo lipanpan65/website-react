@@ -5,6 +5,11 @@ import originAxios from 'axios'
 // } from '@/utils'
 import { message } from 'antd'
 
+
+console.log('REACT 运行环境--->',process.env.NODE_ENV)
+
+console.log('REACT 运行环境--->',process.env)
+
 const httpStatesHandler = ((error: any) => {
   let response_message = '';
   if (error && error.response) {
