@@ -6,7 +6,8 @@ import {
 } from "react-router-dom"
 
 import {
-  List
+  Col,
+  List, Row, theme
   // Space,
   // Dropdown,
   // Menu,
@@ -57,6 +58,12 @@ const reducer = (state: any, action: any) => {
 }
 
 const Article: React.FC = () => {
+
+  const {
+    token: { colorBgContainer,
+      borderRadiusLG },
+  } = theme.useToken();
+
   const [state, dispatch] = React.useReducer(reducer, initialState);
   // console.log('postsMock--->', postsMock)
   // console.log('state--->', state)
@@ -81,36 +88,48 @@ const Article: React.FC = () => {
     })
   }
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     console.log('分页发生变化')
     // getArticleList()
-  },[state.page])
+  }, [state.page])
 
   React.useEffect(() => getArticleList(), [])
 
   return (
     <React.Fragment>
-      <List
-        loading={state.loading}
-        itemLayout="horizontal"
-        dataSource={state.data}
-        pagination={{
-          ...state.page,
-          showTotal,
-          showSizeChanger: false,
-          onChange // function(page, pageSize)
-        }}
-        rowKey={rowKeyF}
-        renderItem={(item: any, index: number) => (
-          <List.Item>
-            <List.Item.Meta
-              // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
-              title={articleTitle(item)}
-              description={item.content}
+      <Row>
+        <Col span={12} offset={6}>
+          <main style={{
+            background: colorBgContainer
+          }}>
+            <List
+              loading={state.loading}
+              itemLayout="horizontal"
+              dataSource={state.data}
+              pagination={{
+                ...state.page,
+                showTotal,
+                showSizeChanger: false,
+                onChange // function(page, pageSize)
+              }}
+              rowKey={rowKeyF}
+              renderItem={(item: any, index: number) => (
+                <List.Item style={{padding:'12px 12px 0'}}>
+                  <List.Item.Meta
+                    // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
+                    title={articleTitle(item)}
+                    description={item.content}
+                  />
+                </List.Item>
+              )}
             />
-          </List.Item>
-        )}
-      />
+          </main>
+        </Col>
+      </Row>
+
+
+
+
     </React.Fragment>
   )
 }

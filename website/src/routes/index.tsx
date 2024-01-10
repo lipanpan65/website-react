@@ -15,7 +15,7 @@ import {
   // DeploymentUnitOutlined,
   // InboxOutlined,
   // DatabaseOutlined,
-  // BugOutlined,
+  BugOutlined,
   // NodeIndexOutlined,
   // VerifiedOutlined,
   // BlockOutlined,
@@ -46,6 +46,13 @@ export const routeMap: any = [
         url: "/user/article/overview",
         hash: "#/user/article/overview",
         icon: <AppstoreOutlined />,
+      },
+      {
+        id: "12",
+        name: "研发",
+        url: "/user/article/develop",
+        hash: "#/user/article/develop",
+        icon: <BugOutlined />,
       },
       // {
       //   id: "10",

@@ -5,11 +5,14 @@ import {
   Row,
   Col,
   Menu,
-  Layout
+  Layout,
+  MenuProps
 } from 'antd'
 
 import {
-  Link, NavLink, useNavigate,
+  Link, 
+  NavLink, 
+  useNavigate,
   // NavLink,
 } from "react-router-dom"
 
@@ -26,7 +29,7 @@ const AppHeader: any = (props: any) => {
   let { funcs = [], active = {} } = props,
     selectedKeys = [active.id];
 
-  let items = funcs.map((v: any) => {
+  const items = funcs.map((v: any) => {
     console.log("v===>", v)
     return {
       label: v.name,
@@ -35,7 +38,11 @@ const AppHeader: any = (props: any) => {
     }
   })
 
-
+  const onClick: MenuProps['onClick'] = (e) => {
+    console.log('click ', e);
+    // setCurrent(e.key);
+    
+  };
 
 
   console.log("AppHeader.props===>", props)
@@ -52,6 +59,7 @@ const AppHeader: any = (props: any) => {
           theme="dark"
           mode="horizontal"
           items={items}
+          onClick={onClick}
           style={{ flex: 1, minWidth: 0 }}
         ></Menu>
         <div><Button type='primary' onClick={() => navigate(`/user/article/edit`)}>写文章</Button></div>
