@@ -7,7 +7,7 @@ import {
 
 import {
   Col,
-  List, Row, theme
+  List, Row, Typography, theme
   // Space,
   // Dropdown,
   // Menu,
@@ -15,6 +15,8 @@ import {
   // Col,
   // Avatar,
 } from 'antd'
+
+const { Paragraph, Text } = Typography;
 
 // import request from '@/utils/request'
 // import request from '../../../utils/request';
@@ -26,7 +28,17 @@ import { postsMock } from '../../../mock';
 
 const rowKeyF = (record: { id: number }): number => record.id
 const showTotal = (total: any) => `共${total}条记录`
-const articleTitle = (article: any) => <Link to={`/user/article/detail/${article.id}`}>{article.title ?? '无标题'}</Link>
+const ArticleTitle = (article: any) => <Link className='title' to={`/user/article/detail/${article.id}`} target='_blank'>{article.title ?? '无标题'}</Link>
+// const ArticleDescription = (article: any) => (
+//   <Text style={true ? { width: 200 } : undefined}>{article.content}</Text>
+// )
+// const ArticleTitle = (article: any) => (
+//   <div className='title-row'>
+//     <div className='title'>
+//       <Link to={`/user/article/detail/${article.id}`}>{article.title ?? '无标题'}</Link>
+//     </div>
+//   </div>
+// )
 
 // const TabTitle = (i: any, t: any) => (<span>{i}{t}</span>)
 
@@ -102,7 +114,8 @@ const Article: React.FC = () => {
       <Row>
         <Col span={12} offset={6}>
           <main style={{
-            background: colorBgContainer
+            background: colorBgContainer,
+            minHeight: '100vh'
           }}>
             <List
               loading={state.loading}
@@ -111,6 +124,7 @@ const Article: React.FC = () => {
               pagination={{
                 ...state.page,
                 showTotal,
+                align: 'center',
                 showSizeChanger: false,
                 onChange // function(page, pageSize)
               }}
@@ -119,8 +133,8 @@ const Article: React.FC = () => {
                 <List.Item style={{ padding: '12px 12px 0' }}>
                   <List.Item.Meta
                     // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
-                    title={articleTitle(item)}
-                    description={item.content}
+                    title={ArticleTitle(item)}
+                    description={<div style={{ width: '85%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.content}</div>}
                   />
                 </List.Item>
               )}

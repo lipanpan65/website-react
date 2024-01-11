@@ -1,5 +1,9 @@
 import * as React from 'react'
-import { Navigate, useLocation, useRoutes } from 'react-router-dom'
+import {
+  Navigate,
+  useLocation,
+  useRoutes
+} from 'react-router-dom'
 
 import {
   AlertOutlined,
@@ -27,8 +31,6 @@ import {
 import AppLayout from '../components/AppLayout'
 import Article from '../pages/user/article'
 import ArticleDetail from '../pages/user/article/detail'
-
-
 import EditArticle from '../pages/operator/article/editor'
 
 

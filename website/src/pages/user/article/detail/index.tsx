@@ -7,12 +7,10 @@ import rehypeHighlight from 'rehype-highlight'
 import { useParams } from 'react-router-dom'
 import 'github-markdown-css';
 import 'react-markdown-editor-lite/lib/index.css';
-// import request from '../../../../utils/request'
-
 import { request } from '../../../../utils'
 
 import './style.css'
-import { Col, Row } from 'antd'
+import { Col, Row, theme } from 'antd'
 
 const initialState = {
   loading: false,
@@ -41,12 +39,13 @@ const reducer = (state: any, action: any) => {
   }
 }
 
-
-
 const ArticleDetail: React.FC = () => {
   const params = useParams()
   const [state, dispatch] = React.useReducer(reducer, initialState);
-
+  const {
+    token: { colorBgContainer,
+      borderRadiusLG },
+  } = theme.useToken();
   // const markdown = 'This ~is not~ strikethrough, but ~~this is~~! `code` '
   // const markdown = 'This ~is not~ strikethrough, but ~~this is~~! ```sql select * from  ``` '
 
@@ -74,17 +73,24 @@ const ArticleDetail: React.FC = () => {
   console.log('state===>', state)
 
   return (
-
     <React.Fragment>
       <Row>
-        <Col span={12} offset={6}>
-          <main className='container'>
+        <Col span={12} offset={6} style={{
+          background: colorBgContainer,
+          borderRadius: '4px 4px 0 0',
+          paddingLeft: '2.667rem',
+          paddingRight: '2.667rem',
+          minHeight: '100vh'
+        }}>
+          <main className='container main-container'>
             <h1 className='article-title'>{state.data.title}</h1>
-            <Markdown
-              className={'markdown-body'}
-              remarkPlugins={[[remarkGfm, { singleTilde: false }]]}>
-              {state.data.content}
-            </Markdown>
+            <div>
+              <Markdown
+                className={'markdown-body'}
+                remarkPlugins={[[remarkGfm, { singleTilde: false }]]}>
+                {state.data.content}
+              </Markdown>
+            </div>
           </main>
         </Col>
       </Row>

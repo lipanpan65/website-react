@@ -1,6 +1,9 @@
-
 .container {
     max-width: 1200px;
+}
+
+.main-container {
+    margin-top: 1.767rem;
 }
 
 /* 文章标题 */
@@ -11,4 +14,5 @@
     line-height: 1.31;
     /* color: var(--juejin-font-1); */
     color: #252933;
-}
+  }
+  

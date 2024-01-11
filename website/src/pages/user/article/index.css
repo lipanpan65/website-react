@@ -1,0 +1,32 @@
+.title-row {
+  display: flex;
+  margin-bottom: 2px;
+}
+
+
+
+.title {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: #252933;
+  width: 100%;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.article-desc {
+  width: 200px;
+  /* 定义容器的宽度 */
+  height: auto;
+  /* 自动调整高度 */
+  overflow: hidden;
+  /* 当内容超出容器时进行隐藏 */
+  white-space: nowrap;
+  /* 不换行 */
+  text-overflow: ellipsis;
+  /* 使用省略号表示被隐藏的部分 */
+}
