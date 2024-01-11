@@ -7,7 +7,10 @@ import rehypeHighlight from 'rehype-highlight'
 import { useParams } from 'react-router-dom'
 import 'github-markdown-css';
 import 'react-markdown-editor-lite/lib/index.css';
-import request from '../../../../utils/request'
+// import request from '../../../../utils/request'
+
+import { request } from '../../../../utils'
+
 import './style.css'
 import { Col, Row } from 'antd'
 

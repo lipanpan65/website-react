@@ -8,7 +8,9 @@ import {
   Input
 } from 'antd'
 
-import request from '../../../../utils/request'
+// import request from '../../../../utils/request'
+
+import { request } from '../../../../utils'
 
 import 'react-markdown-editor-lite/lib/index.css';
 import './index.css'

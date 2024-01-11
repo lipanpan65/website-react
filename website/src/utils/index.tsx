@@ -1,57 +1,9 @@
-import moment from 'moment'
+// import request from "./request"
 
+export { request } from './request'
+export { dateFormate, timedeltaFormate } from './date-formate'
+export { getCookie, clearCookie } from './cookie'
 
-
-
-const timedeltaFormate: any = (timedelta: any) => {
-  const oneMinute = 60
-  const oneHour = 60 * oneMinute
-  const oneDay = 24 * oneHour
-  let intTimedelta = parseInt(timedelta)
-  if (intTimedelta >= oneDay) {
-    const days = Math.floor(intTimedelta / oneDay)
-    intTimedelta = Math.floor(intTimedelta % oneDay)
-    const hours = Math.floor(intTimedelta / oneHour)
-    intTimedelta = Math.floor(intTimedelta % oneHour)
-    const minutes = Math.floor(intTimedelta / oneMinute)
-    return `${days}天${hours}时${minutes}分`
-  } else if (intTimedelta >= oneHour) {
-    const hours = Math.floor(intTimedelta / oneHour)
-    intTimedelta = Math.floor(intTimedelta % oneHour)
-    const minutes = Math.floor(intTimedelta / oneMinute)
-    const seconds = Math.floor(intTimedelta % oneMinute)
-    return `${hours}时${minutes}分${seconds}秒`
-  } else if (intTimedelta >= oneMinute) {
-    const minutes = Math.floor(intTimedelta / oneMinute)
-    const seconds = Math.floor(intTimedelta % oneMinute)
-    return `${minutes}分${seconds}秒`
-  }
-}
-
-// 获取cookie
-const getCookie: (any | null) = (name?: any) => {
-  const cookies = document.cookie
-  const list = cookies.split("; ")
-  for (let i = 0; i < list.length; i++) {
-    const arr = list[i].split("=")
-    if (arr[0] === name) {
-      return decodeURIComponent(arr[1],)
-    }
-  }
-  return null
-}
-// 清除所有 cookie
-//清空cookie
-const clearCookie = () => {
-  let keys = document.cookie.match(/[^ =;]+(?=\=)/g)
-  if (keys) {
-    for (let i = keys.length; i--;) {
-      document.cookie = keys[i] + '=0;path=/;expires=' + new Date(0).toUTCString()//清除当前域名下的,例如：m.kevis.com
-      document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()//清除当前域名下的，例如 .m.kevis.com
-      document.cookie = keys[i] + '=0;path=/;domain=kevis.com;expires=' + new Date(0).toUTCString()//清除一级域名下的或指定的，例如 .kevis.com
-    }
-  }
-}
 
 // TODO arrary 的
 // const list2Tree = (data:Array<{}>,id:any,pid:any)
@@ -73,7 +25,7 @@ const clearCookie = () => {
 //     return arr.filter((node) => !node[pid])
 // }
 
-const list2Tree = (data: any, id?: any, pid?: any) => {
+export const list2Tree = (data: any, id?: any, pid?: any) => {
   data.forEach((o: any) => {
     const p = data.find((r: any) => r['orgid'] === o['parentid'])
     if (p) {
@@ -89,8 +41,7 @@ const list2Tree = (data: any, id?: any, pid?: any) => {
 //   <Tag color={STATUS_COLOR[status]}>{USER_STATUS[text]}</Tag>
 // }
 
-export {  request  } from './request'
 
-export {
-  dateFormate, getCookie, list2Tree, clearCookie, timedeltaFormate
-}
+// export {
+//   getCookie, list2Tree, clearCookie
+// }

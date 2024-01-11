@@ -17,7 +17,9 @@ import {
 } from 'antd'
 
 // import request from '@/utils/request'
-import request from '../../../utils/request';
+// import request from '../../../utils/request';
+
+import { request } from '../../../utils'
 
 // 导入本地的开发环境
 import { postsMock } from '../../../mock';
@@ -114,7 +116,7 @@ const Article: React.FC = () => {
               }}
               rowKey={rowKeyF}
               renderItem={(item: any, index: number) => (
-                <List.Item style={{padding:'12px 12px 0'}}>
+                <List.Item style={{ padding: '12px 12px 0' }}>
                   <List.Item.Meta
                     // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
                     title={articleTitle(item)}

@@ -11,12 +11,11 @@ console.log('REACT 运行环境--->', process.env.NODE_ENV)
 console.log('REACT 运行环境--->', process.env)
 
 
-const getBaseurl = () => {
+export const getBaseurl = () => {
 
 }
 
-
-const httpStatesHandler = ((error: any) => {
+export const  httpStatesHandler = ((error: any) => {
   let response_message = '';
   if (error && error.response) {
     switch (error.response.status) {
@@ -46,7 +45,7 @@ const httpStatesHandler = ((error: any) => {
   message.error(response_message)
 })
 
-const request = (cfg: any, options?: any) => {
+export const request = (cfg: any, options?: any) => {
 
   // let cfg: any = {
   //   url,
@@ -109,4 +108,3 @@ const request = (cfg: any, options?: any) => {
 
 }
 
-export default request
