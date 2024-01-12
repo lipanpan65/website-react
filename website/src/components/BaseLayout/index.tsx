@@ -13,7 +13,7 @@ const BaseLayout: any = (props: any) => {
   return (
     <React.Fragment>
       {props.children}
-      <Outlet />
+      {/* <Outlet /> */}
     </React.Fragment>
   )
 }

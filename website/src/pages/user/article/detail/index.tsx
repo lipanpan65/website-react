@@ -46,7 +46,8 @@ const ArticleDetail: React.FC = () => {
   const {
     token: { colorBgContainer,
       borderRadiusLG },
-  } = theme.useToken();
+  } = theme.useToken()
+  
   // const markdown = 'This ~is not~ strikethrough, but ~~this is~~! `code` '
   // const markdown = 'This ~is not~ strikethrough, but ~~this is~~! ```sql select * from  ``` '
 
@@ -96,7 +97,6 @@ const ArticleDetail: React.FC = () => {
           </main>
         </Col>
       </Row>
-
     </React.Fragment>
   )
 }
