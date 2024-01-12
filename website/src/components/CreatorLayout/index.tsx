@@ -77,7 +77,7 @@ const CreatorLayout: React.FC = () => {
             margin: 'auto'
           }}>
             <Sider width="20%" style={{ ...siderStyle, background: colorBgContainer, marginRight: '1rem', borderRadius: borderRadiusLG }}>
-              Sider
+              
             </Sider>
             <Content style={{ ...contentStyle, borderRadius: borderRadiusLG }}>
               {/* Outlet 相当于组件 */}

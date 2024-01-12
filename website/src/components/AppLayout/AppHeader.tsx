@@ -21,6 +21,7 @@ const { Header } = Layout
 
 // const toReditArticle
 
+const MenuLable = (v: any) => <NavLink to={`${v.url}`}>{v.name}</NavLink>
 
 const AppHeader: any = (props: any) => {
 
@@ -32,7 +33,7 @@ const AppHeader: any = (props: any) => {
   const items = funcs.map((v: any) => {
     console.log("v===>", v)
     return {
-      label: v.name,
+      label: MenuLable(v),
       key: v.id,
       icon: v.icon
     }
