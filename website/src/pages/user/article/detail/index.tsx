@@ -41,6 +41,7 @@ const reducer = (state: any, action: any) => {
 
 
 const ArticleDetail: React.FC = () => {
+  // TODO 应该在初始化函数进行判断 文件的ID是否为空
   const params = useParams()
   const [state, dispatch] = React.useReducer(reducer, initialState);
 

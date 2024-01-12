@@ -89,7 +89,7 @@ const Article: React.FC = () => {
   }
 
   React.useEffect(() => {
-    console.log('分页发生变化')
+    // console.log('分页发生变化')
     // getArticleList()
   }, [state.page])
 
@@ -99,9 +99,7 @@ const Article: React.FC = () => {
     <React.Fragment>
       <Row>
         <Col span={12} offset={6}>
-          <main style={{
-            background: colorBgContainer
-          }}>
+          <main style={{ background: colorBgContainer }}>
             <List
               loading={state.loading}
               itemLayout="horizontal"
@@ -114,7 +112,7 @@ const Article: React.FC = () => {
               }}
               rowKey={rowKeyF}
               renderItem={(item: any, index: number) => (
-                <List.Item style={{padding:'12px 12px 0'}}>
+                <List.Item style={{ padding: '12px 12px 0' }}>
                   <List.Item.Meta
                     // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
                     title={articleTitle(item)}
@@ -126,10 +124,6 @@ const Article: React.FC = () => {
           </main>
         </Col>
       </Row>
-
-
-
-
     </React.Fragment>
   )
 }

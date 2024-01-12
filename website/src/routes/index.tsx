@@ -27,7 +27,7 @@ import {
 import AppLayout from '../components/AppLayout'
 import Article from '../pages/user/article'
 import ArticleDetail from '../pages/user/article/detail'
-
+import CreatorOverView from '../pages/user/creator'
 
 import EditArticle from '../pages/operator/article/editor'
 
@@ -54,6 +54,7 @@ export const routeMap: any = [
         hash: "#/user/article/develop",
         icon: <BugOutlined />,
       },
+
       // {
       //   id: "10",
       //   name: "工作台",
@@ -89,7 +90,8 @@ const Routes = () => {
           {
             path: '/user/article',
             element: <Navigate to='/user/article/overview' />
-          }, {
+          },
+          {
             path: '/user/article/overview',
             element: <Article />
           },
@@ -102,7 +104,22 @@ const Routes = () => {
             element: <EditArticle />
           }
         ]
-      }
+      },
+      {
+        path: '/user/article/creator',
+        element: <CreatorLayout/>,
+        // element: <Navigate to='/user/article/creator/overview' />,
+        children: [
+          {
+            path: '/user/article/creator',
+            element: <Navigate to='/user/article/creator/overview' />,
+          },
+          {
+            path: '/user/article/creator/overview',
+            element: <CreatorOverView />
+          },
+        ]
+      },
       // {
       //   path: "/login",
       //   element: <Login />
