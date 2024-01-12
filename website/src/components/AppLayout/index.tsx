@@ -120,7 +120,7 @@ const App: React.FC = () => {
           style={{
             // background: colorBgContainer,
             minHeight: 280,
-            padding: 24,
+            // padding: 24,
             borderRadius: borderRadiusLG,
           }}
         >

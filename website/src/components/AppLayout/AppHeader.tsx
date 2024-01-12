@@ -10,8 +10,8 @@ import {
 } from 'antd'
 
 import {
-  Link, 
-  NavLink, 
+  Link,
+  NavLink,
   useNavigate,
   // NavLink,
 } from "react-router-dom"
@@ -41,19 +41,13 @@ const AppHeader: any = (props: any) => {
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
     // setCurrent(e.key);
-    
+
   };
-
-
   console.log("AppHeader.props===>", props)
   console.log("items===>", items)
   return (
     <React.Fragment>
-      <Header style={{
-        display: 'flex',
-        alignItems: 'center',
-        // border: '1px solid red'
-      }}>
+      <Header style={{ display: 'flex', alignItems: 'center' }}>
         <div className="demo-logo" />
         <Menu
           theme="dark"
@@ -64,15 +58,6 @@ const AppHeader: any = (props: any) => {
         ></Menu>
         <div><Button type='primary' onClick={() => navigate(`/user/article/edit`)}>写文章</Button></div>
       </Header>
-      <Row>
-        <Col flex={4}></Col>
-        <Col flex={1}></Col>
-      </Row>
-      {/* <Row>
-        <Col span={22}>
-          </Menu>
-        </Col>
-      </Row> */}
     </React.Fragment>
   )
 }

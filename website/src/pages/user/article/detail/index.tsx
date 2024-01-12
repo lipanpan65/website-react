@@ -40,6 +40,7 @@ const reducer = (state: any, action: any) => {
 }
 
 const ArticleDetail: React.FC = () => {
+  // TODO 应该在初始化函数进行判断 文件的ID是否为空
   const params = useParams()
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const {
@@ -74,12 +75,13 @@ const ArticleDetail: React.FC = () => {
 
   return (
     <React.Fragment>
-      <Row>
+      <Row style={{ paddingTop: '1rem' }}>
         <Col span={12} offset={6} style={{
           background: colorBgContainer,
           borderRadius: '4px 4px 0 0',
           paddingLeft: '2.667rem',
           paddingRight: '2.667rem',
+          paddingTop: '2.667rem',
           minHeight: '100vh'
         }}>
           <main className='container main-container'>

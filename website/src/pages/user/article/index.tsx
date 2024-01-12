@@ -16,7 +16,7 @@ import {
   // Avatar,
 } from 'antd'
 
-const { Paragraph, Text } = Typography;
+// const { Paragraph, Text } = Typography;
 
 // import request from '@/utils/request'
 // import request from '../../../utils/request';
@@ -103,7 +103,7 @@ const Article: React.FC = () => {
   }
 
   React.useEffect(() => {
-    console.log('分页发生变化')
+    // console.log('分页发生变化')
     // getArticleList()
   }, [state.page])
 
@@ -111,11 +111,12 @@ const Article: React.FC = () => {
 
   return (
     <React.Fragment>
-      <Row>
+      <Row style={{ paddingTop: '1rem' }}>
         <Col span={12} offset={6}>
-          <main style={{
+          <article style={{
             background: colorBgContainer,
-            minHeight: '100vh'
+            minHeight: '100vh',
+            // paddingTop: '2.667rem'
           }}>
             <List
               loading={state.loading}
@@ -139,13 +140,9 @@ const Article: React.FC = () => {
                 </List.Item>
               )}
             />
-          </main>
+          </article>
         </Col>
       </Row>
-
-
-
-
     </React.Fragment>
   )
 }
