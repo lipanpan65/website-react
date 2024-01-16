@@ -64,30 +64,36 @@ export const routeMap: any = [
     id: "2",
     name: "创作者中心",
     icon: <HomeOutlined />,
-    url: '/user/article/creator',
-    hash: '#/user/article/creator',
+    url: '/user/creator',
+    hash: '#/user/creator',
     childs: [
       {
         id: "21",
         name: "首页",
-        url: "/user/article/creator/overview",
-        hash: "#/user/article/creator/overview",
+        url: "/user/creator/overview",
+        hash: "#/user/creator/overview",
         icon: <AppstoreOutlined />,
       },
       {
         id: "22",
         name: "内容管理",
-        url: "/user/article/creator/content",
-        hash: "#/user/article/creator/content",
+        // url: "/user/creator/content",
+        // hash: "#/user/creator/content",
         icon: <AppstoreOutlined />,
         childs: [
           {
-            id: "21",
+            id: "221",
             name: "文章管理",
-            url: "/user/article/creator/overview",
-            hash: "#/user/article/creator/overview",
+            url: "/user/creator/overview",
+            hash: "#/user/creator/overview",
             icon: <AppstoreOutlined />,
-          },  
+          }, {
+            id: "222",
+            name: "文章管理2",
+            url: "/user/creator/article",
+            hash: "#/user/creator/article",
+            icon: <AppstoreOutlined />,
+          },
         ]
       }
     ]
@@ -139,20 +145,20 @@ const Routes = () => {
         ]
       },
       {
-        path: '/user/article/creator',
+        path: '/user/creator',
         element: <CreatorLayout />,
         children: [
           {
-            path: '/user/article/creator',
-            element: <Navigate to='/user/article/creator/overview' />,
+            path: '/user/creator',
+            element: <Navigate to='/user/creator/overview' />,
           },
           {
-            path: '/user/article/creator/overview',
+            path: '/user/creator/overview',
             element: <CreatorOverView />
           },
           {
-            path: '/user/article/creator/overview',
-            element: <CreatorOverView />
+            path: '/user/creator/article',
+            element: <CratorArticle />
           },
         ]
       },

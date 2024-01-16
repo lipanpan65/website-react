@@ -1,12 +1,11 @@
-
 import * as React from 'react'
 import BaseLayout from '../BaseLayout'
 import type { MenuProps } from 'antd';
 import { Layout, Flex, Menu, Row, Col, theme } from 'antd'
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
-
 import VerticalMenu from './VerticalMenu';
-
+import './index.css'
+import { Outlet } from 'react-router-dom'
 import { routeMap } from '../../routes'
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -49,13 +48,12 @@ const items: MenuProps['items'] = [
     getItem('Option 11', '11'),
     getItem('Option 12', '12'),
   ]),
-
   getItem('Group', 'grp', null, [getItem('Option 13', '13'), getItem('Option 14', '14')], 'group'),
 ];
 
-
-import './index.css'
-import { Outlet } from 'react-router-dom'
+console.log('==============================')
+console.log('items====>', items)
+console.log('==============================')
 
 const layoutStyle = {
   // width: '100%'
@@ -165,11 +163,9 @@ const CreatorLayout: React.FC = () => {
       borderRadiusLG },
   } = theme.useToken();
 
-
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
   };
-
 
   return (
     <BaseLayout>
@@ -185,10 +181,10 @@ const CreatorLayout: React.FC = () => {
           </Header>
           <Layout style={{
             paddingTop: '1rem',
-            width: 'calc(60% - 8px)',
+            width: 'calc(50% - 8px)',
             margin: 'auto'
           }}>
-            <Sider width="25%" style={{ ...siderStyle, background: colorBgContainer, marginRight: '1rem', borderRadius: borderRadiusLG }}>
+            <Sider width="20%" style={{ ...siderStyle, background: colorBgContainer, marginRight: '1rem', borderRadius: borderRadiusLG }}>
               <VerticalMenu funcs={leftMenu.leftFuncs} active={leftMenu.leftActive} />
             </Sider>
             <Content style={{ ...contentStyle, borderRadius: borderRadiusLG }}>
