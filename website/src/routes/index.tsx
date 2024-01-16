@@ -34,6 +34,7 @@ import ArticleDetail from '../pages/user/article/detail'
 import EditArticle from '../pages/operator/article/editor'
 import CreatorOverView from '../pages/user/creator'
 import CreatorLayout from '../components/CreatorLayout'
+import CratorArticle from '../pages/user/creator/article'
 
 export const routeMap: any = [
   {
@@ -57,24 +58,53 @@ export const routeMap: any = [
         hash: "#/user/article/develop",
         icon: <BugOutlined />,
       },
-
-      // {
-      //   id: "10",
-      //   name: "工作台",
-      //   url: "/operation/dashboard/workbench",
-      //   hash: "#/operation/dashboard/workbench",
-      //   icon: <DesktopOutlined />,
-      // },
-      // {
-      //   id: "12",
-      //   name: "异常汇总",
-      //   url: "/operation/dashboard/problems",
-      //   hash: "#/operation/dashboard/problems",
-      //   icon: <AlertOutlined />,
-      // },
     ]
   },
+  {
+    id: "2",
+    name: "创作者中心",
+    icon: <HomeOutlined />,
+    url: '/user/article/creator',
+    hash: '#/user/article/creator',
+    childs: [
+      {
+        id: "21",
+        name: "首页",
+        url: "/user/article/creator/overview",
+        hash: "#/user/article/creator/overview",
+        icon: <AppstoreOutlined />,
+      },
+      {
+        id: "22",
+        name: "内容管理",
+        url: "/user/article/creator/content",
+        hash: "#/user/article/creator/content",
+        icon: <AppstoreOutlined />,
+        childs: [
+          {
+            id: "21",
+            name: "文章管理",
+            url: "/user/article/creator/overview",
+            hash: "#/user/article/creator/overview",
+            icon: <AppstoreOutlined />,
+          },  
+        ]
+      }
+    ]
+  }
 ]
+
+
+export const creatorRouteMap: any = [
+  {
+    id: "1",
+    name: "创作者中心",
+    icon: <HomeOutlined />,
+    url: '/user/article/creator',
+    hash: '#/user/article'
+  }
+]
+
 
 
 const Routes = () => {
@@ -115,6 +145,10 @@ const Routes = () => {
           {
             path: '/user/article/creator',
             element: <Navigate to='/user/article/creator/overview' />,
+          },
+          {
+            path: '/user/article/creator/overview',
+            element: <CreatorOverView />
           },
           {
             path: '/user/article/creator/overview',

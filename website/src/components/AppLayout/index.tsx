@@ -31,7 +31,7 @@ const getLeftActive = (func: any, curPath: any, parent = []) => {
   console.log("getLeftActive func curPath parent", func, curPath, parent)
   let active: any;
   func.every((item: any) => {
-    console.log("item", item, "curPath", curPath)
+    // console.log("item", item, "curPath", curPath)
     if (item.childs) {
       // 递归调用获取 activate,如果菜单存在子级菜单则 parent 即为 item 本身
       active = getLeftActive(item.childs, curPath, item)
@@ -58,7 +58,10 @@ const getLeftActive = (func: any, curPath: any, parent = []) => {
 
 const App: React.FC = () => {
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: {
+      // colorBgContainer, 
+      borderRadiusLG
+     },
   } = theme.useToken();
   // const [routesMap, setRoutesMap] = React.useState<any>(() => {
   //   return [routeMap];
@@ -96,7 +99,7 @@ const App: React.FC = () => {
 
   return (
     <Layout>
-      <AppHeader funcs={leftMenu.funcs} activate={leftMenu.topActive} />
+      <AppHeader funcs={leftMenu.funcs} active={leftMenu.topActive} />
       {/* <Header style={{ display: 'flex', alignItems: 'center' }}>
         <div className="demo-logo" />
         <Menu
