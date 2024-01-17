@@ -134,10 +134,10 @@ const Routes = () => {
             path: '/user/article/detail/:id',
             element: <ArticleDetail />
           },
-          {
-            path: '/user/article/edit',
-            element: <EditArticle />
-          }
+          // {
+          //   path: '/user/article/edit/:id',
+          //   element: <EditArticle />
+          // }
         ]
       },
       {

@@ -29,8 +29,11 @@ import { postsMock } from '../../../mock';
 const rowKeyF = (record: { id: number }): number => record.id
 const showTotal = (total: any) => `共${total}条记录`
 const ArticleTitle = (article: any) => <Link className='title'
-  to={`/user/article/detail/${article.id}`}
-  state={{ id: article.id, status: 'drafts' }}
+  to={{
+    pathname: `/user/article/detail/${article.id}`,
+    // search: 'new'
+  }}
+  // state={{ id: article.id, status: 'drafts' }}
   target='_blank'>{article.title ?? '无标题'}</Link>
 // const ArticleDescription = (article: any) => (
 //   <Text style={true ? { width: 200 } : undefined}>{article.content}</Text>

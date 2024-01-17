@@ -10,16 +10,27 @@ import type { TabsProps } from 'antd';
 
 import {
   Link,
+  NavLink,
+  Navigate,
+  useNavigate
 } from "react-router-dom"
 
 import { request } from '../../../../utils';
 
 const rowKeyF = (record: { id: number }): number => record.id
 const showTotal = (total: any) => `共${total}条记录`
-const ArticleTitle = (article: any) => <Link className='title'
-  to={`/user/article/editor/${article.id}`}
-  state={{ id: article.id, status: 'drafts' }}
-  target='_blank'>{article.title ?? '无标题'}</Link>
+const ArticleTitle = (article: any) => <Link
+  className='title'
+  to={{
+    pathname: `/user/article/editor/${article.id}`,
+  }}
+  // state={{ status: 'drafts' }}
+  // unstable_viewTransition
+  target='_blank' // 添加了该属性后则无法获取参数
+>
+  {article.title ?? '无标题'}
+</Link >
+
 // 接口返回的数据
 const initialState = {
   loading: false,
@@ -57,7 +68,7 @@ const CratorArticle: any = () => {
       // borderRadiusLG
     },
   } = theme.useToken();
-
+  const navigator = useNavigate()
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   const onChange = (page: any, pageSize: any) => {
@@ -87,6 +98,16 @@ const CratorArticle: any = () => {
   //   // getArticleList()
   // }, [state.page])
 
+  // const handleLinkTo = (v: any) => {
+  //   navigator(`/user/article/editor/${v.id}`, 
+
+  //   {
+  //     state: {
+  //       status: 'k'
+  //     }
+  //   })
+  // }
+
   React.useEffect(() => getArticleList(), [])
 
   return (
@@ -112,6 +133,7 @@ const CratorArticle: any = () => {
               <List.Item.Meta
                 // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
                 title={ArticleTitle(item)}
+                // title={<div onClick={() => handleLinkTo(item)}>{item.title}</div>}
                 description={<div style={{ width: '85%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.content}</div>}
               />
             </List.Item>

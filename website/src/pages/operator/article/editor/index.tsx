@@ -15,7 +15,7 @@ import { request } from '../../../../utils'
 import 'react-markdown-editor-lite/lib/index.css';
 import './index.css'
 
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
@@ -49,15 +49,23 @@ const reducer = (state: any, action: any) => {
       const { id } = action.payload
       state.article.id = id
       return { article: state.article }
+    case "READ_DONE_UPDATE":
+      const { article } = action.payload
+      return {
+        article: { ...article }
+      }
     default:
       return state
   }
 };
 
-const EditorArticle: React.FC = () => {
-
+const EditorArticle: any = (props: any) => {
+  console.log('EditorArticle===?', props)
+  const params = useParams();
   // const navigate = useNavigate();
   const location: any = useLocation() // {id,status:draft}
+  const [search, setSearch] = useSearchParams()
+  console.log("search===?", search)
   console.log('location===>', location)
   // const mdEditor: any = React.useRef(null);
   // const [id, setId] = React.useState<any>(null)
@@ -67,12 +75,28 @@ const EditorArticle: React.FC = () => {
 
   // const [article, setArticle] = React.useState();
 
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [state, dispatch] = React.useReducer(reducer, initialState, (initialState) => {
+    console.log('----z---')
+    // https://zhuanlan.zhihu.com/p/671830177
+    console.log('----z---')
+    console.log('params====?', params)
+    return { article: initialState }
+  });
 
   console.log("state===>", state)
 
-  const getArticle = () => {
-
+  const getArticle = (id: any) => {
+    request({
+      url: `/api/user/v1/article/${id}`, method: 'GET'
+    }).then((r: any) => {
+      console.log('getArticle===>', r)
+      const { status, data } = r
+      console.log('data===>', data)
+      dispatch({ type: 'READ_DONE_UPDATE', payload: { article: { ...data } } })
+    }).catch((e) => {
+      console.log('getArticle.err===>', e)
+    }).finally(() => {
+    })
   }
 
   const createArticle = () => {
@@ -96,11 +120,19 @@ const EditorArticle: React.FC = () => {
 
   React.useEffect(() => {
     console.log('方法一')
+    // const { pathname: { id } } = location
+    // console.log('pathname===>', pathname)
+    console.log('params====?', params)
+    // console.log('id', id)
+    if (params?.id === 'new') {
+    } else {
+      getArticle(params.id)
+    }
   }, [])
-  
-  React.useEffect(() => {
-    console.log('方法二')
-  }, [])
+
+  // React.useEffect(() => {
+  //   console.log('方法二')
+  // }, [])
 
   const updateArticle = () => {
     console.log("updateArticle.state===>", state)

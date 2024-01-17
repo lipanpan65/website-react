@@ -58,7 +58,8 @@ const AppHeader: any = (props: any) => {
           onClick={onClick}
           style={{ flex: 1, minWidth: 0 }}
         ></Menu>
-        <div><Button type='primary' onClick={() => navigate(`/user/article/edit`)}>写文章</Button></div>
+        <div>
+          <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button></div>
       </Header>
     </React.Fragment>
   )
