@@ -4,7 +4,7 @@ import MdEditor from 'react-markdown-editor-lite'
 import MarkdownIt from 'markdown-it'
 
 import {
-  // Button,
+  Button,
   Input
 } from 'antd'
 
@@ -29,9 +29,10 @@ const initialState = {
 };
 
 const reducer = (state: any, action: any) => {
-  // console.log("state===>", state)
-  // console.log("action===>", state)
+
   switch (action.type) {
+    case 'READ_DONE':
+      return state
     case 'CREATE':
       return { count: state.count + 1 };
     case 'UPDATE':
@@ -56,7 +57,8 @@ const reducer = (state: any, action: any) => {
 const EditorArticle: React.FC = () => {
 
   // const navigate = useNavigate();
-  // const location: any = useLocation() // {id,status:draft}
+  const location: any = useLocation() // {id,status:draft}
+  console.log('location===>', location)
   // const mdEditor: any = React.useRef(null);
   // const [id, setId] = React.useState<any>(null)
   // const [title, setTitle] = React.useState<any>("")
@@ -68,6 +70,10 @@ const EditorArticle: React.FC = () => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   console.log("state===>", state)
+
+  const getArticle = () => {
+
+  }
 
   const createArticle = () => {
     const { article: { title, content, content_html } } = state
@@ -87,6 +93,14 @@ const EditorArticle: React.FC = () => {
     }
     return
   }
+
+  React.useEffect(() => {
+    console.log('方法一')
+  }, [])
+  
+  React.useEffect(() => {
+    console.log('方法二')
+  }, [])
 
   const updateArticle = () => {
     console.log("updateArticle.state===>", state)
@@ -136,13 +150,22 @@ const EditorArticle: React.FC = () => {
     dispatch({ type: 'UPDATE', payload: { content_html: html, content: text } })
   };
 
+  const publishPosts = () => {
+
+  }
+
+  const toDrafts = () => {
+
+  }
+
+
   return (
     <React.Fragment>
       <div className='edit-container'>
         <div className='header'>
           <div className="header-left">
             <Input
-              style={{ fontSize: 24 }}
+              style={{ fontSize: 24, height: '100%' }}
               className='input-title'
               value={state.article.title}
               onChange={onChange}
@@ -150,8 +173,8 @@ const EditorArticle: React.FC = () => {
               bordered={false} />
           </div>
           <div className="header-right">
-            {/* <Button type="primary" onClick={publishPosts} >发布</Button>
-            <Button type="primary" onClick={toDrafts}>草稿箱</Button> */}
+            <Button type="primary" onClick={publishPosts} >发布</Button>
+            <Button type="primary" onClick={toDrafts}>草稿箱</Button>
           </div>
         </div>
         <div className="bootom">
@@ -159,7 +182,7 @@ const EditorArticle: React.FC = () => {
             // ref={mdEditor}
             value={state.article.content || ""}
             // value={content}
-            style={{ height: "500px" }}
+            style={{ height: "100vh" }}
             onChange={handleEditorChange}
             // renderHTML={text => <ReactMarkdown children={text} />}
             renderHTML={text => mdParser.render(text)}

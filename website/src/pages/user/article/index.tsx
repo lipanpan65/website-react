@@ -28,7 +28,10 @@ import { postsMock } from '../../../mock';
 
 const rowKeyF = (record: { id: number }): number => record.id
 const showTotal = (total: any) => `共${total}条记录`
-const ArticleTitle = (article: any) => <Link className='title' to={`/user/article/detail/${article.id}`} target='_blank'>{article.title ?? '无标题'}</Link>
+const ArticleTitle = (article: any) => <Link className='title'
+  to={`/user/article/detail/${article.id}`}
+  state={{ id: article.id, status: 'drafts' }}
+  target='_blank'>{article.title ?? '无标题'}</Link>
 // const ArticleDescription = (article: any) => (
 //   <Text style={true ? { width: 200 } : undefined}>{article.content}</Text>
 // )
@@ -74,8 +77,10 @@ const reducer = (state: any, action: any) => {
 const Article: React.FC = () => {
 
   const {
-    token: { colorBgContainer,
-      borderRadiusLG },
+    token: {
+      colorBgContainer,
+      // borderRadiusLG
+    },
   } = theme.useToken();
 
   const [state, dispatch] = React.useReducer(reducer, initialState);

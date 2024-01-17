@@ -35,6 +35,7 @@ import EditArticle from '../pages/operator/article/editor'
 import CreatorOverView from '../pages/user/creator'
 import CreatorLayout from '../components/CreatorLayout'
 import CratorArticle from '../pages/user/creator/article'
+import EditorLayout from '../components/EditorLayout'
 
 export const routeMap: any = [
   {
@@ -100,27 +101,22 @@ export const routeMap: any = [
   }
 ]
 
-
-export const creatorRouteMap: any = [
-  {
-    id: "1",
-    name: "创作者中心",
-    icon: <HomeOutlined />,
-    url: '/user/article/creator',
-    hash: '#/user/article'
-  }
-]
-
-
-
 const Routes = () => {
-  // const auth = useSelector((state: any) => state.auth)
-  // console.log("auth", auth)
   return useRoutes(
     [
       {
         path: '/',
         element: <Navigate to='/user/article' />,
+      },
+      {
+        path: '/user/article/editor',
+        element: <EditorLayout />,
+        children: [
+          {
+            path: '/user/article/editor/:id',
+            element: <EditArticle />
+          },
+        ]
       },
       {
         path: '/user/article',
