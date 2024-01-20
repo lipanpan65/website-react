@@ -37,6 +37,13 @@ export const list2Tree = (data: any, id?: any, pid?: any) => {
   return data.filter((o: any) => o['parentid'] === '0')
 }
 
+
+export const delay = (ms: number) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// https://blog.csdn.net/hfdxmz_3/article/details/106637270
+
 // const statusTag = (status:boolean,STATUS_COLOR?:any=) => {
 //   <Tag color={STATUS_COLOR[status]}>{USER_STATUS[text]}</Tag>
 // }

@@ -19,6 +19,7 @@ import { request } from '../../../../utils';
 
 const rowKeyF = (record: { id: number }): number => record.id
 const showTotal = (total: any) => `共${total}条记录`
+// 文章标题
 const ArticleTitle = (article: any) => <Link
   className='title'
   to={{
@@ -34,7 +35,7 @@ const ArticleTitle = (article: any) => <Link
 // 接口返回的数据
 const initialState = {
   loading: false,
-  data: [],
+  data: [], // 文章的数据
   page: {
     total: 0,
     current: 0,
