@@ -5,6 +5,7 @@ import MarkdownIt from 'markdown-it'
 
 import {
   Button,
+  Divider,
   Input,
   Spin
 } from 'antd'
@@ -24,6 +25,7 @@ const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 // 初始化参数
 const initialState = {
+  // tip: '文章自动保存草稿中...',
   loading: false,
   article: {
     id: null,
@@ -70,7 +72,10 @@ const reducer = (state: any, action: any) => {
     case "UPDATE_ID":
       const { id } = action.payload
       state.article.id = id
-      return { article: state.article }
+      return {
+        loading: false,
+        article: state.article
+      }
     case "READ_DONE_UPDATE":
       const { article } = action.payload
       return {
@@ -86,26 +91,63 @@ const EditorArticle: any = (props: any) => {
 
   // 获取请求参数
   const params = useParams();
+  const timerId: any = React.useRef()
+  // const [timerId, setTimerId] = React.useState(undefined)
 
-  const [state, dispatch] = React.useReducer(reducer, initialState, (initialState) => {
-    if (params.id && params.id != 'new') {
-      // 此处为编辑页面
-      const { article } = initialState
-      const articleId = Number(params.id)
-      return {
-        loading: initialState.loading,
-        article: {
-          id: articleId,
-          title: article.title,
-          content: article.content,
-          content_html: article.content_html
-        }
-      }
+  const [status, setStatus] = React.useState<boolean | undefined>(undefined);
+
+  const intervalRef: any = React.useRef();
+  const titleRef: any = React.useRef();
+
+  // intervalRef.current = () => {
+  //   console.log("updateArticle.state===>", state)
+  //   const { article } = state
+  //   request({ url: `/api/user/v1/article/${article.id}/`, method: 'PUT', data: { ...article } }).then((r: any) => {
+  //     console.log('updateArticle===>', r)
+  //   }).catch((e) => {
+  //     console.log('updateArticle.err===>', e)
+  //   }).finally(() => {
+  //   })
+  // }
+
+  // const [state, dispatch] = React.useReducer(reducer, initialState, (initialState) => {
+  //   if (params.id && params.id != 'new') {
+  //     // 此处为编辑页面
+  //     const { article } = initialState
+  //     const articleId = Number(params.id)
+  //     return {
+  //       loading: initialState.loading,
+  //       article: {
+  //         id: articleId,
+  //         title: article.title,
+  //         content: article.content,
+  //         content_html: article.content_html
+  //       }
+  //     }
+  //   }
+  //   return initialState;
+  // });
+  const [save, setSave] = React.useState();
+  const [state, dispatch] = React.useReducer(reducer, initialState)
+
+  // const throttle: any = (fn: any, delay: number) => {
+  const throttle: any = (delay: number) => {
+    setStatus(true)
+    // https://www.cnblogs.com/aurora-ql/p/13757733.html
+    if (timerId.current) {
+      // 如果上一次存在 timerid 则清除请求
+      clearTimeout(timerId.current)
+      // return
     }
-    return initialState;
-  });
+    timerId.current = setTimeout(() => {
+      updateArticle()
+      timerId.current = null
+      console.log('timer', timerId)
+    }, delay)
+  }
 
   console.log("---------sssssssssssss-------------")
+  console.log(timerId)
   console.log("EditorArticle===>", state)
   console.log("---------*************-------------")
 
@@ -116,6 +158,8 @@ const EditorArticle: any = (props: any) => {
       url: `/api/user/v1/article/${id}`, method: 'GET'
     }).then((r: any) => {
       const { status, data } = r
+      intervalRef.current = data.content
+      titleRef.current = data.title
       dispatch({ type: 'READ_DONE_UPDATE', payload: { article: { ...data } } })
     }).catch((e) => {
     }).finally(() => {
@@ -143,55 +187,60 @@ const EditorArticle: any = (props: any) => {
   }
 
   React.useEffect(() => {
-    console.log('00000009999900')
-    console.log(typeof state.article.id)
-    console.log(state.article.id)
-    console.log('创建文章 params.id', params.id, "state.article.id", state.article.id)
-    console.log('00000000000000')
-    if (state.article.id && params.id !== 'new') {
-      console.log('创建文章')
-      const articleId = state.article.id
+    if (params.id && params.id !== 'new') {
+      const articleId = params.id
       getArticle(articleId)
     }
     // }, [state.article.id])
   }, [])
 
   const updateArticle = () => {
-    console.log("updateArticle.state===>", state)
     const { article } = state
-    // console.log('')
-    // request({ url: `/api/user/v1/article/${article.id}/`, method: 'PUT', data: { ...article } }).then((r: any) => {
-    //   console.log('updateArticle===>', r)
-    // }).catch((e) => {
-    //   console.log('updateArticle.err===>', e)
-    // }).finally(() => {
-    // })
+    // console.log('更新函数')
+    request({
+      url: `/api/user/v1/article/${article.id}/`, method: 'PUT', data: {
+        // content: intervalRef.current,
+        // title: titleRef.current
+        ...article
+      }
+    }).then((r: any) => {
+      console.log('updateArticle===>', r)
+    }).catch((e) => {
+      console.log('updateArticle.err===>', e)
+    }).finally(() => {
+      setStatus(false)
+    })
   }
 
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      // console.log("state.article===>", state.article)
-      if (params.id === 'new' && state.article.id === null) {
-        console.log('创建文章 params.id', params.id, "state.article.id", state.article.id)
-        createArticle()
-      } else if (state.article.id) {
-        console.log('更新文档 params.id', params.id, "state.article.id", state.article.id)
-        updateArticle()
-      }
-    }, 5000 * 1);
-    return () => clearInterval(interval)
-  }, [])
+  // React.useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     console.log(intervalRef.current)
+  //     if (params.id === 'new' && state.article.id === null) {
+  //       console.log('创建文章 params.id', params.id, "state.article.id", state.article.id)
+  //       createArticle()
+  //     } else if (state.article.id) {
+  //       console.log('更新文档 params.id', params.id, "state.article.id", state.article.id)
+  //       updateArticle()
+  //     }
+  //   }, 5000 * 1);
+  //   return () => clearInterval(interval)
+  // }, [])
 
   const onChange = (e: any) => {
     const title = e.target.value
+    titleRef.current = title
     dispatch({ type: 'UPDATE_TITLE', payload: { title } })
   }
 
   const handleEditorChange = ({ html, text }: any) => {
-    // console.log("handleEditorChange===>", html)
-    // console.log("handleEditorChange===>", text)
+    console.log("handleEditorChange===>", html)
+    console.log("handleEditorChange===>", text)
+    intervalRef.current = text
     // const newValue = text.replace(/\d/g, "");
     dispatch({ type: 'UPDATE_CONTENT', payload: { content_html: html, content: text } })
+    console.log("timerId", timerId)
+    throttle(5000)
+
   };
 
   const publishPosts = () => {
@@ -216,6 +265,12 @@ const EditorArticle: any = (props: any) => {
                 placeholder="请输入文章标题"
                 bordered={false} />
             </div>
+            <div>
+              {state.tip}
+            </div>
+            {
+              timerId.current === undefined ? <div>文章自动保存到草稿中...</div> : (timerId.current === null ? <div>保存成功...</div> : <div>保存中...</div>)
+            }
             <div className="header-right">
               <Button type="primary" onClick={publishPosts} >发布</Button>
               <Button type="primary" onClick={toDrafts}>草稿箱</Button>
@@ -234,7 +289,7 @@ const EditorArticle: any = (props: any) => {
           </div>
         </div>
       </Spin>
-    </React.Fragment>
+    </React.Fragment >
   )
 }
 
