@@ -230,6 +230,7 @@ const EditorArticle: any = (props: any) => {
     const title = e.target.value
     titleRef.current = title
     dispatch({ type: 'UPDATE_TITLE', payload: { title } })
+    // throttle(5000)
   }
 
   const handleEditorChange = ({ html, text }: any) => {

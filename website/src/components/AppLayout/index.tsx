@@ -61,7 +61,7 @@ const App: React.FC = () => {
     token: {
       // colorBgContainer, 
       borderRadiusLG
-     },
+    },
   } = theme.useToken();
   // const [routesMap, setRoutesMap] = React.useState<any>(() => {
   //   return [routeMap];
@@ -100,16 +100,6 @@ const App: React.FC = () => {
   return (
     <Layout>
       <AppHeader funcs={leftMenu.funcs} active={leftMenu.topActive} />
-      {/* <Header style={{ display: 'flex', alignItems: 'center' }}>
-        <div className="demo-logo" />
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={['2']}
-          items={items}
-          style={{ flex: 1, minWidth: 0 }}
-        />
-      </Header> */}
       <Content style={{ padding: '0 48px' }}>
         {/* <Breadcrumb style={{ margin: '16px 0' }}>
           <Breadcrumb.Item>Home</Breadcrumb.Item>
@@ -122,7 +112,7 @@ const App: React.FC = () => {
         <div
           style={{
             // background: colorBgContainer,
-            minHeight: 280,
+            minHeight: '100vh',
             // padding: 24,
             borderRadius: borderRadiusLG,
           }}
