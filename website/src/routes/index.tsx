@@ -25,7 +25,7 @@ import {
   // BlockOutlined,
   // FileTextOutlined,
   SwitcherOutlined,
-  <EditOutlined />,
+  EditOutlined,
   HomeOutlined
 } from '@ant-design/icons'
 
