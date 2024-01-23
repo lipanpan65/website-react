@@ -24,6 +24,8 @@ import {
   // VerifiedOutlined,
   // BlockOutlined,
   // FileTextOutlined,
+  SwitcherOutlined,
+  <EditOutlined />,
   HomeOutlined
 } from '@ant-design/icons'
 
@@ -80,7 +82,7 @@ export const routeMap: any = [
         name: "内容管理",
         // url: "/user/creator/content",
         // hash: "#/user/creator/content",
-        icon: <AppstoreOutlined />,
+        icon: <SwitcherOutlined />,
         childs: [
           {
             id: "221",
