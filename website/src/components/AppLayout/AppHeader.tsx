@@ -9,8 +9,11 @@ import {
   MenuProps,
   Flex,
   Avatar,
-  Space
+  Space,
+  Dropdown
 } from 'antd'
+
+// import { Col, MenuProps, Row, Menu, theme, Tabs, List, Dropdown, message } from 'antd'
 
 // import { Button, Flex, Segmented } from 'antd';
 
@@ -18,6 +21,7 @@ import {
   Link,
   useNavigate,
 } from "react-router-dom"
+import { FileTextOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
 
 const UserList = ['U', 'Lucy', 'Tom', 'Edward'];
 const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
@@ -28,6 +32,9 @@ const { Header } = Layout
 const MenuLable = (v: any) => <Link to={`${v.url}`}>{v.name}</Link>
 
 const AppHeader: any = (props: any) => {
+
+
+
 
   console.log("AppHeader===>", props)
 
@@ -49,6 +56,24 @@ const AppHeader: any = (props: any) => {
     console.log('click ', e);
     // setCurrent(e.key);
   };
+
+  const items2: MenuProps['items'] = [
+    {
+      key: 'user',
+      label: '李盼盼',
+      icon: <UserOutlined />,
+    },
+    {
+      key: 'edit',
+      label: <Link to={`/user/article/editor/new`}>写文章</Link>,
+      icon: <FileTextOutlined />,
+    },
+    {
+      key: 'delete',
+      label: <Link to={`/user/creator/overview`}>创作者中心</Link>,
+      icon: <HomeOutlined />,
+    },
+  ];
 
   console.log("AppHeader.props===>", props)
   console.log("items===>", items)
@@ -85,10 +110,19 @@ const AppHeader: any = (props: any) => {
           <Space>
             <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button>
             {/* <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }} size={'default'}>U</Avatar> */}
-            <Avatar style={{ backgroundColor: ColorList[0], verticalAlign: 'middle' }} size="large" gap={GapList[0]}>
-              {/* {UserList[0]} */}
-              李
-            </Avatar>
+            <React.Fragment>
+              <Dropdown menu={{
+                items: items2,
+                onClick: (e: any) => console.log(e)
+              }}>
+
+                <Avatar style={{ backgroundColor: ColorList[0], verticalAlign: 'middle' }} size="default" gap={GapList[0]}>
+                  {/* {UserList[0]} */}
+                  李
+                </Avatar>
+              </Dropdown>
+            </React.Fragment>
+
           </Space>
         </div>
         <div>

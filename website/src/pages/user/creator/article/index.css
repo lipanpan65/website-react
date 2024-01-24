@@ -1,0 +1,37 @@
+.item-wrapper {
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 12px 12px 0;
+    /* padding: 12px; */
+    border-bottom: 1px solid rgba(228, 230, 235, 0.5);
+    display: flex;
+    flex-direction: column;
+    /* 如果设置了纵轴的排列方式，则会影响子元素的排列方式 */
+    /* align-items: flex-start; */
+}
+
+.item-title {
+    /* background-color: aliceblue; */
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.item-title a {
+    text-decoration: none;
+}
+
+
+/* 设置第一个 padding-top 为 0px */
+
+
+
+/* .item-wrapper .item-title span {
+    color: #252933;
+    font-weight: 600;
+    line-height: 24px;
+    font-size: 16px;
+    flex: 1;
+} */
