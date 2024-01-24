@@ -132,6 +132,12 @@ const EditorArticle: any = (props: any) => {
 
   // const throttle: any = (fn: any, delay: number) => {
   const throttle: any = (delay: number) => {
+
+    console.log("----------------------")
+    console.log("params======>", params)
+    console.log("state.id", state.article.id)
+    console.log("----------------------")
+
     setStatus(true)
     // https://www.cnblogs.com/aurora-ql/p/13757733.html
     if (timerId.current) {
@@ -140,7 +146,11 @@ const EditorArticle: any = (props: any) => {
       // return
     }
     timerId.current = setTimeout(() => {
-      updateArticle()
+      if (state.article.id === null && params.id === 'new') {
+        createArticle()
+      } else if (state.article.id) {
+        updateArticle()
+      }
       timerId.current = null
       console.log('timer', timerId)
     }, delay)

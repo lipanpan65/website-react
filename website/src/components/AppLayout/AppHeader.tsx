@@ -33,9 +33,6 @@ const MenuLable = (v: any) => <Link to={`${v.url}`}>{v.name}</Link>
 
 const AppHeader: any = (props: any) => {
 
-
-
-
   console.log("AppHeader===>", props)
 
   const navigate = useNavigate()
