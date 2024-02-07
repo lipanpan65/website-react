@@ -3,15 +3,37 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux';
+
+import { ConfigProvider } from 'antd'
+import {
+  HashRouter as Router
+} from 'react-router-dom'
+
+import zhCN from 'antd/es/locale/zh_CN'
+import "moment/locale/zh-cn"
+// import store from './store';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+// root.render(
+//   <React.StrictMode>
+//     <App />
+//   </React.StrictMode>
+// );
+
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  // <Provider store={store}>
+    <ConfigProvider locale={zhCN}>
+      <Router>
+        <App />
+      </Router>
+    </ConfigProvider>
+  // </Provider>
 );
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
