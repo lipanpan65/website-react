@@ -93,7 +93,7 @@ const EditorArticle: any = (props: any) => {
   const params = useParams();
   const timerId: any = React.useRef()
   // const [timerId, setTimerId] = React.useState(undefined)
-
+  const navigator = useNavigate()
   const [status, setStatus] = React.useState<boolean | undefined>(undefined);
 
   const intervalRef: any = React.useRef();
@@ -258,8 +258,15 @@ const EditorArticle: any = (props: any) => {
 
   }
 
-  const toDrafts = () => {
-
+  const handLinkToDrafts = () => {
+    alert('handLinkToDrafts')
+    navigator(`/user/creator/overview`, {
+      // replace: true
+      state: {
+        // id: article.id,
+        // status: 'draft',
+      }
+    })
   }
 
   return (
@@ -284,11 +291,12 @@ const EditorArticle: any = (props: any) => {
             }
             <div className="header-right">
               <Button type="primary" onClick={publishPosts} >发布</Button>
-              <Button type="primary" onClick={toDrafts}>草稿箱</Button>
+              <Button type="primary" onClick={handLinkToDrafts}>草稿箱</Button>
             </div>
           </div>
           <div className="bootom">
             <MdEditor
+              onImageUpload={() => alert('image')}
               // ref={mdEditor}
               value={state.article.content || ""}
               // value={content}
