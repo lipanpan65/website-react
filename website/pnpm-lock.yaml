@@ -106,6 +106,12 @@ devDependencies:
   craco-less:
     specifier: ^3.0.1
     version: 3.0.1(@craco/craco@7.0.0-alpha.9)(react-scripts@5.0.1)(webpack@5.89.0)
+  jest-dom:
+    specifier: ^4.0.0
+    version: 4.0.0
+  react-testing-library:
+    specifier: ^8.0.1
+    version: 8.0.1
 
 packages:
 
@@ -6310,6 +6316,11 @@ packages:
     dependencies:
       detect-newline: 3.1.0
 
+  /jest-dom@4.0.0:
+    resolution: {integrity: sha512-gBxYZlZB1Jgvf2gP2pRfjjUWF8woGBHj/g5rAQgFPB/0K2atGuhVcPO+BItyjWeKg9zM+dokgcMOH01vrWVMFA==}
+    deprecated: '🚨 jest-dom has moved to @testing-library/jest-dom. Please uninstall jest-dom and install @testing-library/jest-dom instead, or use an older version of jest-dom. Learn more about this change here: https://github.com/testing-library/dom-testing-library/issues/260 Thanks! :)'
+    dev: true
+
   /jest-each@27.5.1:
     resolution: {integrity: sha512-1Ff6p+FbhT/bXQnEouYy00bkNSY7OUpfIcmdl8vZ31A1UUaurOLPA8a8BbJOF2RDUElwJhmeaV7LnagI+5UwNQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
@@ -9621,6 +9632,11 @@ packages:
       - webpack-cli
       - webpack-hot-middleware
       - webpack-plugin-serve
+
+  /react-testing-library@8.0.1:
+    resolution: {integrity: sha512-Gq4JC9r3prA4hYwo7afcbHHMFckO29+5Nrh2KblAEPuK/DWaU0bJE1vtpAgLhzhY9bBirmcgjjIHljHEwGAXKw==}
+    deprecated: '🚨  react-testing-library has moved to @testing-library/react. Please uninstall react-testing-library and install @testing-library/react instead, or use an older version of react-testing-library. Learn more about this change here: https://github.com/testing-library/dom-testing-library/issues/260 Thanks! :)'
+    dev: true
 
   /react@18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
