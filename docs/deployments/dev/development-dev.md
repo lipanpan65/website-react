@@ -5,6 +5,9 @@
 nvm install v20.10.0
 nvm alias website v20.10.0
 nvm use website
+npm install pnpm -g
+pnpm install
+pnpm start
 ```
 安装包
 ```
