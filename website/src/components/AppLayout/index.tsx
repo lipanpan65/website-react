@@ -99,7 +99,7 @@ const App: React.FC = () => {
 
   return (
     <Layout>
-      <AppHeader funcs={leftMenu.funcs} active={leftMenu.topActive} />
+      <AppHeader funcs={leftMenu.funcs} active={leftMenu.topActive} top={'首页'} />
       <Content style={{ padding: '0 48px' }}>
         {/* <Breadcrumb style={{ margin: '16px 0' }}>
           <Breadcrumb.Item>Home</Breadcrumb.Item>

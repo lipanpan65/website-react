@@ -7,6 +7,7 @@ import VerticalMenu from './VerticalMenu';
 import './index.css'
 import { Outlet } from 'react-router-dom'
 import { routeMap } from '../../routes'
+import AppHeader from '../AppLayout/AppHeader';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -75,7 +76,9 @@ const headerStyle: React.CSSProperties = {
 
 const contentStyle: React.CSSProperties = {
   // textAlign: 'center',
-  minHeight: 540,
+  // minHeight: 540,
+  minHeight: '100vh',
+  
   // minHeight: '80vh',
   // lineHeight: '120px',
   // color: '#fff',
@@ -172,15 +175,17 @@ const CreatorLayout: React.FC = () => {
       <React.Fragment>
         {/* <Flex gap="default" wrap="wrap"> */}
         <Layout style={layoutStyle}>
-          <Header
+          {/* <Header
             // style={headerStyle}
             // style={{ border: '1px solid yellow' }}
             style={{ display: 'flex', alignItems: 'center' }}
           >
             <div className="demo-logo" />
-          </Header>
+          </Header> */}
+          <AppHeader funcs={leftMenu.funcs} active={leftMenu.topActive} top={'创作者中心'} />
           <Layout style={{
             paddingTop: '1rem',
+            // minHeight: '100vh',
             width: 'calc(50% - 8px)',
             margin: 'auto'
           }}>

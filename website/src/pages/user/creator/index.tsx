@@ -40,8 +40,7 @@ const CreatorOverView: React.FC = () => {
     <React.Fragment>
       <div style={{
         // height: 200,
-        // width: '100%',
-        // height: '100vh',
+        height: '100vh',
         padding: '0 20px',
         // border: '1px solid green',
         background: colorBgContainer
