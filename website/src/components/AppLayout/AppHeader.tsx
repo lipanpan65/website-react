@@ -37,11 +37,11 @@ const AppHeader: any = (props: any) => {
 
   const navigate = useNavigate()
 
-  let { funcs = [], active = {} } = props,
+  let { funcs = [], active = {},top } = props,
     selectedKeys = [active.id];
   console.log("selectedKeys===>", selectedKeys)
 
-  const items = funcs.filter((v: any) => v.name === '首页').map((v: any) => {
+  const items = funcs.filter((v: any) => v.name === top || v.name === '专题').map((v: any) => {
     return {
       key: v.id,
       icon: v.icon,
@@ -119,7 +119,6 @@ const AppHeader: any = (props: any) => {
                 </Avatar>
               </Dropdown>
             </React.Fragment>
-
           </Space>
         </div>
         <div>

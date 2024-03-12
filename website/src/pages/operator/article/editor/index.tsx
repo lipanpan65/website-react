@@ -255,11 +255,11 @@ const EditorArticle: any = (props: any) => {
   };
 
   const publishPosts = () => {
-
+    // 弹出层
+    
   }
 
   const handLinkToDrafts = () => {
-    alert('handLinkToDrafts')
     navigator(`/user/creator/overview`, {
       // replace: true
       state: {

@@ -100,7 +100,30 @@ export const routeMap: any = [
         ]
       }
     ]
-  }
+  },
+  {
+    id: "3",
+    name: "专题",
+    icon: <HomeOutlined />,
+    url: '/user/subjects',
+    hash: '#/user/subjects',
+    childs: [
+      {
+        id: "11",
+        name: "首页概览",
+        url: "/user/article/overview",
+        hash: "#/user/article/overview",
+        icon: <AppstoreOutlined />,
+      },
+      {
+        id: "12",
+        name: "研发",
+        url: "/user/article/develop",
+        hash: "#/user/article/develop",
+        icon: <BugOutlined />,
+      },
+    ]
+  },
 ]
 
 const Routes = () => {

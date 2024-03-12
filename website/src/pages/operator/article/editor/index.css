@@ -19,11 +19,17 @@
 
 
 .edit-container .header .header-left {
-    width: 80%;
+    width: 70%;
     line-height: 64px;
 }
 
+/* .header-left {
+    width: 70%;
+
+} */
+
 .header-left .input-title {
+    /* width: 70%; */
     padding: 0px;
     font-weight: 500;
     height: '100%';
