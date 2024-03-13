@@ -39,7 +39,6 @@ const CreatorOverView: React.FC = () => {
   return (
     <React.Fragment>
       <div style={{
-        // height: 200,
         height: '100vh',
         padding: '0 20px',
         // border: '1px solid green',
@@ -47,20 +46,6 @@ const CreatorOverView: React.FC = () => {
       }}>
         <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
       </div>
-      {/* main 页面 */}
-      {/* <Row style={{
-        // paddingTop: '1rem',
-        background: colorBgContainer,
-      }}> */}
-
-      {/* <p style={{ background: 'red' }}>p</p> */}
-      {/* <Col span={12} offset={6} style={{
-          background: colorBgContainer,
-          minHeight: '100vh'
-        }}>
-          <span>kjs</span>
-        </Col> */}
-      {/* </Row> */}
     </React.Fragment>
   )
 }

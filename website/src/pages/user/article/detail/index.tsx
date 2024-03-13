@@ -1,16 +1,23 @@
 import * as React from 'react'
-
+import MarkdownNavbar from 'markdown-navbar';
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 // TODO 查看如何使用
 import rehypeHighlight from 'rehype-highlight'
 import { useParams } from 'react-router-dom'
+import 'markdown-navbar/dist/navbar.css';
 import 'github-markdown-css';
 import 'react-markdown-editor-lite/lib/index.css';
 import { request } from '../../../../utils'
+// 代码高亮
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+// 高亮的主题npm i --save-dev @types/react-syntax-highlighter
+import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+
 
 import './style.css'
 import { Col, Row, theme } from 'antd'
+import CodeCopy from '../../../../components/CodeCopy';
 
 const initialState = {
   loading: false,
@@ -47,14 +54,11 @@ const ArticleDetail: React.FC = () => {
     token: { colorBgContainer,
       borderRadiusLG },
   } = theme.useToken()
-  
-  // const markdown = 'This ~is not~ strikethrough, but ~~this is~~! `code` '
-  // const markdown = 'This ~is not~ strikethrough, but ~~this is~~! ```sql select * from  ``` '
+
 
   const getArticle = () => {
     const { id } = params
     if (!id) {
-      alert('页面跳转')
       console.log('aaaaa')
     }
     request({
@@ -74,15 +78,34 @@ const ArticleDetail: React.FC = () => {
 
   console.log('state===>', state)
 
+  let ref: any = ''
+  const Pre = (preProps: any) => {
+    return (
+      <pre
+        className='blog-pre'
+        // 兼容移动端的触摸事件
+        onTouchStart={({ currentTarget }) => {
+          if (ref) ref.className = 'blog-pre'
+          currentTarget.className = 'blog-pre active'
+          ref = currentTarget
+        }}
+      >
+        <CodeCopy>{preProps.children}</CodeCopy>
+        {preProps.children}
+      </pre>
+    )
+  }
+
   return (
     <React.Fragment>
       <Row style={{ paddingTop: '1rem' }}>
         <Col span={12} offset={6} style={{
           background: colorBgContainer,
           borderRadius: '4px 4px 0 0',
-          paddingLeft: '2.667rem',
-          paddingRight: '2.667rem',
-          paddingTop: '2.667rem',
+          // paddingLeft: '2.667rem',
+          // paddingRight: '2.667rem',
+          // paddingTop: '2.667rem',
+          padding: '2.667rem',
           minHeight: '100vh'
         }}>
           <main className='container main-container'>
@@ -90,11 +113,38 @@ const ArticleDetail: React.FC = () => {
             <div>
               <Markdown
                 className={'markdown-body'}
-                remarkPlugins={[[remarkGfm, { singleTilde: false }]]}>
+                remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
+                components={{
+                  pre: Pre, // 修改pre标签
+                  code({ node, inline, className, children, ...props }: any) {
+                    const match = /language-(\w+)/.exec(className || '')
+                    return !inline && match ? (
+                      <SyntaxHighlighter
+                        children={String(children).replace(/\n$/, '')}
+                        style={coldarkDark}
+                        language={match[1]}
+                        PreTag="div"
+                        showLineNumbers={true}
+                        // showInlineLineNumbers={true}
+                        {...props}
+                      />
+                    ) : (
+                      <code className={className} {...props} children={children} />
+                    )
+                  }
+                }}
+              >
                 {state.data.content}
               </Markdown>
             </div>
           </main>
+        </Col>
+        <Col span={4}>
+          {state.data.content &&
+            <div className="navigation">
+              <MarkdownNavbar source={state.data.content || ""} />
+            </div>
+          }
         </Col>
       </Row>
     </React.Fragment>
