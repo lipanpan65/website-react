@@ -90,13 +90,14 @@ export const routeMap: any = [
             url: "/user/creator/overview",
             hash: "#/user/creator/overview",
             icon: <AppstoreOutlined />,
-          }, {
-            id: "222",
-            name: "文章管理2",
-            url: "/user/creator/article",
-            hash: "#/user/creator/article",
-            icon: <AppstoreOutlined />,
           },
+          // {
+          //   id: "222",
+          //   name: "文章管理2",
+          //   url: "/user/creator/article",
+          //   hash: "#/user/creator/article",
+          //   icon: <AppstoreOutlined />,
+          // },
         ]
       }
     ]
@@ -329,6 +330,8 @@ const Routes = () => {
 }
 
 export default Routes
+
+
 
 
 

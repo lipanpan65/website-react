@@ -66,9 +66,12 @@ const reducer = (state: any, action: any) => {
   }
 }
 
+
+
+
 // 这是编辑页面
 
-const CratorArticle: any = () => {
+const CratorArticle: any = (props:any) => {
 
   const {
     token: {
@@ -78,7 +81,6 @@ const CratorArticle: any = () => {
   } = theme.useToken();
   const navigator = useNavigate()
   const [state, dispatch] = React.useReducer(reducer, initialState);
-  // const navigate = useNavigate()
   const items: MenuProps['items'] = [
     {
       key: 'edit',
@@ -89,8 +91,6 @@ const CratorArticle: any = () => {
       label: (<a>删除</a>),
     },
   ];
-
-
   const onChange = (page: any, pageSize: any) => {
     // console.log('onChange===>', page, pageSize)
     getArticleList({ page, pageSize })
@@ -169,15 +169,13 @@ const CratorArticle: any = () => {
     }
   };
 
-
-
   React.useEffect(() => getArticleList(), [])
 
   return (
     <React.Fragment>
       <article style={{
         background: colorBgContainer,
-        minHeight: '100vh'
+        // minHeight: '100vh'
       }}>
         <List
           loading={state.loading}
