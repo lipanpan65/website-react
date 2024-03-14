@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm'
 // TODO 查看如何使用
 import rehypeHighlight from 'rehype-highlight'
 import { useParams } from 'react-router-dom'
+import './style.scss'
 import 'markdown-navbar/dist/navbar.css';
 import 'github-markdown-css';
 import 'react-markdown-editor-lite/lib/index.css';
@@ -110,7 +111,7 @@ const ArticleDetail: React.FC = () => {
         }}>
           <main className='container main-container'>
             <h1 className='article-title'>{state.data.title}</h1>
-            <div>
+            <div className='article-body' style={{ position: 'relative' }}>
               <Markdown
                 className={'markdown-body'}
                 remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
@@ -121,10 +122,10 @@ const ArticleDetail: React.FC = () => {
                     return !inline && match ? (
                       <SyntaxHighlighter
                         children={String(children).replace(/\n$/, '')}
-                        style={coldarkDark}
-                        language={match[1]}
+                        // style={coldarkDark}
+                        // language={match[1]}
                         PreTag="div"
-                        showLineNumbers={true}
+                        // showLineNumbers={true}
                         // showInlineLineNumbers={true}
                         {...props}
                       />
@@ -142,7 +143,7 @@ const ArticleDetail: React.FC = () => {
         <Col span={4}>
           {state.data.content &&
             <div className="navigation">
-              <MarkdownNavbar source={state.data.content || ""} />
+              {/* <MarkdownNavbar source={state.data.content || ""} /> */}
             </div>
           }
         </Col>
