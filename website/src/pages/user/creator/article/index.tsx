@@ -104,10 +104,10 @@ const CratorArticle: any = (props:any) => {
       method: 'GET',
       params: params || {}
     }).then((response: any) => {
-      // console.log('getArticleList===>', response)
       const { status, statusText } = response
       if (status === 200 && statusText === 'OK') {
-        const { page, data } = response.data
+        const { success, message, data: { page, data } } = response.data
+        // const { page, data } = response.data
         dispatch({ type: 'READ_DONE', payload: { data, page } })
       }
     })

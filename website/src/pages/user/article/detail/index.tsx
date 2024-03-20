@@ -14,7 +14,7 @@ import { request } from '../../../../utils'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 // 高亮的主题npm i --save-dev @types/react-syntax-highlighter
 import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-
+import MarkDownTOC from '../../../../components/MarkDownTOC';
 
 import './style.css'
 import { Col, Row, theme } from 'antd'
@@ -107,7 +107,8 @@ const ArticleDetail: React.FC = () => {
           // paddingRight: '2.667rem',
           // paddingTop: '2.667rem',
           padding: '2.667rem',
-          minHeight: '100vh'
+          minHeight: '100vh',
+          marginRight: '16px'
         }}>
           <main className='container main-container'>
             <h1 className='article-title'>{state.data.title}</h1>
@@ -118,20 +119,21 @@ const ArticleDetail: React.FC = () => {
                 components={{
                   pre: Pre, // 修改pre标签
                   code({ node, inline, className, children, ...props }: any) {
-                    const match = /language-(\w+)/.exec(className || '')
-                    return !inline && match ? (
-                      <SyntaxHighlighter
-                        children={String(children).replace(/\n$/, '')}
-                        // style={coldarkDark}
-                        // language={match[1]}
-                        PreTag="div"
-                        // showLineNumbers={true}
-                        // showInlineLineNumbers={true}
-                        {...props}
-                      />
-                    ) : (
-                      <code className={className} {...props} children={children} />
-                    )
+                    return <code className={className} {...props} children={children} />
+                    // const match = /language-(\w+)/.exec(className || '')
+                    // return !inline && match ? (
+                    //   <SyntaxHighlighter
+                    //     children={String(children).replace(/\n$/, '')}
+                    //     // style={coldarkDark}
+                    //     // language={match[1]}
+                    //     PreTag="div"
+                    //     // showLineNumbers={true}
+                    //     // showInlineLineNumbers={true}
+                    //     {...props}
+                    //   />
+                    // ) : (
+                    //   <code className={className} {...props} children={children} />
+                    // )
                   }
                 }}
               >
@@ -140,12 +142,21 @@ const ArticleDetail: React.FC = () => {
             </div>
           </main>
         </Col>
-        <Col span={4}>
-          {state.data.content &&
-            <div className="navigation">
-              {/* <MarkdownNavbar source={state.data.content || ""} /> */}
-            </div>
-          }
+        <Col span={4} style={{
+          // background: colorBgContainer,
+          // borderRadius: '4px 4px 0 0',
+        }}>
+          <div style={{
+            background: colorBgContainer,
+            borderRadius: '4px 4px 0 0',
+          }}>
+            <div className='sidebar-title'><span>目录</span></div>
+            {state.data.content &&
+              <div className="navigation">
+                <MarkDownTOC source={state.data.content || ""} />
+              </div>
+            }
+          </div>
         </Col>
       </Row>
     </React.Fragment>

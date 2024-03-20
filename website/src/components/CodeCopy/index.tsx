@@ -8,7 +8,6 @@ const CodeCopy = ({ children }: any) => {
     console.log("children===>",children)
     const [copyOk, setCopyOk] = React.useState(false)
     const handleClick = async () => {
-        debugger
         // const text = children[0].props.children[0] // 获取文本
         const text = children.props.children
         if (window.isSecureContext) { // 在安全域下
