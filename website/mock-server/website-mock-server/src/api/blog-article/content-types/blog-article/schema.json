@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "blog_articles",
+  "info": {
+    "singularName": "blog-article",
+    "pluralName": "blog-articles",
+    "displayName": "Blog-Article"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "category_name": {
+      "type": "string"
+    },
+    "remark": {
+      "type": "string"
+    }
+  }
+}
