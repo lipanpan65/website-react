@@ -44,6 +44,7 @@ docker pull mysql:8.1.0
 
 
 # Windows 搭建
+```
 $ npx create-strapi-app@latest website-mock-server --quickstart --ts
 Creating a quickstart project.
 Creating a new Strapi application at D:\github\website-react\website\mock-server\website-mock-server.
@@ -138,4 +139,4 @@ $ nvm ls
     14.17.6
     10.15.3
 
-
+```
