@@ -5,6 +5,7 @@ import originAxios from 'axios'
 // } from '@/utils'
 import { message } from 'antd'
 
+console.log('REACT_APP_BASE_API===>',process.env.APP_BASE_API)
 
 console.log('REACT 运行环境--->', process.env.NODE_ENV)
 

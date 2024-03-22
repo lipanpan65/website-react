@@ -15,8 +15,8 @@
     "antd": "^5.12.5",
     "axios": "^1.6.2",
     "copy-to-clipboard": "^3.3.3",
+    "dotenv": "^16.4.5",
     "github-markdown-css": "^5.5.0",
-    "http-proxy-middleware": "^2.0.6",
     "lodash": "^4.17.21",
     "markdown-it": "^14.0.0",
     "markdown-navbar": "^1.4.3",
@@ -38,7 +38,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "craco start --verbose",
     "build": "craco build",
     "test": "craco test",
     "eject": "craco eject"
@@ -66,6 +66,7 @@
     "@types/react-syntax-highlighter": "^15.5.11",
     "babel-plugin-import": "^1.13.8",
     "craco-less": "^3.0.1",
+    "http-proxy-middleware": "^2.0.6",
     "jest-dom": "^4.0.0",
     "react-testing-library": "^8.0.1"
   },
