@@ -131,4 +131,11 @@ Create your first administrator 💻 by going to the administration panel at:
 [2024-03-22 11:59:57.814] http: GET /admin/4306.4432d33c.chunk.js (1 ms) 200
 [2024-03-22 11:59:57.857] http: GET /admin/init (6 ms) 200
 
+$ nvm ls
+    20.10.0
+  * 18.19.1 (Currently using 64-bit executable)
+    16.19.0
+    14.17.6
+    10.15.3
+
 
