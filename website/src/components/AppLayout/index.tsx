@@ -67,7 +67,160 @@ const App: React.FC = () => {
   //   return [routeMap];
   // });
   const [leftMenu, setLeftMenu] = React.useState<any>(() => {
-    // console.log("initleftmenu===>", routeMap)
+    console.log("initleftmenu===>", routeMap)
+    /**
+     * 
+     * [
+    {
+        "id": "1",
+        "name": "首页",
+        "icon": {
+            "type": {},
+            "key": null,
+            "ref": null,
+            "props": {},
+            "_owner": null,
+            "_store": {}
+        },
+        "url": "/user/article",
+        "hash": "#/user/article",
+        "childs": [
+            {
+                "id": "11",
+                "name": "首页概览",
+                "url": "/user/article/overview",
+                "hash": "#/user/article/overview",
+                "icon": {
+                    "type": {},
+                    "key": null,
+                    "ref": null,
+                    "props": {},
+                    "_owner": null,
+                    "_store": {}
+                },
+                "parent": []
+            },
+            {
+                "id": "12",
+                "name": "研发",
+                "url": "/user/article/develop",
+                "hash": "#/user/article/develop",
+                "icon": {
+                    "type": {},
+                    "key": null,
+                    "ref": null,
+                    "props": {},
+                    "_owner": null,
+                    "_store": {}
+                }
+            }
+        ]
+    },
+    {
+        "id": "2",
+        "name": "创作者中心",
+        "icon": {
+            "type": {},
+            "key": null,
+            "ref": null,
+            "props": {},
+            "_owner": null,
+            "_store": {}
+        },
+        "url": "/user/creator",
+        "hash": "#/user/creator",
+        "childs": [
+            {
+                "id": "21",
+                "name": "首页",
+                "url": "/user/creator/overview",
+                "hash": "#/user/creator/overview",
+                "icon": {
+                    "type": {},
+                    "key": null,
+                    "ref": null,
+                    "props": {},
+                    "_owner": null,
+                    "_store": {}
+                }
+            },
+            {
+                "id": "22",
+                "name": "内容管理",
+                "icon": {
+                    "type": {},
+                    "key": null,
+                    "ref": null,
+                    "props": {},
+                    "_owner": null,
+                    "_store": {}
+                },
+                "childs": [
+                    {
+                        "id": "221",
+                        "name": "文章管理",
+                        "url": "/user/creator/overview",
+                        "hash": "#/user/creator/overview",
+                        "icon": {
+                            "type": {},
+                            "key": null,
+                            "ref": null,
+                            "props": {},
+                            "_owner": null,
+                            "_store": {}
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "3",
+        "name": "专题",
+        "icon": {
+            "type": {},
+            "key": null,
+            "ref": null,
+            "props": {},
+            "_owner": null,
+            "_store": {}
+        },
+        "url": "/user/subjects",
+        "hash": "#/user/subjects",
+        "childs": [
+            {
+                "id": "11",
+                "name": "首页概览",
+                "url": "/user/article/overview",
+                "hash": "#/user/article/overview",
+                "icon": {
+                    "type": {},
+                    "key": null,
+                    "ref": null,
+                    "props": {},
+                    "_owner": null,
+                    "_store": {}
+                }
+            },
+            {
+                "id": "12",
+                "name": "研发",
+                "url": "/user/article/develop",
+                "hash": "#/user/article/develop",
+                "icon": {
+                    "type": {},
+                    "key": null,
+                    "ref": null,
+                    "props": {},
+                    "_owner": null,
+                    "_store": {}
+                }
+            }
+        ]
+    }
+]
+     * 
+     */
     let [funcs, leftFuncs, topActive, leftActive]: any = [routeMap]
     if (funcs) {
       funcs.every((top: any) => {
@@ -107,7 +260,6 @@ const App: React.FC = () => {
           <Breadcrumb.Item>App</Breadcrumb.Item>
         </Breadcrumb> */}
         {/* <main className='index-container container'>
-
         </main> */}
         <div
           style={{

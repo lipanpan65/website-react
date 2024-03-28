@@ -10,11 +10,12 @@ module.exports = function (app) {
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'http://localhost:1337', //代理的地址
+      // target: 'http://localhost:1337', //代理的地址
+      target: 'http://127.0.0.1:9000', //代理的地址
       changeOrigin: true,
-      pathRewrite: {
-        '^/api': ''  // 将请求路径中的 "/api" 替换为 ""
-      }
+      // pathRewrite: {
+      //   '^/api': ''  // 将请求路径中的 "/api" 替换为 ""
+      // }
     })
   )
 };

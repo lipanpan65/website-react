@@ -37,7 +37,7 @@ const AppHeader: any = (props: any) => {
 
   const navigate = useNavigate()
 
-  let { funcs = [], active = {},top } = props,
+  let { funcs = [], active = {}, top } = props,
     selectedKeys = [active.id];
   console.log("selectedKeys===>", selectedKeys)
 
@@ -48,6 +48,10 @@ const AppHeader: any = (props: any) => {
       label: MenuLable(v)
     }
   })
+
+  const handleLinkTo = () => {
+    navigate('/')
+  }
 
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
@@ -79,14 +83,12 @@ const AppHeader: any = (props: any) => {
       <Header style={{
         display: 'flex',
         alignItems: 'center', // 文字上下巨中
-        // border: '1px solid red',
-        // width:'500px'
       }}>
         {/* <Flex align='center' justify='center' style={{
           // width: 'calc(40%-16px)',
           // margin: 'auto'
         }}> */}
-        <div className="demo-logo" />
+        <div className="demo-logo" onClick={handleLinkTo} />
         {/* <div> */}
         <Menu
           selectedKeys={selectedKeys}
