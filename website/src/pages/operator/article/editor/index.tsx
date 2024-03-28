@@ -103,7 +103,7 @@ const reducer = (preState: any, action: any) => {
       console.log("PUBLISH", data)
       return {
         loading: true,
-        acticle: preState.article
+        article: preState.article
       }
 
     default:
