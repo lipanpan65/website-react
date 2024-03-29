@@ -10,17 +10,15 @@ import {
   Spin
 } from 'antd'
 
-// import request from '../../../../utils/request'
+import Publish from './publish'
 
-import { request, delay } from '../../../../utils'
+import { request, delay } from '@/utils'
 
 import 'react-markdown-editor-lite/lib/index.css';
 import './index.css'
 
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { access } from 'fs'
-
-const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 
 // 初始化参数
@@ -35,13 +33,31 @@ const initialState = {
   }
 };
 
-const reducer = (state: any, action: any) => {
+
+
+// 定义context
+export const EditArticleContext = React.createContext<{
+  state: typeof initialState,
+  dispatch: React.Dispatch<any>
+}>({
+  state: initialState,
+  dispatch: () => { }
+})
+
+const reducer = (preState: any, action: any) => {
+
+  console.log("preState", preState, "action", action)
+
+  let { type } = action;
+  if (typeof action == 'function') {
+    type = action()
+  }
 
   switch (action.type) {
     case 'READ':
       return {
         loading: true,
-        article: { ...state.article } // 
+        article: { ...preState.article }
       }
     // case 'READ_DONE':
     //   return state
@@ -56,25 +72,25 @@ const reducer = (state: any, action: any) => {
     //   }
     case 'UPDATE_TITLE':
       const { title } = action.payload
-      state.article.title = title
+      preState.article.title = title
       return {
         loading: false,
-        article: state.article
+        article: preState.article
       }
     case 'UPDATE_CONTENT':
       const { content, content_html } = action.payload
-      state.article.content = content
-      state.article.content_html = content_html
+      preState.article.content = content
+      preState.article.content_html = content_html
       return {
         loading: false,
-        article: state.article
+        article: preState.article
       }
     case "UPDATE_ID":
       const { id } = action.payload
-      state.article.id = id
+      preState.article.id = id
       return {
         loading: false,
-        article: state.article
+        article: preState.article
       }
     case "READ_DONE_UPDATE":
       const { article } = action.payload
@@ -82,13 +98,25 @@ const reducer = (state: any, action: any) => {
         loading: false,
         article
       }
+    case "PUBLISH":
+      const { data } = action.payload
+      console.log("PUBLISH", data)
+      return {
+        loading: true,
+        article: preState.article
+      }
+
     default:
-      return state
+      return preState
   }
 };
 
-const EditorArticle: any = (props: any) => {
 
+
+const mdParser = new MarkdownIt(/* Markdown-it options */);
+
+
+const EditorArticle: any = (props: any) => {
   // 获取请求参数
   const params = useParams();
   const timerId: any = React.useRef()
@@ -97,6 +125,7 @@ const EditorArticle: any = (props: any) => {
   const [status, setStatus] = React.useState<boolean | undefined>(undefined);
 
   const intervalRef: any = React.useRef();
+  const publishRef: any = React.useRef();
   const titleRef: any = React.useRef();
 
   // intervalRef.current = () => {
@@ -256,8 +285,15 @@ const EditorArticle: any = (props: any) => {
 
   const publishPosts = () => {
     // 弹出层
-    
+    publishRef.current.setIsModalOpen(true)
+    // if (!!record.id) {
+    //   publishRef.current.setRecord(record)
+    // } else {
+    //   dialogRef.current.setRecord({})
+    // }
   }
+
+
 
   const handLinkToDrafts = () => {
     navigator(`/user/creator/overview`, {
@@ -271,43 +307,49 @@ const EditorArticle: any = (props: any) => {
 
   return (
     <React.Fragment>
-      <Spin spinning={state.loading}>
-        <div className='edit-container'>
-          <div className='header'>
-            <div className="header-left">
-              <Input
-                style={{ fontSize: 24, height: '100%' }}
-                className='input-title'
-                value={state.article.title}
-                onChange={onChange}
-                placeholder="请输入文章标题"
-                bordered={false} />
+      <EditArticleContext.Provider value={{ state, dispatch }}>
+        <Spin spinning={state.loading}>
+          <div className='edit-container'>
+            <div className='header'>
+              <div className="header-left">
+                <Input
+                  style={{ fontSize: 24, height: '100%' }}
+                  className='input-title'
+                  // value={state.article.title || "无标题"}
+                  onChange={onChange}
+                  placeholder="请输入文章标题"
+                  bordered={false} />
+              </div>
+              <div>
+                {state.tip}
+              </div>
+              {
+                timerId.current === undefined ? <div>文章自动保存到草稿中...</div> : (timerId.current === null ? <div>保存成功...</div> : <div>保存中...</div>)
+              }
+              <div className="header-right">
+                <Button type="primary" onClick={publishPosts} >发布</Button>
+                <Button type="primary" onClick={handLinkToDrafts}>草稿箱</Button>
+              </div>
+            </div>
+            <div className="bootom">
+              <MdEditor
+                onImageUpload={() => alert('image')}
+                // ref={mdEditor}
+                value={state.article.content || ""}
+                // value={content}
+                style={{ height: "100vh" }}
+                onChange={handleEditorChange}
+                // renderHTML={text => <ReactMarkdown children={text} />}
+                renderHTML={text => mdParser.render(text)}
+              />
             </div>
             <div>
-              {state.tip}
-            </div>
-            {
-              timerId.current === undefined ? <div>文章自动保存到草稿中...</div> : (timerId.current === null ? <div>保存成功...</div> : <div>保存中...</div>)
-            }
-            <div className="header-right">
-              <Button type="primary" onClick={publishPosts} >发布</Button>
-              <Button type="primary" onClick={handLinkToDrafts}>草稿箱</Button>
+              <Publish ref={publishRef} />
             </div>
           </div>
-          <div className="bootom">
-            <MdEditor
-              onImageUpload={() => alert('image')}
-              // ref={mdEditor}
-              value={state.article.content || ""}
-              // value={content}
-              style={{ height: "100vh" }}
-              onChange={handleEditorChange}
-              // renderHTML={text => <ReactMarkdown children={text} />}
-              renderHTML={text => mdParser.render(text)}
-            />
-          </div>
-        </div>
-      </Spin>
+        </Spin>
+      </EditArticleContext.Provider>
+
     </React.Fragment >
   )
 }

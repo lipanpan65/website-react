@@ -29,13 +29,10 @@ import {
 
 // const { Paragraph, Text } = Typography;
 
-// import request from '@/utils/request'
-// import request from '../../../utils/request';
-
-import { request } from '../../../utils'
+import { request } from '@/utils'
 
 // 导入本地的开发环境
-import { postsMock } from '../../../mock';
+import { postsMock } from '@/mock';
 
 const rowKeyF = (record: { id: number }): number => record.id
 const showTotal = (total: any) => `共${total}条记录`

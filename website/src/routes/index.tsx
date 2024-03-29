@@ -29,15 +29,16 @@ import {
   HomeOutlined
 } from '@ant-design/icons'
 
-
-import AppLayout from '../components/AppLayout'
-import Article from '../pages/user/article'
-import ArticleDetail from '../pages/user/article/detail'
-import EditArticle from '../pages/operator/article/editor'
-import CreatorOverView from '../pages/user/creator'
-import CreatorLayout from '../components/CreatorLayout'
-import CratorArticle from '../pages/user/creator/article'
-import EditorLayout from '../components/EditorLayout'
+import AppLayout from '@/components/AppLayout'
+import BaseLayout from '@/components/BaseLayout'
+import Article from '@/pages/user/article'
+import ArticleDetail from '@/pages/user/article/detail'
+import EditArticle from '@/pages/operator/article/editor'
+import CreatorOverView from '@/pages/user/creator'
+import CreatorLayout from '@/components/CreatorLayout'
+import CratorArticle from '@/pages/user/creator/article'
+import EditorLayout from '@/components/EditorLayout'
+import NotFound from '@/components/NotFound'
 
 export const routeMap: any = [
   {
@@ -321,10 +322,10 @@ const Routes = () => {
       //     }
       //   ]
       // },
-      // {
-      //   path: "*",
-      //   element: <NotFound />
-      // }
+      {
+        path: "*",
+        element: <NotFound />
+      }
     ])
 
 }
