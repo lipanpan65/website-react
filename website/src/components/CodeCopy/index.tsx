@@ -5,7 +5,7 @@ import { Button } from 'antd'
 import './index.scss'
 
 const CodeCopy = ({ children }: any) => {
-    console.log("children===>",children)
+    // console.log("children===>",children)
     const [copyOk, setCopyOk] = React.useState(false)
     const handleClick = async () => {
         // const text = children[0].props.children[0] // 获取文本

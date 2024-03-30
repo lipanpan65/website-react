@@ -9,41 +9,62 @@ import './style.scss'
 import 'markdown-navbar/dist/navbar.css';
 import 'github-markdown-css';
 import 'react-markdown-editor-lite/lib/index.css';
-import { request } from '../../../../utils'
+import { request } from '@/utils'
 // 代码高亮
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 // 高亮的主题npm i --save-dev @types/react-syntax-highlighter
 import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import MarkDownTOC from '../../../../components/MarkDownTOC';
-
+import MarkDownTOC from '@/components/MarkDownTOC';
 import './style.css'
-import { Col, Row, theme } from 'antd'
-import CodeCopy from '../../../../components/CodeCopy';
+import { Col, Row, message, theme } from 'antd'
+import CodeCopy from '@/components/CodeCopy';
+import Article from '..';
 
+
+// const headerStyle: React.CSSProperties = {
+//   textAlign: 'center',
+//   color: '#fff',
+//   height: 64,
+//   paddingInline: 48,
+//   lineHeight: '64px',
+//   backgroundColor: '#4096ff',
+// };
+
+// https://www.ruanyifeng.com/blog/2014/03/undefined-vs-null.html
+
+interface Article {
+  id: number | null,
+  titile: string | null,
+  content: string | null,
+}
+
+// TODO 文章的接口
 const initialState = {
   loading: false,
-  data: {
-    id: null,
-    title: null,
-    content: null
-  },
+  article: Article
 };
 
-const reducer = (state: any, action: any) => {
+const reducer = (preState: any, action: any) => {
+  // console.log('READ.preState', preState)
+
   switch (action.type) {
     case 'READ':
+      console.log('READ.preState', preState)
+      // debugger
       return {
         loading: true,
-        ...state
+        article: preState.article
       }
     case 'READ_DONE':
-      const { payload: { data } } = action
+      // console.log('READ_DONE.preState', preState)
+      // console.log('READ_DONE.action', action)
+      const { payload: { article } } = action
       return {
-        ...state,
-        data
+        loading: false,
+        article: { ...article }
       }
     default:
-      return state
+      return preState
   }
 }
 
@@ -56,8 +77,10 @@ const ArticleDetail: React.FC = () => {
       borderRadiusLG },
   } = theme.useToken()
 
+  // console.log('ArticleDetail.state===>', state)
 
   const getArticle = () => {
+    dispatch({ type: 'READ', payload: {} })
     const { id } = params
     if (!id) {
       console.log('aaaaa')
@@ -66,18 +89,21 @@ const ArticleDetail: React.FC = () => {
       url: `/api/user/v1/article/${id}/`,
       method: 'GET',
     }).then((res: any) => {
-      console.log("res=======>", res)
-      const { status, statusText } = res
+      // console.log("res=======>", res)
+      const { status, statusText, data: { code, success, data } } = res
       if (status === 200 && statusText === 'OK') {
-        const { data } = res
-        dispatch({ type: 'READ_DONE', payload: { data } })
+        if (code === "0000") {
+          const article: Article = data
+          // console.log('article', article)
+          dispatch({ type: 'READ_DONE', payload: { article } })
+        } else if (code === "9999") {
+          message.error("操作失败")
+        }
       }
     })
   }
 
   React.useEffect(() => getArticle(), [])
-
-  console.log('state===>', state)
 
   let ref: any = ''
   const Pre = (preProps: any) => {
@@ -111,7 +137,7 @@ const ArticleDetail: React.FC = () => {
           marginRight: '16px'
         }}>
           <main className='container main-container'>
-            <h1 className='article-title'>{state.data.title}</h1>
+            <h1 className='article-title'>{state.article.title}</h1>
             <div className='article-body' style={{ position: 'relative' }}>
               <Markdown
                 className={'markdown-body'}
@@ -137,7 +163,7 @@ const ArticleDetail: React.FC = () => {
                   }
                 }}
               >
-                {state.data.content}
+                {state.article.content}
               </Markdown>
             </div>
           </main>
@@ -151,9 +177,9 @@ const ArticleDetail: React.FC = () => {
             borderRadius: '4px 4px 0 0',
           }}>
             <div className='sidebar-title'><span>目录</span></div>
-            {state.data.content &&
+            {state.article.content &&
               <div className="navigation">
-                <MarkDownTOC source={state.data.content || ""} />
+                <MarkDownTOC source={state.article.content || ""} />
               </div>
             }
           </div>

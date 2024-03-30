@@ -11,12 +11,24 @@ import {
   Space,
   Radio, Tag,
   Switch,
-  message
+  message,
+  Select,
+  SelectProps
 } from 'antd'
 
 import { dateFormate } from '@/utils'
 
 import { EditArticleContext } from './index'
+
+const options: SelectProps['options'] = [];
+
+for (let i = 10; i < 36; i++) {
+  options.push({
+    label: i.toString(36) + i,
+    value: i.toString(36) + i,
+  });
+}
+
 
 
 const IEditForm = React.forwardRef((props: any, ref: any) => {
@@ -37,19 +49,71 @@ const IEditForm = React.forwardRef((props: any, ref: any) => {
         initialValues={{
           status: true
         }}
+      // layout={'vertical'}
       >
         <Row gutter={[16, 0]}>
-          <Col span={11} >
-            <Form.Item label="名称" name="cname" {...formLayout}
+          <Col span={20} >
+            <Form.Item
+              label="分类"
+              name="cname"
+              {...formLayout}
               rules={[
-                { required: true, message: '请输入名称' },
+                { required: true, message: '请输入分类名称' },
                 // { validator: validateNameExists }
               ]}
             >
-              {isUpdate ? <span>{`${data.cname}`}</span> : <Input placeholder="请输入名称" />}
+              <Select
+                allowClear
+                // defaultValue="lucy"
+                // style={{ width: 120 }}
+                // onChange={handleChange}
+                placeholder='请选择分类'
+                options={[
+                  { value: 'jack', label: 'Jack' },
+                  { value: 'lucy', label: 'Lucy' },
+                  { value: 'Yiminghe', label: 'yiminghe' },
+                  { value: 'disabled', label: 'Disabled', disabled: true },
+                ]}
+              />
+              {/* <Input placeholder="请输入分类名称" /> */}
             </Form.Item>
           </Col>
-          <Col span={11} >
+          {/* 标签 */}
+          <Col span={20}>
+            <Form.Item
+              label="添加标签"
+              {...formLayout}
+              // labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}
+              name={"ckey"}
+              rules={[{ required: true, message: '请输入key' }]}
+            >
+              <Select
+                mode="multiple"
+                allowClear
+                style={{ width: '100%' }}
+                placeholder="请搜索添加标签"
+                // defaultValue={['a10', 'c12']}
+                // onChange={handleChange}
+                options={options}
+              />
+              {/* <Input placeholder="请输入key" /> */}
+            </Form.Item>
+          </Col>
+          <Col span={20}>
+            <Form.Item label="编辑摘要"
+              {...formLayout}
+              // labelCol={{ span: 3 }}
+              // wrapperCol={{ span: 21 }}
+              name={"note"}
+              rules={[
+                { type: 'string', max: 1000, message: '备注信息字数不能超过1000' },
+              ]}
+            >
+              <Input.TextArea placeholder="请输入备注信息" />
+            </Form.Item>
+          </Col>
+          {/*           
+          <Col span={20} >
             <Form.Item name="ctype" label="类型" {...formLayout}
               rules={[
                 { required: true, message: '请输入类型' },
@@ -77,20 +141,8 @@ const IEditForm = React.forwardRef((props: any, ref: any) => {
             >
               {isUpdate ? <span>{`${data.ctype}`}</span> : <Input placeholder='请输入名称' />}
             </Form.Item>
-          </Col>
-          <Col span={22}>
-            <Form.Item label="key"
-              labelCol={{ span: 3 }} wrapperCol={{ span: 21 }}
-              name={"ckey"}
-              rules={[{
-                required: true,
-                message: '请输入key'
-              }]}
-            >
-              <Input placeholder="请输入key" />
-            </Form.Item>
-          </Col>
-          <Col span={22}>
+          </Col> */}
+          {/* <Col span={22}>
             <Form.Item
               label="value"
               labelCol={{ span: 3 }}
@@ -103,20 +155,9 @@ const IEditForm = React.forwardRef((props: any, ref: any) => {
             >
               <Input.TextArea placeholder="请输入Value" />
             </Form.Item>
-          </Col>
-          <Col span={22}>
-            <Form.Item label="备注"
-              labelCol={{ span: 3 }}
-              wrapperCol={{ span: 21 }}
-              name={"note"}
-              rules={[
-                { type: 'string', max: 1000, message: '备注信息字数不能超过1000' },
-              ]}
-            >
-              <Input.TextArea placeholder="请输入备注信息" />
-            </Form.Item>
-          </Col>
-          <Col span={22}>
+          </Col> */}
+
+          {/* <Col span={22}>
             <Form.Item
               valuePropName="checked"
               label="状态"
@@ -126,8 +167,8 @@ const IEditForm = React.forwardRef((props: any, ref: any) => {
             >
               <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
             </Form.Item>
-          </Col>
-          {
+          </Col> */}
+          {/* {
             isUpdate ? (
               <React.Fragment>
                 <Col span={11}>
@@ -163,12 +204,13 @@ const IEditForm = React.forwardRef((props: any, ref: any) => {
                 </Col>
               </React.Fragment>
             ) : null
-          }
+          } */}
         </Row>
       </Form>
     </React.Fragment>
   )
 })
+
 
 
 const Publish = React.forwardRef((props: any, ref: any) => {
@@ -211,7 +253,7 @@ const Publish = React.forwardRef((props: any, ref: any) => {
     <React.Fragment>
       <div>
         <Modal
-          // title={title}
+          title={'发布文章'}
           width={"40%"}
           open={isModalOpen}
           onOk={onOk}

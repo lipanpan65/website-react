@@ -5,7 +5,7 @@ import originAxios from 'axios'
 // } from '@/utils'
 import { message } from 'antd'
 
-console.log('REACT_APP_BASE_API===>',process.env.APP_BASE_API)
+console.log('REACT_APP_BASE_API===>', process.env.APP_BASE_API)
 
 console.log('REACT 运行环境--->', process.env.NODE_ENV)
 
@@ -16,7 +16,7 @@ export const getBaseurl = () => {
 
 }
 
-export const  httpStatesHandler = ((error: any) => {
+export const httpStatesHandler = ((error: any) => {
   let response_message = '';
   if (error && error.response) {
     switch (error.response.status) {
@@ -99,7 +99,7 @@ export const request = (cfg: any, options?: any) => {
 
     // 传入网络配置进行网络请求
     instance(cfg).then((response: any) => {
-      // if (process.env.NODE_ENV === "development") console.log("response", response)
+      if (process.env.NODE_ENV === "development") console.log("response", response)
       resolve(response)
     }).catch((error: any) => {
       if (process.env.NODE_ENV === 'development') console.log('网络请求异常', error)

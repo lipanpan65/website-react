@@ -173,16 +173,8 @@ const CreatorLayout: React.FC = () => {
   return (
     <BaseLayout>
       <React.Fragment>
-        {/* <Flex gap="default" wrap="wrap"> */}
         <Layout style={layoutStyle}>
-          {/* <Header
-            // style={headerStyle}
-            // style={{ border: '1px solid yellow' }}
-            style={{ display: 'flex', alignItems: 'center' }}
-          >
-            <div className="demo-logo" />
-          </Header> */}
-          <AppHeader funcs={leftMenu.funcs} active={leftMenu.topActive} top={'创作者中心'} />
+          {/* <AppHeader funcs={leftMenu.funcs} active={leftMenu.topActive} top={'创作者中心'} /> */}
           <Layout style={{
             paddingTop: '1rem',
             // minHeight: '100vh',
