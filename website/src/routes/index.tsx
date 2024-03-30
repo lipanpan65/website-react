@@ -26,8 +26,11 @@ import {
   // FileTextOutlined,
   SwitcherOutlined,
   EditOutlined,
-  HomeOutlined
+  HomeOutlined,
+  ProfileOutlined
 } from '@ant-design/icons'
+
+{/* <ProfileOutlined /> */ }
 
 import AppLayout from '@/components/AppLayout'
 import BaseLayout from '@/components/BaseLayout'
@@ -106,7 +109,7 @@ export const routeMap: any = [
   {
     id: "3",
     name: "专题",
-    icon: <HomeOutlined />,
+    icon: <ProfileOutlined />,
     url: '/user/subjects',
     hash: '#/user/subjects',
     childs: [

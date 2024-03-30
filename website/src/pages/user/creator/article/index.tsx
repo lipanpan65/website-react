@@ -17,7 +17,7 @@ import {
   useNavigate
 } from "react-router-dom"
 
-import { dateFormate, request } from '../../../../utils';
+import { dateFormate, request } from '@/utils';
 
 import './index.css'
 import modal from 'antd/es/modal';

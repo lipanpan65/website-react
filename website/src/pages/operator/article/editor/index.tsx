@@ -7,7 +7,8 @@ import {
   Button,
   Divider,
   Input,
-  Spin
+  Spin,
+  message
 } from 'antd'
 
 import Publish from './publish'
@@ -16,9 +17,7 @@ import { request, delay } from '@/utils'
 
 import 'react-markdown-editor-lite/lib/index.css';
 import './index.css'
-
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { access } from 'fs'
 
 
 // 初始化参数
@@ -105,16 +104,12 @@ const reducer = (preState: any, action: any) => {
         loading: true,
         article: preState.article
       }
-
     default:
       return preState
   }
 };
 
-
-
 const mdParser = new MarkdownIt(/* Markdown-it options */);
-
 
 const EditorArticle: any = (props: any) => {
   // 获取请求参数
@@ -196,10 +191,14 @@ const EditorArticle: any = (props: any) => {
     request({
       url: `/api/user/v1/article/${id}`, method: 'GET'
     }).then((r: any) => {
-      const { status, data } = r
-      intervalRef.current = data.content
-      titleRef.current = data.title
-      dispatch({ type: 'READ_DONE_UPDATE', payload: { article: { ...data } } })
+      const { data: { code, success, data } } = r
+      if (code === '0000' && success) {
+        intervalRef.current = data.content
+        titleRef.current = data.title
+        dispatch({ type: 'READ_DONE_UPDATE', payload: { article: { ...data } } })
+      } else if (code === '9999') {
+        message.error('操作失败')
+      }
     }).catch((e) => {
     }).finally(() => {
     })
@@ -315,7 +314,7 @@ const EditorArticle: any = (props: any) => {
                 <Input
                   style={{ fontSize: 24, height: '100%' }}
                   className='input-title'
-                  // value={state.article.title || "无标题"}
+                  value={state.article.title || "无标题"}
                   onChange={onChange}
                   placeholder="请输入文章标题"
                   bordered={false} />
@@ -336,7 +335,6 @@ const EditorArticle: any = (props: any) => {
                 onImageUpload={() => alert('image')}
                 // ref={mdEditor}
                 value={state.article.content || ""}
-                // value={content}
                 style={{ height: "100vh" }}
                 onChange={handleEditorChange}
                 // renderHTML={text => <ReactMarkdown children={text} />}
