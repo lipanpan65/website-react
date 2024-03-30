@@ -13,7 +13,8 @@ import {
   Switch,
   message,
   Select,
-  SelectProps
+  SelectProps,
+  type FormInstance
 } from 'antd'
 
 import { dateFormate } from '@/utils'
@@ -29,10 +30,26 @@ for (let i = 10; i < 36; i++) {
   });
 }
 
+interface Values {
+  title?: string;
+  description?: string;
+  modifier?: string;
+}
 
+interface IEditFormProps {
+  // initialValues: Values;
+  onFormInstanceReady: (instance: FormInstance<Values>) => void;
+}
 
 const IEditForm = React.forwardRef((props: any, ref: any) => {
-  const { isUpdate, data } = props
+
+  const [form] = Form.useForm();
+
+  // React.useEffect(() => {
+  //   onFormInstanceReady(form);
+  // }, []);
+
+  // const { isUpdate, data } = props
   let formRef: any = React.useRef<any>()
 
   const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } }
@@ -45,7 +62,7 @@ const IEditForm = React.forwardRef((props: any, ref: any) => {
 
   return (
     <React.Fragment>
-      <Form ref={formRef}
+      <Form form={form} ref={formRef}
         initialValues={{
           status: true
         }}
@@ -216,25 +233,28 @@ const IEditForm = React.forwardRef((props: any, ref: any) => {
 const Publish = React.forwardRef((props: any, ref: any) => {
 
   const context = React.useContext(EditArticleContext)
-
   const formRef: any = React.useRef<any>()
   const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
   let [record, setRecord] = React.useState<any>({})
-  const [title, setTitle] = React.useState<string>("创建字典")
+
+  // const [formInstance, setFormInstance] = React.useState<FormInstance>();
+
+  console.log('formRef', formRef)
 
   const onOk = () => {
-    context.dispatch({ type: 'PUBLISH', payload: {} })
+    console.log('ok')
+    // context.dispatch({ type: 'PUBLISH', payload: {} })
     console.log(formRef)
-    // debugger
-    // formRef?.current?.formRef.current.validateFields()
-    //   .then((values: any) => {
-    //     console.log("values")
-    //     context.dispatch({ type: 'PUBLISH', payload: values })
-    //     // values["id"] = record.id
-    //     // props.onSubmit(values)
-    //   }).finally(() => {
-    //     setIsModalOpen(false)
-    //   })
+
+    formRef?.current?.formRef.current.validateFields()
+      .then((values: any) => {
+        console.log("values")
+        // context.dispatch({ type: 'PUBLISH', payload: values })
+        // values["id"] = record.id
+        // props.onSubmit(values)
+      }).finally(() => {
+        setIsModalOpen(false)
+      })
   }
 
   const onCancel = () => {
@@ -258,9 +278,14 @@ const Publish = React.forwardRef((props: any, ref: any) => {
           open={isModalOpen}
           onOk={onOk}
           onCancel={onCancel}
+          forceRender={true}// 看这里，重点在这里哦
         >
           <IEditForm
             ref={formRef}
+            // initialValues={initialValues}
+            // onFormInstanceReady={(instance) => {
+            //   setFormInstance(instance);
+            // }}
             isUpdate={!!record.id}
             data={record}
           />

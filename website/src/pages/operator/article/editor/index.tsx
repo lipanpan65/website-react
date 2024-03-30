@@ -292,8 +292,6 @@ const EditorArticle: any = (props: any) => {
     // }
   }
 
-
-
   const handLinkToDrafts = () => {
     navigator(`/user/creator/overview`, {
       // replace: true
