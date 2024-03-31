@@ -243,6 +243,7 @@ const Publish = React.forwardRef((props: any, ref: any) => {
 
   const onOk = () => {
     console.log('ok')
+    
     // context.dispatch({ type: 'PUBLISH', payload: {} })
     console.log(formRef)
 
