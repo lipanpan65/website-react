@@ -42,6 +42,7 @@ import CreatorLayout from '@/components/CreatorLayout'
 import CratorArticle from '@/pages/user/creator/article'
 import EditorLayout from '@/components/EditorLayout'
 import NotFound from '@/components/NotFound'
+import ArticleCategory from '@/pages/operator/article/category'
 
 export const routeMap: any = [
   {
@@ -95,13 +96,13 @@ export const routeMap: any = [
             hash: "#/user/creator/overview",
             icon: <AppstoreOutlined />,
           },
-          // {
-          //   id: "222",
-          //   name: "文章管理2",
-          //   url: "/user/creator/article",
-          //   hash: "#/user/creator/article",
-          //   icon: <AppstoreOutlined />,
-          // },
+          {
+            id: "222",
+            name: "分类管理",
+            url: "/user/creator/article-category",
+            hash: "#/user/creator/article-category",
+            icon: <AppstoreOutlined />,
+          },
         ]
       }
     ]
@@ -185,6 +186,10 @@ const Routes = () => {
           {
             path: '/user/creator/article',
             element: <CratorArticle />
+          },
+          {
+            path: '/user/creator/article-category',
+            element: <ArticleCategory />
           },
         ]
       },

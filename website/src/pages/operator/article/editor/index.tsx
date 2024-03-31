@@ -175,15 +175,18 @@ const EditorArticle: any = (props: any) => {
       } else if (state.article.id) {
         updateArticle()
       }
+      // 执行完成后清除 timeid 更新页面的保存中
       timerId.current = null
-      console.log('timer', timerId)
+      console.log('timer----->', timerId)
     }, delay)
+
+    console.log('--执行完成后timer----->', timerId)
   }
 
   console.log("---------sssssssssssss-------------")
-  console.log(timerId)
-  console.log("EditorArticle===>", state)
-  console.log("---------*************-------------")
+  console.log("timerId====>", timerId)
+  // console.log("EditorArticle===>", state)
+  // console.log("---------*************-------------")
 
   const getArticle = async (id: any) => {
     dispatch({ type: 'READ' })
@@ -214,8 +217,16 @@ const EditorArticle: any = (props: any) => {
         }
       }).then((r: any) => {
         console.log('createArticle===>', r)
-        const { status, data } = r
-        dispatch({ type: 'UPDATE_ID', payload: { id: data.id } })
+        console.log('createArticle===>', r)
+        console.log('createArticle===>', r)
+        console.log('createArticle===>', r)
+        console.log('createArticle===>', r)
+        const { status, data: { code, success, data } } = r
+        if (code === "0000") {
+          console.log('data---->', data)
+          dispatch({ type: 'UPDATE_ID', payload: { id: data.id } })
+        }
+
       }).catch((e) => {
         console.log('createArticle.err===>', e)
       }).finally(() => {
@@ -234,7 +245,6 @@ const EditorArticle: any = (props: any) => {
 
   const updateArticle = () => {
     const { article } = state
-    // console.log('更新函数')
     request({
       url: `/api/user/v1/article/${article.id}/`, method: 'PUT', data: {
         // content: intervalRef.current,
@@ -242,9 +252,7 @@ const EditorArticle: any = (props: any) => {
         ...article
       }
     }).then((r: any) => {
-      console.log('updateArticle===>', r)
     }).catch((e) => {
-      console.log('updateArticle.err===>', e)
     }).finally(() => {
       setStatus(false)
     })
@@ -272,14 +280,13 @@ const EditorArticle: any = (props: any) => {
   }
 
   const handleEditorChange = ({ html, text }: any) => {
-    console.log("handleEditorChange===>", html)
-    console.log("handleEditorChange===>", text)
+    // console.log("handleEditorChange===>", html)
+    // console.log("handleEditorChange===>", text)
     intervalRef.current = text
     // const newValue = text.replace(/\d/g, "");
     dispatch({ type: 'UPDATE_CONTENT', payload: { content_html: html, content: text } })
-    console.log("timerId", timerId)
+    console.log("handleEditorChange=timerId", timerId)
     throttle(5000)
-
   };
 
   const publishPosts = () => {
@@ -291,8 +298,6 @@ const EditorArticle: any = (props: any) => {
     //   dialogRef.current.setRecord({})
     // }
   }
-
-
 
   const handLinkToDrafts = () => {
     navigator(`/user/creator/overview`, {
@@ -314,7 +319,7 @@ const EditorArticle: any = (props: any) => {
                 <Input
                   style={{ fontSize: 24, height: '100%' }}
                   className='input-title'
-                  value={state.article.title || "无标题"}
+                  value={state.article.title || ""}
                   onChange={onChange}
                   placeholder="请输入文章标题"
                   bordered={false} />

@@ -56,8 +56,8 @@ const reducer = (preState: any, action: any) => {
         article: preState.article
       }
     case 'READ_DONE':
-      // console.log('READ_DONE.preState', preState)
-      // console.log('READ_DONE.action', action)
+      console.log('READ_DONE.preState', preState)
+      console.log('READ_DONE.action', action)
       const { payload: { article } } = action
       return {
         loading: false,
@@ -94,7 +94,7 @@ const ArticleDetail: React.FC = () => {
       if (status === 200 && statusText === 'OK') {
         if (code === "0000") {
           const article: Article = data
-          // console.log('article', article)
+          console.log('article', article)
           dispatch({ type: 'READ_DONE', payload: { article } })
         } else if (code === "9999") {
           message.error("操作失败")
