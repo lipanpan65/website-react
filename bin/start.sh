@@ -22,8 +22,8 @@ build() {
   cd "$PROJECT_DIR" || exit
   source ~/.bashrc
   nvm use website
-  npm install  # 安装项目依赖
-  npm run build  # 运行打包命令
+  pnpm install  # 安装项目依赖
+  pnpm run build  # 运行打包命令
 }
 
 # 部署到服务器
