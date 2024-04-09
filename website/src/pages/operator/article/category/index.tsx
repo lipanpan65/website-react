@@ -30,9 +30,7 @@ const api = {
       return r.data
       // reject(r.data)
     }
-  })
-    .catch((e: any) => e)
-
+  }).catch((e: any) => e)
 }
 
 
@@ -437,7 +435,7 @@ const ArticleCategory = () => {
   // pagination, filters, sorter, extra: { currentDataSource: [], action: paginate | sort | filter }
   const onChange = (pagination: any) => {
     setLoading(true)
-    Promise.name
+    // Promise.name
     console.log('onChange')
     // TODO 这里是异步执行的 https://blog.csdn.net/weixin_41697143/article/details/81837076
     // https://blog.csdn.net/qq_37581764/article/details/134213648
@@ -457,7 +455,7 @@ const ArticleCategory = () => {
         total: pagination.total
       }
     })
-    getArticleCategory()
+    // getArticleCategory()
   }
 
   const getArticleCategory = () => {

@@ -16,7 +16,6 @@ const AppMenuSearch = () => {
   )
 }
 
-
 const AppMenuTable = () => {
 
   return (
@@ -26,8 +25,6 @@ const AppMenuTable = () => {
   )
 }
 
-
-
 const AppMenuDialog = () => {
   return (
     <React.Fragment>
@@ -35,13 +32,6 @@ const AppMenuDialog = () => {
     </React.Fragment>
   )
 }
-
-
-
-
-
-
-
 
 const AppMenu = () => {
   return (

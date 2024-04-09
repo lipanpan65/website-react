@@ -28,7 +28,6 @@ const initialState = {
     id: null,
     title: null,
     content: null,
-    content_html: null
   }
 };
 
@@ -98,8 +97,8 @@ const reducer = (preState: any, action: any) => {
         article
       }
     case "PUBLISH":
-      const { data } = action.payload
-      console.log("PUBLISH", data)
+      const { category_name, summary } = action.payload
+      console.log("PUBLISH", category_name, summary)
       return {
         loading: true,
         article: preState.article
@@ -153,6 +152,23 @@ const EditorArticle: any = (props: any) => {
   // });
   const [save, setSave] = React.useState();
   const [state, dispatch] = React.useReducer(reducer, initialState)
+
+  // 定义action 
+  const dispatchF: React.Dispatch<any> = (action: any) => {
+    // 判断action是不是函数，如果是函数，就执行,并且把dispatch传进去
+    if (typeof action === 'function') {
+      action(dispatch)
+    } else {
+      dispatch(action)
+    }
+  }
+
+  // 作者：佑子呀
+  // 链接：https://juejin.cn/post/7156123099522400293
+  // 来源：稀土掘金
+  // 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+
 
   // const throttle: any = (fn: any, delay: number) => {
   const throttle: any = (delay: number) => {
@@ -289,14 +305,8 @@ const EditorArticle: any = (props: any) => {
     throttle(5000)
   };
 
-  const publishPosts = () => {
-    // 弹出层
-    publishRef.current.setIsModalOpen(true)
-    // if (!!record.id) {
-    //   publishRef.current.setRecord(record)
-    // } else {
-    //   dialogRef.current.setRecord({})
-    // }
+  const showModel = (event: any, data?: any) => {
+    publishRef.current.showModel(true, data)
   }
 
   const handLinkToDrafts = () => {
@@ -311,7 +321,7 @@ const EditorArticle: any = (props: any) => {
 
   return (
     <React.Fragment>
-      <EditArticleContext.Provider value={{ state, dispatch }}>
+      <EditArticleContext.Provider value={{ state, dispatch: dispatchF }}>
         <Spin spinning={state.loading}>
           <div className='edit-container'>
             <div className='header'>
@@ -331,7 +341,7 @@ const EditorArticle: any = (props: any) => {
                 timerId.current === undefined ? <div>文章自动保存到草稿中...</div> : (timerId.current === null ? <div>保存成功...</div> : <div>保存中...</div>)
               }
               <div className="header-right">
-                <Button type="primary" onClick={publishPosts} >发布</Button>
+                <Button type="primary" onClick={showModel} >发布</Button>
                 <Button type="primary" onClick={handLinkToDrafts}>草稿箱</Button>
               </div>
             </div>
