@@ -7,7 +7,7 @@ const { Meta } = Card;
 
 const style: React.CSSProperties = {
   // background: '#0092ff', 
-  padding: '8px 0'
+  padding: '16px 0'
 };
 
 const Subject: React.FC = () => {
@@ -19,7 +19,7 @@ const Subject: React.FC = () => {
 
   return (
     <React.Fragment>
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]} style={style}>
         <Col className="gutter-row" span={6} >
           {/* <div style={style}>col-6</div> */}
           <Card
