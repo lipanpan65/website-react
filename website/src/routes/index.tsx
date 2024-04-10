@@ -43,6 +43,7 @@ import CratorArticle from '@/pages/user/creator/article'
 import EditorLayout from '@/components/EditorLayout'
 import NotFound from '@/components/NotFound'
 import ArticleCategory from '@/pages/operator/article/category'
+import Subject from '@/pages/user/subjects/overview'
 
 export const routeMap: any = [
   {
@@ -165,10 +166,20 @@ const Routes = () => {
             path: '/user/article/detail/:id',
             element: <ArticleDetail />
           },
-          // {
-          //   path: '/user/article/edit/:id',
-          //   element: <EditArticle />
-          // }
+        ]
+      },
+      {
+        path: '/user/subjects',
+        element: <AppLayout />,
+        children: [
+          {
+            path: '/user/subjects',
+            element: <Navigate to='/user/subjects/overview' />
+          },
+          {
+            path: '/user/subjects/overview',
+            element: <Subject />
+          },
         ]
       },
       {
