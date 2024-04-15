@@ -201,7 +201,6 @@ const EditorArticle: any = (props: any) => {
 
   console.log("---------sssssssssssss-------------")
   console.log("timerId====>", timerId)
-  // console.log("EditorArticle===>", state)
   // console.log("---------*************-------------")
 
   const getArticle = async (id: any) => {
@@ -224,7 +223,6 @@ const EditorArticle: any = (props: any) => {
   }
 
   const createArticle = () => {
-    console.log("创建文章")
     const { article: { title, content, content_html } } = state
     if (title || content || content_html) {
       request({
@@ -232,17 +230,10 @@ const EditorArticle: any = (props: any) => {
           title, content, content_html
         }
       }).then((r: any) => {
-        console.log('createArticle===>', r)
-        console.log('createArticle===>', r)
-        console.log('createArticle===>', r)
-        console.log('createArticle===>', r)
-        console.log('createArticle===>', r)
         const { status, data: { code, success, data } } = r
         if (code === "0000") {
-          console.log('data---->', data)
           dispatch({ type: 'UPDATE_ID', payload: { id: data.id } })
         }
-
       }).catch((e) => {
         console.log('createArticle.err===>', e)
       }).finally(() => {
@@ -263,8 +254,6 @@ const EditorArticle: any = (props: any) => {
     const { article } = state
     request({
       url: `/api/user/v1/article/${article.id}/`, method: 'PUT', data: {
-        // content: intervalRef.current,
-        // title: titleRef.current
         ...article
       }
     }).then((r: any) => {

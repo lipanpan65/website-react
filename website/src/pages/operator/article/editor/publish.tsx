@@ -16,7 +16,7 @@ import {
   type FormInstance
 } from 'antd'
 
-import { dateFormate } from '@/utils'
+import { dateFormate, request } from '@/utils'
 
 import { EditArticleContext } from './index'
 
@@ -46,7 +46,6 @@ const ModelForm: React.FC<DaliogFormProps> = ({
 }) => {
   const [form] = Form.useForm();
 
-  // 组件渲染完成将组件回传给 ModelForm
   React.useEffect(() => {
     onFormInstanceReady(form);
   }, []);
@@ -82,13 +81,12 @@ const ModelForm: React.FC<DaliogFormProps> = ({
                 // onChange={handleChange}
                 placeholder='请选择分类'
                 options={[
-                  { value: 'jack', label: 'Jack' },
-                  { value: 'lucy', label: 'Lucy' },
-                  { value: 'Yiminghe', label: 'yiminghe' },
-                  { value: 'disabled', label: 'Disabled', disabled: true },
+                  // { value: 'jack', label: 'Jack' },
+                  // { value: 'lucy', label: 'Lucy' },
+                  // { value: 'Yiminghe', label: 'yiminghe' },
+                  // { value: 'disabled', label: 'Disabled', disabled: true },
                 ]}
               />
-              {/* <Input placeholder="请输入分类名称" /> */}
             </Form.Item>
           </Col>
 
@@ -232,25 +230,21 @@ const Publish = React.forwardRef((props: any, ref: any) => {
   const [open, setOpen] = React.useState<boolean>(false);
   const [formInstance, setFormInstance] = React.useState<FormInstance>();
   const [formValues, setFormValues] = React.useState<any>({})
-
   // const [formInstance, setFormInstance] = React.useState<FormInstance>();
 
   const publishArticle = (dispatch: React.Dispatch<any>, values: any) => {
     console.log('publishArticle===>', values)
     // https://juejin.cn/post/7156123099522400293
     setTimeout(() => {
-      dispatch({ type: 'increment' })
+      dispatch({ type: 'PUBLISH', payload: values })
     }, 3000)
     // 跳转到首页
-
   }
 
   const showModel = (open: boolean, data?: any) => {
     Promise.resolve().then(() => {
-      console.log('---> open')
       setOpen(preState => open)
     }).then(() => {
-      console.log('---> set')
       if (data) {
         setFormValues(() => data)
       }
@@ -283,8 +277,21 @@ const Publish = React.forwardRef((props: any, ref: any) => {
   }
 
   const afterOpenChange = (open: boolean) => {
-    if (open) { // 发送请求
-      
+    if (open) {
+      request({
+        url: `/api/user/v1/article_category`,
+        method: 'GET',
+      }).then((r: any) => {
+        // console.log('r', r)
+        const { data: { data } } = r
+        console.log('data', data)
+        const options = data.data.map((v: any) => ({ value: v.id, label: v.category_name }))
+        // https://juejin.cn/s/antd%20select%20%E5%8A%A8%E6%80%81option
+        formInstance?.setFieldsValue({ category_name: options })
+        // formInstance?.setFieldValue({
+        //   category_name:[]
+        // })
+      })
     }
   }
 

@@ -7,14 +7,9 @@ import {
 import type { TableProps, FormInstance } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { request } from '@/utils';
-import { resolve } from 'path';
-import { reject } from 'lodash';
-// import { resolve } from 'path';
-// import { reject } from 'lodash';
-// import { Action, Form } from 'antd-pro-max';
+import { dateFormate } from '@/utils';
 
 const { confirm } = Modal;
-
 
 const api = {
   fetch: (params?: any) => request({
@@ -48,7 +43,6 @@ const layout = {
 const CategorySearch = (props: any) => {
   const { onFormInstanceReady, showModel, setQqueryParams } = props
   const [form] = Form.useForm();
-
 
   // 由于是按照加载顺序所以放在最上面
   React.useEffect(() => {
@@ -97,7 +91,6 @@ const CategorySearch = (props: any) => {
         [k]: e.target.value
       }
     })
-
   }
 
 
@@ -124,7 +117,7 @@ const CategorySearch = (props: any) => {
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Button type="primary" onClick={showModel}>添加</Button>
+            <Button type="primary" onClick={(event: any) => showModel(event, {})}>添加</Button>
           </Col>
         </Row>
       </Form>
@@ -213,11 +206,13 @@ interface CategoryModelProps {
 }
 
 interface ModelFormProps {
+  isUpdate: boolean;
   initialValues: ArticleCategory;
   onFormInstanceReady: (instance: FormInstance<ArticleCategory>) => void;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
+  isUpdate,
   initialValues,
   onFormInstanceReady,
 }) => {
@@ -236,32 +231,38 @@ const ModelForm: React.FC<ModelFormProps> = ({
     form.setFieldsValue({ ...data })
   }
 
+  const validateNameExists = (_: any, category_name: any) => new Promise(async (resolve, reject) => {
+    const id = form.getFieldValue('id')
+    if (id) {
+      resolve(category_name)
+    }
+    const r: any = await request({
+      url: `/api/user/v1/article_category/validate_category_name`,
+      method: 'GET',
+      params: { category_name }
+    })
+    const { data: { code, success, message: msg } } = r
+    if (!success) {
+      reject(msg)
+    } else {
+      resolve(category_name)
+    }
+  })
+
   return (
     <React.Fragment>
       <Form layout="vertical" form={form} name="form_in_modal" initialValues={initialValues}>
         <Form.Item
           name="category_name"
           label="分类名称"
-          rules={[{
-            required: true, message: '请输入分类名称',
-            validator: (_, value) => new Promise((resolve, reject) => {
-              if (value === 'sss') {
-                resolve(value);
-              } else {
-                reject('ssss')
-              }
-            })
-            // return new Promise((resolve, reject) => {
-
-            // })
-            // return Promise.resolve();
-
-            // return Promise.reject(new Error('The new password that you entered do not match!'));
-            // },
-          }]}
+          rules={[
+            { required: true, message: '请输入分类名称' },
+            { validator: validateNameExists }
+          ]}
         >
           <Input
             placeholder='请输入分类名称'
+            disabled={isUpdate}
           />
         </Form.Item>
         <Form.Item name="remark" label="备注">
@@ -289,10 +290,8 @@ const CategoryModel: any = React.forwardRef((props: any, ref: any) => {
 
   const showModel = (open: boolean, data?: any) => {
     Promise.resolve().then(() => {
-      console.log('---> open')
       setOpen(preState => open)
     }).then(() => {
-      console.log('---> set')
       if (data) {
         setFormValues(() => data)
       }
@@ -311,11 +310,10 @@ const CategoryModel: any = React.forwardRef((props: any, ref: any) => {
 
     formInstance?.validateFields()
       .then((values: any) => {
-        console.log("values", values)
         // context.dispatch({ type: 'PUBLISH', payload: values })
-        // if (!formValues.id) {
-        //   values["id"] = formValues.id
-        // }
+        if (formValues.id) {
+          values["id"] = formValues.id
+        }
         // props.onSubmit(values)
         onSubmit(values)
       }).catch((e) => {
@@ -373,6 +371,7 @@ const CategoryModel: any = React.forwardRef((props: any, ref: any) => {
           onFormInstanceReady={(instance) => {
             setFormInstance(instance);
           }}
+          isUpdate={!!formValues.id}
         />
       </Modal>
     </React.Fragment>
@@ -398,6 +397,7 @@ const ArticleCategory = () => {
       title: '更新时间',
       dataIndex: 'update_time',
       key: 'update_time',
+      render: dateFormate
     },
     {
       title: '操作',
@@ -455,7 +455,6 @@ const ArticleCategory = () => {
         total: pagination.total
       }
     })
-    // getArticleCategory()
   }
 
   const getArticleCategory = () => {
@@ -466,22 +465,6 @@ const ArticleCategory = () => {
     }).finally(() => {
       setLoading(false)
     })
-    // request({
-    //   url: `/api/user/v1/article_category`,
-    //   method: 'GET',
-    // }).then((r: any) => {
-    //   console.log(r)
-    //   const { status, statusText
-    //   } = r
-    //   if (status === 200 && statusText === 'OK') {
-    //     const { code, success, data: { page, data } } = r.data
-    //     if (code === "0000") {
-    //       setData(data)
-    //     } else if (success === false) {
-    //       message.error(r.data.message)
-    //     }
-    //   }
-    // })
   }
 
 
@@ -574,6 +557,8 @@ const ArticleCategory = () => {
     modelRef.current.showModel(true, data)
   }
 
+
+
   /**
    * 按照顺序执行
    */
@@ -617,7 +602,7 @@ const ArticleCategory = () => {
           open={open}
           onSubmit={onSubmit}
           // onOK={onOK}
-          // onCancel={() => setOpen(false)}
+          // onCancel={() => onCancel}
           initialValues={{ modifier: 'public' }}
         />
       </div>

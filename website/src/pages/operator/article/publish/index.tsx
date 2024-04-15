@@ -3,18 +3,18 @@ import * as React from 'react'
 import { Button, Modal } from 'antd';
 
 const PublishArticle: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
 
   const showModal = () => {
-    setIsModalOpen(true);
+    setOpen(true);
   };
 
   const handleOk = () => {
-    setIsModalOpen(false);
+    setOpen(false);
   };
 
   const handleCancel = () => {
-    setIsModalOpen(false);
+    setOpen(false);
   };
 
   return (
@@ -24,7 +24,7 @@ const PublishArticle: React.FC = () => {
       </Button>
       <Modal
         title="发布文章"
-        open={isModalOpen}
+        open={open}
         onOk={handleOk}
         onCancel={handleCancel}>
         <p>Some contents...</p>
