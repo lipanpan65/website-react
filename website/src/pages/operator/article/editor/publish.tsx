@@ -36,21 +36,36 @@ interface Values {
 }
 
 interface DaliogFormProps {
+  options: [];
   initialValues: any;
   onFormInstanceReady: (instance: FormInstance) => void;
 }
 
 const ModelForm: React.FC<DaliogFormProps> = ({
   initialValues,
+  options,
   onFormInstanceReady,
 }) => {
+  const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } }
   const [form] = Form.useForm();
+  // const [options, setOptions] = React.useState([]);
+  const context = React.useContext(EditArticleContext)
+
+
+  console.log("initialValues", initialValues)
+
+
+
+  console.log('ModelForm===>', context.state)
+
+  React.useEffect(() => {
+    console.log('ModelForm===>', 'ModelForm')
+  }, [])
 
   React.useEffect(() => {
     onFormInstanceReady(form);
   }, []);
 
-  const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } }
 
   const onResetFields = () => form.resetFields()
 
@@ -61,7 +76,9 @@ const ModelForm: React.FC<DaliogFormProps> = ({
   return (
     <React.Fragment>
       <Form form={form}
-        initialValues={initialValues}
+        initialValues={{
+          summary: context.state.article.summary
+        }}
       // layout={'vertical'}
       >
         <Row gutter={[16, 0]}>
@@ -76,16 +93,18 @@ const ModelForm: React.FC<DaliogFormProps> = ({
             >
               <Select
                 allowClear
+                labelInValue={true}
                 // defaultValue="lucy"
                 // style={{ width: 120 }}
                 // onChange={handleChange}
                 placeholder='请选择分类'
-                options={[
-                  // { value: 'jack', label: 'Jack' },
-                  // { value: 'lucy', label: 'Lucy' },
-                  // { value: 'Yiminghe', label: 'yiminghe' },
-                  // { value: 'disabled', label: 'Disabled', disabled: true },
-                ]}
+                // options={[
+                // { value: 'jack', label: 'Jack' },
+                // { value: 'lucy', label: 'Lucy' },
+                // { value: 'Yiminghe', label: 'yiminghe' },
+                // { value: 'disabled', label: 'Disabled', disabled: true },
+                // ]}
+                options={options}
               />
             </Form.Item>
           </Col>
@@ -116,7 +135,7 @@ const ModelForm: React.FC<DaliogFormProps> = ({
               {...formLayout}
               // labelCol={{ span: 3 }}
               // wrapperCol={{ span: 21 }}
-              name={"summary"}
+              name="summary"
               rules={[
                 { type: 'string', max: 1000, message: '备注信息字数不能超过1000' },
               ]}
@@ -225,16 +244,28 @@ const ModelForm: React.FC<DaliogFormProps> = ({
 
 
 const Publish = React.forwardRef((props: any, ref: any) => {
-  const { initialValues, onSubmit } = props
+
   const context = React.useContext(EditArticleContext)
+  // const { initialValues, onSubmit } = props
   const [open, setOpen] = React.useState<boolean>(false);
   const [formInstance, setFormInstance] = React.useState<FormInstance>();
   const [formValues, setFormValues] = React.useState<any>({})
+  const [options, setOptions] = React.useState<any>()
+  const [initialValues, setInitialValues] = React.useState<any>()
+
   // const [formInstance, setFormInstance] = React.useState<FormInstance>();
 
   const publishArticle = (dispatch: React.Dispatch<any>, values: any) => {
     console.log('publishArticle===>', values)
     // https://juejin.cn/post/7156123099522400293
+    request({
+      url: ``,
+      method: 'POST',
+      data: {},
+    }).then((r: any) => {
+      
+    })
+
     setTimeout(() => {
       dispatch({ type: 'PUBLISH', payload: values })
     }, 3000)
@@ -256,6 +287,7 @@ const Publish = React.forwardRef((props: any, ref: any) => {
     formInstance?.validateFields()
       .then((values: any) => {
         console.log("Publish===ok", values)
+
         // context.dispatch({ type: 'PUBLISH', payload: values })
         // context.dispatch((...args: any) => {
         //   console.log('----------')
@@ -282,14 +314,12 @@ const Publish = React.forwardRef((props: any, ref: any) => {
         url: `/api/user/v1/article_category`,
         method: 'GET',
       }).then((r: any) => {
-        // console.log('r', r)
         const { data: { data } } = r
-        console.log('data', data)
         const options = data.data.map((v: any) => ({ value: v.id, label: v.category_name }))
         // https://juejin.cn/s/antd%20select%20%E5%8A%A8%E6%80%81option
-        formInstance?.setFieldsValue({ category_name: options })
-        // formInstance?.setFieldValue({
-        //   category_name:[]
+        setOptions(() => options)
+        // setFormValues({
+        //   summary: context.state.article.summary
         // })
       })
     }
@@ -315,6 +345,7 @@ const Publish = React.forwardRef((props: any, ref: any) => {
           afterOpenChange={afterOpenChange}
         >
           <ModelForm
+            options={options}
             initialValues={initialValues}
             onFormInstanceReady={(instance) => {
               setFormInstance(instance);

@@ -19,6 +19,34 @@ import 'react-markdown-editor-lite/lib/index.css';
 import './index.css'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
+const removeMarkdownSyntax = (markdownText: string) => {
+  // 匹配任何以 # 开头的行，并替换为空字符串
+  markdownText = markdownText.replace(/^#.*$/gm, '');
+  // 移除标题
+  markdownText = markdownText.replace(/^#+\s*(.*)$/gm, '$1');
+  // 移除粗体
+  markdownText = markdownText.replace(/\*\*(.*?)\*\*/g, '$1');
+  // 移除斜体
+  markdownText = markdownText.replace(/\*(.*?)\*/g, '$1');
+  // 移除链接
+  markdownText = markdownText.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+  // 移除图片
+  markdownText = markdownText.replace(/!\[([^\]]+)\]\([^)]+\)/g, '');
+  // // 移除行内代码
+  // markdownText = markdownText.replace(/`([^`]+)`/g, '$1');
+  // // 移除代码块
+  // markdownText = markdownText.replace(/```[^`]+```/g, '');
+
+  markdownText = markdownText.replace(/```[^`\n]*\n+[^```]+```\n+/g, "")
+  markdownText = markdownText.replace(/`([^`\n]+)`/g, "$1")
+
+  // 移除多余的换行符和空白行
+  markdownText = markdownText.replace(/\n+/g, ' ');
+  // 移除多余的空格
+  markdownText = markdownText.trim();
+
+  return markdownText;
+}
 
 // 初始化参数
 const initialState = {
@@ -28,7 +56,10 @@ const initialState = {
     id: null,
     title: null,
     content: null,
-  }
+    summary: null,
+    html: null
+  },
+  options: []
 };
 
 
@@ -50,12 +81,12 @@ const reducer = (preState: any, action: any) => {
   if (typeof action == 'function') {
     type = action()
   }
-
   switch (action.type) {
     case 'READ':
       return {
         loading: true,
-        article: { ...preState.article }
+        article: { ...preState.article },
+        // ...preState
       }
     // case 'READ_DONE':
     //   return state
@@ -73,35 +104,42 @@ const reducer = (preState: any, action: any) => {
       preState.article.title = title
       return {
         loading: false,
-        article: preState.article
+        article: preState.article,
+        // ...preState
       }
     case 'UPDATE_CONTENT':
-      const { content, content_html } = action.payload
+      const { content, html } = action.payload
       preState.article.content = content
-      preState.article.content_html = content_html
+      preState.article.html = html
+      preState.article.summary = removeMarkdownSyntax(content)
+      // preState.article.summary = MarkdownIt().render(content)
       return {
         loading: false,
-        article: preState.article
+        article: preState.article,
+        // ...preState
       }
     case "UPDATE_ID":
       const { id } = action.payload
       preState.article.id = id
       return {
         loading: false,
-        article: preState.article
+        article: preState.article,
+        // ...preState
       }
     case "READ_DONE_UPDATE":
       const { article } = action.payload
       return {
         loading: false,
-        article
+        article,
+        // ...preState
       }
     case "PUBLISH":
       const { category_name, summary } = action.payload
       console.log("PUBLISH", category_name, summary)
       return {
         loading: true,
-        article: preState.article
+        article: preState.article,
+        // ...preState
       }
     default:
       return preState
@@ -223,11 +261,11 @@ const EditorArticle: any = (props: any) => {
   }
 
   const createArticle = () => {
-    const { article: { title, content, content_html } } = state
-    if (title || content || content_html) {
+    const { article: { title, content, html } } = state
+    if (title || content || html) {
       request({
         url: `/api/user/v1/article/`, method: 'POST', data: {
-          title, content, content_html
+          title, content, html
         }
       }).then((r: any) => {
         const { status, data: { code, success, data } } = r
@@ -289,7 +327,7 @@ const EditorArticle: any = (props: any) => {
     // console.log("handleEditorChange===>", text)
     intervalRef.current = text
     // const newValue = text.replace(/\d/g, "");
-    dispatch({ type: 'UPDATE_CONTENT', payload: { content_html: html, content: text } })
+    dispatch({ type: 'UPDATE_CONTENT', payload: { html, content: text } })
     console.log("handleEditorChange=timerId", timerId)
     throttle(5000)
   };
