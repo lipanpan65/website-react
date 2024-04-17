@@ -19,7 +19,7 @@ import 'react-markdown-editor-lite/lib/index.css';
 import './index.css'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-const removeMarkdownSyntax = (markdownText: string) => {
+const removeMarkdownSyntax = (markdownText: string, maxLength: number) => {
   // 匹配任何以 # 开头的行，并替换为空字符串
   markdownText = markdownText.replace(/^#.*$/gm, '');
   // 移除标题
@@ -45,7 +45,7 @@ const removeMarkdownSyntax = (markdownText: string) => {
   // 移除多余的空格
   markdownText = markdownText.trim();
 
-  return markdownText;
+  return markdownText.substring(0, maxLength);
 }
 
 // 初始化参数
@@ -114,7 +114,7 @@ const reducer = (preState: any, action: any) => {
       const { content, html } = action.payload
       preState.article.content = content
       preState.article.html = html
-      preState.article.summary = removeMarkdownSyntax(content)
+      preState.article.summary = removeMarkdownSyntax(content, 100)
       return {
         loading: false,
         article: preState.article,
