@@ -19,6 +19,7 @@ import {
 import { dateFormate, request } from '@/utils'
 
 import { EditArticleContext } from './index'
+import { useNavigate } from 'react-router-dom';
 
 const options: SelectProps['options'] = [];
 
@@ -48,12 +49,7 @@ const ModelForm: React.FC<DaliogFormProps> = ({
 }) => {
   const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } }
   const [form] = Form.useForm();
-  // const [options, setOptions] = React.useState([]);
   const context = React.useContext(EditArticleContext)
-
-  console.log("initialValues", initialValues)
-
-  console.log('ModelForm===>', context.state)
 
   React.useEffect(() => {
     console.log('ModelForm===>', 'ModelForm')
@@ -81,7 +77,7 @@ const ModelForm: React.FC<DaliogFormProps> = ({
         <Row gutter={[16, 0]}>
           <Col span={20} >
             <Form.Item label="分类"
-              name="category_name"
+              name="category_id"
               {...formLayout}
               rules={[
                 { required: true, message: '请输入分类名称' },
@@ -90,8 +86,7 @@ const ModelForm: React.FC<DaliogFormProps> = ({
             >
               <Select
                 allowClear
-                labelInValue={true}
-                // defaultValue="lucy"
+                // labelInValue={true}
                 // style={{ width: 120 }}
                 // onChange={handleChange}
                 placeholder='请选择分类'
@@ -241,29 +236,42 @@ const ModelForm: React.FC<DaliogFormProps> = ({
 
 
 const Publish = React.forwardRef((props: any, ref: any) => {
-
   const context = React.useContext(EditArticleContext)
-  // const { initialValues, onSubmit } = props
   const [open, setOpen] = React.useState<boolean>(false);
+  const navigator = useNavigate()
   const [formInstance, setFormInstance] = React.useState<FormInstance>();
   const [formValues, setFormValues] = React.useState<any>({})
   const [options, setOptions] = React.useState<any>()
-  const [initialValues, setInitialValues] = React.useState<any>()
+  const [initialValues, setInitialValues] = React.useState<any>(() => ({
+    summary: context.state.article.summary
+  }))
+
+  // console.log('initialValues===>', initialValues)
 
   const publishArticle = (dispatch: React.Dispatch<any>, values: any) => {
+    dispatch({ type: 'PUBLISH', payload: values })
     console.log('publishArticle===>', values)
+    const id = context.state.article.id
     // https://juejin.cn/post/7156123099522400293
     request({
-      url: ``,
+      url: `/api/user/v1/article/${id}/publish/`,
       method: 'POST',
-      data: {},
+      data: { ...values },
     }).then((r: any) => {
-
+      dispatch({ type: 'READ_DONE', payload: values })
+      navigator(`/user/article/overview`, {
+        // replace: true
+        state: {
+          // id: article.id,
+          // status: 'draft',
+        }
+      })
+      console.log('r===>', r)
     })
 
-    setTimeout(() => {
-      dispatch({ type: 'PUBLISH', payload: values })
-    }, 3000)
+    // setTimeout(() => {
+    //   dispatch({ type: 'PUBLISH', payload: values })
+    // }, 3000)
     // 跳转到首页
   }
 
@@ -271,9 +279,9 @@ const Publish = React.forwardRef((props: any, ref: any) => {
     Promise.resolve().then(() => {
       setOpen(preState => open)
     }).then(() => {
-      if (data) {
-        setFormValues(() => data)
-      }
+      // setInitialValues(() => ({
+      //   summary: context.state.article.summary
+      // }))
     })
   }
 
@@ -282,13 +290,6 @@ const Publish = React.forwardRef((props: any, ref: any) => {
     formInstance?.validateFields()
       .then((values: any) => {
         console.log("Publish===ok", values)
-
-        // context.dispatch({ type: 'PUBLISH', payload: values })
-        // context.dispatch((...args: any) => {
-        //   console.log('----------')
-        //   console.log(args) 该 args 是一个函数
-        //   console.log('----------')
-        // })
         context.dispatch((f: any) => publishArticle(f, values))
       }).finally(() => {
         formInstance.resetFields()
@@ -311,9 +312,6 @@ const Publish = React.forwardRef((props: any, ref: any) => {
         const options = data.data.map((v: any) => ({ value: v.id, label: v.category_name }))
         // https://juejin.cn/s/antd%20select%20%E5%8A%A8%E6%80%81option
         setOptions(() => options)
-        setInitialValues({
-          summary: context.state.article.summary
-        })
       })
     }
   }

@@ -88,8 +88,11 @@ const reducer = (preState: any, action: any) => {
         article: { ...preState.article },
         // ...preState
       }
-    // case 'READ_DONE':
-    //   return state
+    case 'READ_DONE':
+      return {
+        loading: false,
+        article: { ...preState.article }
+      }
     // case 'UPDATE':
     //   const { content, content_html } = action.payload
     //   state.article.content = content
