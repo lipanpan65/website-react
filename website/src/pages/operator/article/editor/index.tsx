@@ -112,7 +112,6 @@ const reducer = (preState: any, action: any) => {
       preState.article.content = content
       preState.article.html = html
       preState.article.summary = removeMarkdownSyntax(content)
-      // preState.article.summary = MarkdownIt().render(content)
       return {
         loading: false,
         article: preState.article,

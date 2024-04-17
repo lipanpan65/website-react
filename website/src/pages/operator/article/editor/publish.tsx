@@ -51,10 +51,7 @@ const ModelForm: React.FC<DaliogFormProps> = ({
   // const [options, setOptions] = React.useState([]);
   const context = React.useContext(EditArticleContext)
 
-
   console.log("initialValues", initialValues)
-
-
 
   console.log('ModelForm===>', context.state)
 
@@ -253,8 +250,6 @@ const Publish = React.forwardRef((props: any, ref: any) => {
   const [options, setOptions] = React.useState<any>()
   const [initialValues, setInitialValues] = React.useState<any>()
 
-  // const [formInstance, setFormInstance] = React.useState<FormInstance>();
-
   const publishArticle = (dispatch: React.Dispatch<any>, values: any) => {
     console.log('publishArticle===>', values)
     // https://juejin.cn/post/7156123099522400293
@@ -263,7 +258,7 @@ const Publish = React.forwardRef((props: any, ref: any) => {
       method: 'POST',
       data: {},
     }).then((r: any) => {
-      
+
     })
 
     setTimeout(() => {
@@ -295,8 +290,6 @@ const Publish = React.forwardRef((props: any, ref: any) => {
         //   console.log('----------')
         // })
         context.dispatch((f: any) => publishArticle(f, values))
-        // values["id"] = record.id
-        // onSubmit(values)
       }).finally(() => {
         formInstance.resetFields()
         setOpen(false)
@@ -318,9 +311,9 @@ const Publish = React.forwardRef((props: any, ref: any) => {
         const options = data.data.map((v: any) => ({ value: v.id, label: v.category_name }))
         // https://juejin.cn/s/antd%20select%20%E5%8A%A8%E6%80%81option
         setOptions(() => options)
-        // setFormValues({
-        //   summary: context.state.article.summary
-        // })
+        setInitialValues({
+          summary: context.state.article.summary
+        })
       })
     }
   }
