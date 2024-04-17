@@ -16,20 +16,10 @@ import {
   // Avatar,
 } from 'antd'
 
-// const contentWithoutCode = source
-// .replace(/^[^#]+\n/g, "")
-// .replace(/(?:[^\n#]+)#+\s([^#\n]+)\n*/g, "") // 匹配行内出现 # 号的情况
-// .replace(/^#\s[^#\n]*\n+/, "")
-// .replace(/```[^`\n]*\n+[^```]+```\n+/g, "")
-// .replace(/`([^`\n]+)`/g, "$1")
-// .replace(/\*\*?([^*\n]+)\*\*?/g, "$1")
-// .replace(/__?([^_\n]+)__?/g, "$1")
-// .trim();
-
-
 // const { Paragraph, Text } = Typography;
 
 import { request } from '@/utils'
+import { ArticleApi } from '@/api'
 
 // 导入本地的开发环境
 import { postsMock } from '@/mock';
@@ -93,10 +83,7 @@ const Article: React.FC = () => {
       // borderRadiusLG
     },
   } = theme.useToken();
-
   const [state, dispatch] = React.useReducer(reducer, initialState);
-  // console.log('postsMock--->', postsMock)
-  // console.log('state--->', state)
 
   const onChange = (page: any, pageSize: any) => {
     // console.log('onChange===>', page, pageSize)
@@ -105,7 +92,7 @@ const Article: React.FC = () => {
 
   const getArticleList = (params?: any): any => {
     request({
-      url: `/api/user/v1/article/`,
+      url: `/api/user/v1/article/?status=publish`,
       method: 'GET',
       params: params || {}
     }).then((response: any) => {
@@ -151,7 +138,7 @@ const Article: React.FC = () => {
                   <List.Item.Meta
                     // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
                     title={ArticleTitle(item)}
-                    description={<div style={{ width: '85%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.content}</div>}
+                    description={<div style={{ width: '85%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.summary}</div>}
                   />
                 </List.Item>
               )}

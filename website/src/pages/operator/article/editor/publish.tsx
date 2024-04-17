@@ -1,5 +1,4 @@
 import * as React from 'react';
-// import request from '@/services'
 import {
   Col,
   Row,
@@ -17,9 +16,10 @@ import {
   type FormInstance
 } from 'antd'
 
-import { dateFormate } from '@/utils'
+import { dateFormate, request } from '@/utils'
 
 import { EditArticleContext } from './index'
+import { useNavigate } from 'react-router-dom';
 
 const options: SelectProps['options'] = [];
 
@@ -36,43 +36,48 @@ interface Values {
   modifier?: string;
 }
 
-interface IEditFormProps {
-  // initialValues: Values;
-  onFormInstanceReady: (instance: FormInstance<Values>) => void;
+interface DaliogFormProps {
+  options: [];
+  initialValues: any;
+  onFormInstanceReady: (instance: FormInstance) => void;
 }
 
-const IEditForm = React.forwardRef((props: any, ref: any) => {
-
-  const [form] = Form.useForm();
-
-  // React.useEffect(() => {
-  //   onFormInstanceReady(form);
-  // }, []);
-
-  // const { isUpdate, data } = props
-  let formRef: any = React.useRef<any>()
-
+const ModelForm: React.FC<DaliogFormProps> = ({
+  initialValues,
+  options,
+  onFormInstanceReady,
+}) => {
   const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } }
+  const [form] = Form.useForm();
+  const context = React.useContext(EditArticleContext)
 
-  const onResetFields = () => formRef.current?.resetFields()
+  React.useEffect(() => {
+    console.log('ModelForm===>', 'ModelForm')
+  }, [])
+
+  React.useEffect(() => {
+    onFormInstanceReady(form);
+  }, []);
+
+
+  const onResetFields = () => form.resetFields()
 
   const onSetFieldsValue = (values: any) => {
-    formRef.current?.setFieldsValue({ ...values })
+    form.setFieldsValue({ ...values })
   }
 
   return (
     <React.Fragment>
-      <Form form={form} ref={formRef}
+      <Form form={form}
         initialValues={{
-          status: true
+          summary: context.state.article.summary
         }}
       // layout={'vertical'}
       >
         <Row gutter={[16, 0]}>
           <Col span={20} >
-            <Form.Item
-              label="分类"
-              name="cname"
+            <Form.Item label="分类"
+              name="category_id"
               {...formLayout}
               rules={[
                 { required: true, message: '请输入分类名称' },
@@ -81,22 +86,22 @@ const IEditForm = React.forwardRef((props: any, ref: any) => {
             >
               <Select
                 allowClear
-                // defaultValue="lucy"
+                // labelInValue={true}
                 // style={{ width: 120 }}
                 // onChange={handleChange}
                 placeholder='请选择分类'
-                options={[
-                  { value: 'jack', label: 'Jack' },
-                  { value: 'lucy', label: 'Lucy' },
-                  { value: 'Yiminghe', label: 'yiminghe' },
-                  { value: 'disabled', label: 'Disabled', disabled: true },
-                ]}
+                // options={[
+                // { value: 'jack', label: 'Jack' },
+                // { value: 'lucy', label: 'Lucy' },
+                // { value: 'Yiminghe', label: 'yiminghe' },
+                // { value: 'disabled', label: 'Disabled', disabled: true },
+                // ]}
+                options={options}
               />
-              {/* <Input placeholder="请输入分类名称" /> */}
             </Form.Item>
           </Col>
-          {/* 标签 */}
-          <Col span={20}>
+
+          {/* <Col span={20}>
             <Form.Item
               label="添加标签"
               {...formLayout}
@@ -113,15 +118,16 @@ const IEditForm = React.forwardRef((props: any, ref: any) => {
                 // onChange={handleChange}
                 options={options}
               />
-              {/* <Input placeholder="请输入key" /> */}
             </Form.Item>
-          </Col>
+          </Col> */}
+          {/* <Input placeholder="请输入key" /> */}
+
           <Col span={20}>
             <Form.Item label="编辑摘要"
               {...formLayout}
               // labelCol={{ span: 3 }}
               // wrapperCol={{ span: 21 }}
-              name={"note"}
+              name="summary"
               rules={[
                 { type: 'string', max: 1000, message: '备注信息字数不能超过1000' },
               ]}
@@ -226,48 +232,95 @@ const IEditForm = React.forwardRef((props: any, ref: any) => {
       </Form>
     </React.Fragment>
   )
-})
-
+}
 
 
 const Publish = React.forwardRef((props: any, ref: any) => {
-
   const context = React.useContext(EditArticleContext)
-  const formRef: any = React.useRef<any>()
-  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
-  let [record, setRecord] = React.useState<any>({})
+  const [open, setOpen] = React.useState<boolean>(false);
+  const navigator = useNavigate()
+  const [formInstance, setFormInstance] = React.useState<FormInstance>();
+  const [formValues, setFormValues] = React.useState<any>({})
+  const [options, setOptions] = React.useState<any>()
+  const [initialValues, setInitialValues] = React.useState<any>(() => ({
+    summary: context.state.article.summary
+  }))
 
-  // const [formInstance, setFormInstance] = React.useState<FormInstance>();
+  // console.log('initialValues===>', initialValues)
 
-  console.log('formRef', formRef)
+  const publishArticle = (dispatch: React.Dispatch<any>, values: any) => {
+    dispatch({ type: 'PUBLISH', payload: values })
+    console.log('publishArticle===>', values)
+    const id = context.state.article.id
+    // https://juejin.cn/post/7156123099522400293
+    request({
+      url: `/api/user/v1/article/${id}/publish/`,
+      method: 'POST',
+      data: { ...values },
+    }).then((r: any) => {
+      dispatch({ type: 'READ_DONE', payload: values })
+      navigator(`/user/article/overview`, {
+        // replace: true
+        state: {
+          // id: article.id,
+          // status: 'draft',
+        }
+      })
+      console.log('r===>', r)
+    })
+
+    // setTimeout(() => {
+    //   dispatch({ type: 'PUBLISH', payload: values })
+    // }, 3000)
+    // 跳转到首页
+  }
+
+  const showModel = (open: boolean, data?: any) => {
+    Promise.resolve().then(() => {
+      setOpen(preState => open)
+    }).then(() => {
+      // setInitialValues(() => ({
+      //   summary: context.state.article.summary
+      // }))
+    })
+  }
 
   const onOk = () => {
-    console.log('ok')
-    
     // context.dispatch({ type: 'PUBLISH', payload: {} })
-    console.log(formRef)
-
-    formRef?.current?.formRef.current.validateFields()
+    formInstance?.validateFields()
       .then((values: any) => {
-        console.log("values")
-        // context.dispatch({ type: 'PUBLISH', payload: values })
-        // values["id"] = record.id
-        // props.onSubmit(values)
+        console.log("Publish===ok", values)
+        context.dispatch((f: any) => publishArticle(f, values))
       }).finally(() => {
-        setIsModalOpen(false)
+        formInstance.resetFields()
+        setOpen(false)
       })
   }
 
   const onCancel = () => {
-    formRef.current?.onResetFields()
-    setIsModalOpen(false)
+    formInstance?.resetFields()
+    setOpen(false)
+  }
+
+  const afterOpenChange = (open: boolean) => {
+    if (open) {
+      request({
+        url: `/api/user/v1/article_category`,
+        method: 'GET',
+      }).then((r: any) => {
+        const { data: { data } } = r
+        const options = data.data.map((v: any) => ({ value: v.id, label: v.category_name }))
+        // https://juejin.cn/s/antd%20select%20%E5%8A%A8%E6%80%81option
+        setOptions(() => options)
+      })
+    }
   }
 
   React.useImperativeHandle(ref, () => ({
     onOk,
     onCancel,
-    setRecord,
-    setIsModalOpen
+    setOpen,
+    showModel
   }))
 
   return (
@@ -276,19 +329,18 @@ const Publish = React.forwardRef((props: any, ref: any) => {
         <Modal
           title={'发布文章'}
           width={"40%"}
-          open={isModalOpen}
+          open={open}
           onOk={onOk}
           onCancel={onCancel}
           forceRender={true}// 看这里，重点在这里哦
+          afterOpenChange={afterOpenChange}
         >
-          <IEditForm
-            ref={formRef}
-            // initialValues={initialValues}
-            // onFormInstanceReady={(instance) => {
-            //   setFormInstance(instance);
-            // }}
-            isUpdate={!!record.id}
-            data={record}
+          <ModelForm
+            options={options}
+            initialValues={initialValues}
+            onFormInstanceReady={(instance) => {
+              setFormInstance(instance);
+            }}
           />
         </Modal>
       </div>

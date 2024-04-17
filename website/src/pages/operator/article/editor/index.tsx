@@ -19,6 +19,34 @@ import 'react-markdown-editor-lite/lib/index.css';
 import './index.css'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
+const removeMarkdownSyntax = (markdownText: string) => {
+  // 匹配任何以 # 开头的行，并替换为空字符串
+  markdownText = markdownText.replace(/^#.*$/gm, '');
+  // 移除标题
+  markdownText = markdownText.replace(/^#+\s*(.*)$/gm, '$1');
+  // 移除粗体
+  markdownText = markdownText.replace(/\*\*(.*?)\*\*/g, '$1');
+  // 移除斜体
+  markdownText = markdownText.replace(/\*(.*?)\*/g, '$1');
+  // 移除链接
+  markdownText = markdownText.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+  // 移除图片
+  markdownText = markdownText.replace(/!\[([^\]]+)\]\([^)]+\)/g, '');
+  // // 移除行内代码
+  // markdownText = markdownText.replace(/`([^`]+)`/g, '$1');
+  // // 移除代码块
+  // markdownText = markdownText.replace(/```[^`]+```/g, '');
+
+  markdownText = markdownText.replace(/```[^`\n]*\n+[^```]+```\n+/g, "")
+  markdownText = markdownText.replace(/`([^`\n]+)`/g, "$1")
+
+  // 移除多余的换行符和空白行
+  markdownText = markdownText.replace(/\n+/g, ' ');
+  // 移除多余的空格
+  markdownText = markdownText.trim();
+
+  return markdownText;
+}
 
 // 初始化参数
 const initialState = {
@@ -28,8 +56,10 @@ const initialState = {
     id: null,
     title: null,
     content: null,
-    content_html: null
-  }
+    summary: null,
+    html: null
+  },
+  options: []
 };
 
 
@@ -51,15 +81,18 @@ const reducer = (preState: any, action: any) => {
   if (typeof action == 'function') {
     type = action()
   }
-
   switch (action.type) {
     case 'READ':
       return {
         loading: true,
+        article: { ...preState.article },
+        // ...preState
+      }
+    case 'READ_DONE':
+      return {
+        loading: false,
         article: { ...preState.article }
       }
-    // case 'READ_DONE':
-    //   return state
     // case 'UPDATE':
     //   const { content, content_html } = action.payload
     //   state.article.content = content
@@ -74,35 +107,41 @@ const reducer = (preState: any, action: any) => {
       preState.article.title = title
       return {
         loading: false,
-        article: preState.article
+        article: preState.article,
+        // ...preState
       }
     case 'UPDATE_CONTENT':
-      const { content, content_html } = action.payload
+      const { content, html } = action.payload
       preState.article.content = content
-      preState.article.content_html = content_html
+      preState.article.html = html
+      preState.article.summary = removeMarkdownSyntax(content)
       return {
         loading: false,
-        article: preState.article
+        article: preState.article,
+        // ...preState
       }
     case "UPDATE_ID":
       const { id } = action.payload
       preState.article.id = id
       return {
         loading: false,
-        article: preState.article
+        article: preState.article,
+        // ...preState
       }
     case "READ_DONE_UPDATE":
       const { article } = action.payload
       return {
         loading: false,
-        article
+        article,
+        // ...preState
       }
     case "PUBLISH":
-      const { data } = action.payload
-      console.log("PUBLISH", data)
+      const { category_name, summary } = action.payload
+      console.log("PUBLISH", category_name, summary)
       return {
         loading: true,
-        article: preState.article
+        article: preState.article,
+        // ...preState
       }
     default:
       return preState
@@ -154,6 +193,23 @@ const EditorArticle: any = (props: any) => {
   const [save, setSave] = React.useState();
   const [state, dispatch] = React.useReducer(reducer, initialState)
 
+  // 定义action 
+  const dispatchF: React.Dispatch<any> = (action: any) => {
+    // 判断action是不是函数，如果是函数，就执行,并且把dispatch传进去
+    if (typeof action === 'function') {
+      action(dispatch)
+    } else {
+      dispatch(action)
+    }
+  }
+
+  // 作者：佑子呀
+  // 链接：https://juejin.cn/post/7156123099522400293
+  // 来源：稀土掘金
+  // 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+
+
   // const throttle: any = (fn: any, delay: number) => {
   const throttle: any = (delay: number) => {
 
@@ -185,7 +241,6 @@ const EditorArticle: any = (props: any) => {
 
   console.log("---------sssssssssssss-------------")
   console.log("timerId====>", timerId)
-  // console.log("EditorArticle===>", state)
   // console.log("---------*************-------------")
 
   const getArticle = async (id: any) => {
@@ -208,25 +263,17 @@ const EditorArticle: any = (props: any) => {
   }
 
   const createArticle = () => {
-    console.log("创建文章")
-    const { article: { title, content, content_html } } = state
-    if (title || content || content_html) {
+    const { article: { title, content, html } } = state
+    if (title || content || html) {
       request({
         url: `/api/user/v1/article/`, method: 'POST', data: {
-          title, content, content_html
+          title, content, html
         }
       }).then((r: any) => {
-        console.log('createArticle===>', r)
-        console.log('createArticle===>', r)
-        console.log('createArticle===>', r)
-        console.log('createArticle===>', r)
-        console.log('createArticle===>', r)
         const { status, data: { code, success, data } } = r
         if (code === "0000") {
-          console.log('data---->', data)
           dispatch({ type: 'UPDATE_ID', payload: { id: data.id } })
         }
-
       }).catch((e) => {
         console.log('createArticle.err===>', e)
       }).finally(() => {
@@ -247,8 +294,6 @@ const EditorArticle: any = (props: any) => {
     const { article } = state
     request({
       url: `/api/user/v1/article/${article.id}/`, method: 'PUT', data: {
-        // content: intervalRef.current,
-        // title: titleRef.current
         ...article
       }
     }).then((r: any) => {
@@ -284,19 +329,13 @@ const EditorArticle: any = (props: any) => {
     // console.log("handleEditorChange===>", text)
     intervalRef.current = text
     // const newValue = text.replace(/\d/g, "");
-    dispatch({ type: 'UPDATE_CONTENT', payload: { content_html: html, content: text } })
+    dispatch({ type: 'UPDATE_CONTENT', payload: { html, content: text } })
     console.log("handleEditorChange=timerId", timerId)
     throttle(5000)
   };
 
-  const publishPosts = () => {
-    // 弹出层
-    publishRef.current.setIsModalOpen(true)
-    // if (!!record.id) {
-    //   publishRef.current.setRecord(record)
-    // } else {
-    //   dialogRef.current.setRecord({})
-    // }
+  const showModel = (event: any, data?: any) => {
+    publishRef.current.showModel(true, data)
   }
 
   const handLinkToDrafts = () => {
@@ -311,7 +350,7 @@ const EditorArticle: any = (props: any) => {
 
   return (
     <React.Fragment>
-      <EditArticleContext.Provider value={{ state, dispatch }}>
+      <EditArticleContext.Provider value={{ state, dispatch: dispatchF }}>
         <Spin spinning={state.loading}>
           <div className='edit-container'>
             <div className='header'>
@@ -331,7 +370,7 @@ const EditorArticle: any = (props: any) => {
                 timerId.current === undefined ? <div>文章自动保存到草稿中...</div> : (timerId.current === null ? <div>保存成功...</div> : <div>保存中...</div>)
               }
               <div className="header-right">
-                <Button type="primary" onClick={publishPosts} >发布</Button>
+                <Button type="primary" onClick={showModel} >发布</Button>
                 <Button type="primary" onClick={handLinkToDrafts}>草稿箱</Button>
               </div>
             </div>

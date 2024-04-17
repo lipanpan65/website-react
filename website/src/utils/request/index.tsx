@@ -60,7 +60,7 @@ export const request = (cfg: any, options?: any) => {
   //   cfg.params = data ?? {}
   //   console.log('cfg get--->',cfg)
   // }
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     // 创建实例
     const instance = originAxios.create({
       baseURL: '/', // 设置统一的请求前缀
