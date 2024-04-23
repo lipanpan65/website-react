@@ -13,6 +13,7 @@ switch_to_master() {
   cd "$PROJECT_DIR" || exit
   git checkout master
   git reset --hard HEAD  # 重置到最新的提交，丢弃所有修改
+  git pull origin master
 }
 
 
