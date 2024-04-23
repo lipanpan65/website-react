@@ -173,8 +173,6 @@ export const MenuContext = React.createContext<{
   dispatch: () => { }
 })
 
-
-
 const reducer = (preState: any, action: any) => {
 
   let { type } = action;

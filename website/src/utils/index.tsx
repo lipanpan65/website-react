@@ -1,8 +1,9 @@
-// import request from "./request"
-
+import { theme } from 'antd'
 export { request } from './request'
 export { dateFormate, timedeltaFormate } from './date-formate'
 export { getCookie, clearCookie } from './cookie'
+
+
 
 
 // TODO arrary 的
