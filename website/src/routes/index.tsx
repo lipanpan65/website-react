@@ -45,7 +45,7 @@ import NotFound from '@/components/NotFound'
 import ArticleCategory from '@/pages/operator/article/category'
 import Subject from '@/pages/user/subjects/overview'
 import SubjectDetail from '@/pages/user/subjects/detail'
-
+import AppMenu from '@/pages/operator/account/menu'
 
 export const routeMap: any = [
   {
@@ -104,6 +104,12 @@ export const routeMap: any = [
             name: "分类管理",
             url: "/user/creator/article-category",
             hash: "#/user/creator/article-category",
+            icon: <AppstoreOutlined />,
+          }, {
+            id: "223",
+            name: "菜单管理",
+            url: "/user/creator/menu",
+            hash: "#/user/creator/menu",
             icon: <AppstoreOutlined />,
           },
         ]
@@ -207,6 +213,10 @@ const Routes = () => {
           {
             path: '/user/creator/article-category',
             element: <ArticleCategory />
+          },
+          {
+            path: '/user/creator/menu',
+            element: <AppMenu />
           },
         ]
       },
