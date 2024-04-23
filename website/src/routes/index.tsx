@@ -44,6 +44,8 @@ import EditorLayout from '@/components/EditorLayout'
 import NotFound from '@/components/NotFound'
 import ArticleCategory from '@/pages/operator/article/category'
 import Subject from '@/pages/user/subjects/overview'
+import SubjectDetail from '@/pages/user/subjects/detail'
+
 
 export const routeMap: any = [
   {
@@ -179,6 +181,10 @@ const Routes = () => {
           {
             path: '/user/subjects/overview',
             element: <Subject />
+          },
+          {
+            path: '/user/subjects/detail/:id',
+            element: <SubjectDetail />
           },
         ]
       },
