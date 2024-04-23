@@ -2,7 +2,9 @@ import * as React from 'react'
 import {
   Button, Col,
   Form,
-  Input, Modal, Radio, Row, Space, Table, Tag, message, theme
+  Input, Modal,
+  Radio, Row, Space, Table,
+  Tag, message, theme
 } from 'antd'
 import type { TableProps, FormInstance } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
@@ -19,17 +21,12 @@ const api = {
   }).then((r: any) => {
     const { status, statusText } = r
     if (status === 200 && statusText === 'OK') {
-      // resolve(r.data)
       return r.data
     } else {
       return r.data
-      // reject(r.data)
     }
   }).catch((e: any) => e)
 }
-
-
-
 
 // type FormInstance
 
@@ -38,12 +35,10 @@ const layout = {
   wrapperCol: { span: 16 },
 };
 
-
 // TODO 基于 props 的方式实现
 const CategorySearch = (props: any) => {
   const { onFormInstanceReady, showModel, setQqueryParams } = props
   const [form] = Form.useForm();
-
   // 由于是按照加载顺序所以放在最上面
   React.useEffect(() => {
     onFormInstanceReady(form);
@@ -104,6 +99,9 @@ const CategorySearch = (props: any) => {
       // style={{ maxWidth: 600 }}
       >
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+          <Col span={4}>
+            <Button type="primary" onClick={(event: any) => showModel(event, {})}>添加</Button>
+          </Col>
           <Col span={12}>
             <Form.Item
               name="search" label="搜索" rules={[{ required: false }]}>
@@ -115,9 +113,6 @@ const CategorySearch = (props: any) => {
 
               />
             </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Button type="primary" onClick={(event: any) => showModel(event, {})}>添加</Button>
           </Col>
         </Row>
       </Form>
@@ -187,7 +182,6 @@ const CategoryTable = (props: any) => {
         pagination={pagination}
         columns={columns}
         dataSource={data} />
-
     </React.Fragment>
   )
 }
@@ -381,6 +375,12 @@ const CategoryModel: any = React.forwardRef((props: any, ref: any) => {
 
 const ArticleCategory = () => {
 
+  const {
+    token: {
+      colorBgContainer,
+    },
+  } = theme.useToken();
+
   const columns: TableProps<DataType>['columns'] = [
     {
       title: '分类名称',
@@ -411,11 +411,7 @@ const ArticleCategory = () => {
     },
   ];
 
-  const {
-    token: {
-      colorBgContainer,
-    },
-  } = theme.useToken();
+
 
   const modelRef: any = React.useRef()
   const tableRef: any = React.useRef()
@@ -579,10 +575,9 @@ const ArticleCategory = () => {
     <React.Fragment>
       <div style={{
         height: '100vh',
-        padding: '0 20px',
+        padding: '20px 20px',
         background: colorBgContainer
       }}>
-        {/* <Button type="primary" onClick={(event: any) => showModel(event)}>添加</Button> */}
         <CategorySearch
           showModel={showModel}
           onFormInstanceReady={(instance: any) => {

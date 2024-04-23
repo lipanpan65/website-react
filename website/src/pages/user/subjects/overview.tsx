@@ -1,7 +1,13 @@
 import React from 'react';
-import { Button, Col, Result, Row } from 'antd';
+import {
+  Button,
+  Col,
+  Result,
+  Row
+} from 'antd';
 import { Avatar, Card, Skeleton, Switch } from 'antd';
 import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 
 const { Meta } = Card;
 
@@ -31,11 +37,13 @@ const Subject: React.FC = () => {
             ]}
           >
             <Skeleton loading={loading} avatar active>
-              <Meta
-                // avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=2" />}
-                title="Card title"
-                description="This is the description"
-              />
+              <Link to={'/user/subjects/detail/1'}>
+                <Meta
+                  // avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=2" />}
+                  title="Card title"
+                  description="This is the description"
+                />
+              </Link>
             </Skeleton>
           </Card>
         </Col>
