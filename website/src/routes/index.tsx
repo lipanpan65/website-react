@@ -112,6 +112,13 @@ export const routeMap: any = [
             hash: "#/user/creator/menu",
             icon: <AppstoreOutlined />,
           },
+          {
+            id: "224",
+            name: "专题管理",
+            url: "/user/creator/subjects",
+            hash: "#/user/creator/subjects",
+            icon: <AppstoreOutlined />,
+          },
         ]
       }
     ]

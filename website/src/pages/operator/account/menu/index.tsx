@@ -2,7 +2,6 @@
 import { Table, theme } from 'antd'
 import * as React from 'react'
 
-
 import type { TableColumnsType, TableProps } from 'antd';
 
 type TableRowSelection<T> = TableProps<T>['rowSelection'];
