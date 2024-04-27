@@ -1,8 +1,9 @@
 
-import { Table, theme } from 'antd'
 import * as React from 'react'
+import { Button, Col, Form, Input, Modal, Row, Table, theme } from 'antd'
 
-import type { TableColumnsType, TableProps } from 'antd';
+import type { FormInstance, TableColumnsType, TableProps } from 'antd';
+import { request } from '@/utils';
 
 type TableRowSelection<T> = TableProps<T>['rowSelection'];
 
@@ -14,36 +15,138 @@ interface DataType {
   children?: DataType[];
 }
 
+// 初始化参数
+const initialState = {
+  // tip: '文章自动保存草稿中...',
+  loading: false,
+  open: false,
+  article: {
+    id: null,
+    title: null,
+    content: null,
+    summary: null,
+    html: null
+  },
+  options: []
+};
+
+
+
+// 定义context
+export const MenuContext = React.createContext<{
+  state: typeof initialState,
+  dispatch: React.Dispatch<any>
+}>({
+  state: initialState,
+  dispatch: () => { }
+})
+
+const layout = {
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 },
+};
+
 /**
  * 菜单管理
  * @returns 
  */
 
-const AppMenuSearch = () => {
+const AppMenuSearch = (props: any) => {
+  const { onFormInstanceReady, showModel, setQqueryParams } = props
+
+  const [form] = Form.useForm();
+  // 由于是按照加载顺序所以放在最上面
+  React.useEffect(() => {
+    onFormInstanceReady(form);
+  }, []);
+  const onGenderChange = (value: string) => {
+    switch (value) {
+      case 'male':
+        form.setFieldsValue({ note: 'Hi, man!' });
+        break;
+      case 'female':
+        form.setFieldsValue({ note: 'Hi, lady!' });
+        break;
+      case 'other':
+        form.setFieldsValue({ note: 'Hi there!' });
+        break;
+      default:
+    }
+  };
+
+  const onFinish = (values: any) => {
+    console.log(values);
+  };
+
+  const onResetFields = () => {
+    form.resetFields();
+  };
+
+  const onFill = () => {
+    form.setFieldsValue({ note: 'Hello world!', gender: 'male' });
+  };
+
+  const onPressEnter = (e: any, k: any) => {
+    console.log('onPressEnter') // 优先执行
+    const name = 'lipanpan'
+    const info = {
+      [name]: 'nan',
+      age: 18
+    }
+    console.log(info)
+    setQqueryParams((preQuerys: any) => {
+      return {
+        ...preQuerys,
+        [k]: e.target.value
+      }
+    })
+  }
 
   return (
     <React.Fragment>
-
-    </React.Fragment>
+      <Form
+        {...layout}
+        form={form}
+        name="control-hooks"
+      // onFinish={onFinish}
+      // style={{ maxWidth: 65 }}
+      >
+        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className='search'>
+          <Button type="primary" onClick={(event: any) => showModel(event, {})}>添加</Button>
+          <Form.Item
+            name="search" label="搜索" rules={[{ required: false }]}>
+            <Input
+              placeholder='请搜索...'
+              allowClear
+              // onPressEnter={onPressEnter}
+              onPressEnter={(e: any) => onPressEnter(e, 'search')}
+              onFocus={() => { console.log('onFocus') }}
+              onBlur={() => { console.log('onBlur') }}
+            />
+          </Form.Item>
+        </Row>
+      </Form>
+    </React.Fragment >
   )
+
 }
 
 const columns: TableColumnsType<DataType> = [
   {
-    title: 'Name',
+    title: '菜单名称',
     dataIndex: 'name',
     key: 'name',
   },
   {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-    width: '12%',
+    title: '路由地址',
+    dataIndex: 'url',
+    key: 'url',
+    // width: '12%',
   },
   {
-    title: 'Address',
-    dataIndex: 'address',
-    width: '30%',
+    title: '组件名称',
+    dataIndex: 'element',
+    // width: '30%',
     key: 'address',
   },
 ];
@@ -140,37 +243,158 @@ const AppMenuTable = () => {
   )
 }
 
-const AppMenuDialog = () => {
+
+interface ModelFormProps {
+  isUpdate: boolean;
+  initialValues: any; // todo 
+  onFormInstanceReady: (instance: FormInstance<any>) => void;
+}
+
+const ModelForm: React.FC<ModelFormProps> = ({
+  onFormInstanceReady
+}) => {
+  const context = React.useContext(MenuContext)
+  const [form] = Form.useForm();
+  React.useEffect(() => onFormInstanceReady(form), [])
+
   return (
     <React.Fragment>
+      <Form form={form} name="form_in_modal" initialValues={{}}>
+        <Row gutter={[16, 16]}>
+          <Col span={11}>
+            <Form.Item
+              name="menu_name"
+              label="菜单名称"
+              rules={[
+                { required: true, message: '请输入菜单名称' },
+                // { validator: validateNameExists }
+              ]}
+            >
+              <Input
+                placeholder='请输入菜单名称'
+              // disabled={isUpdate}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={11}>
+            <Form.Item
+              name="url"
+              label="路由地址"
+              rules={[
+                { required: true, message: '请输入路由地址' },
+                // { validator: validateNameExists }
+              ]}
+            >
+              <Input
+                placeholder='请输入路由地址'
+              // disabled={isUpdate}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={22}>
+            <Form.Item name="remark" label="备注">
+              <Input.TextArea
+                placeholder='请输入备注'
+                showCount maxLength={100} />
+            </Form.Item>
+          </Col>
+        </Row>
 
+      </Form>
     </React.Fragment>
   )
 }
 
 
-// 初始化参数
-const initialState = {
-  loading: false,
-  menu: {
-    id: null,
-    title: null,
-    content: null,
-    summary: null,
-    html: null
-  },
-  page: {},
-  data: []
-};
+const AppMenuDialog = React.forwardRef((props: any, ref) => {
+  const { onSubmit } = props
+  const context = React.useContext(MenuContext)
+  console.log("context", context)
+  // const [open, setOpen] = React.useState<boolean>(false);
+  const [formInstance, setFormInstance] = React.useState<FormInstance>();
 
-// 定义 context 
-export const MenuContext = React.createContext<{
-  state: typeof initialState,
-  dispatch: React.Dispatch<any>
-}>({
-  state: initialState,
-  dispatch: () => { }
+  const onOk = () => {
+    formInstance?.validateFields()
+      .then((values: any) => {
+        // onSubmit(values)
+        context.dispatch((f: any) => onSubmit(f, values))
+        // context.dispatch({ type: 'CREATE', payload: values })
+      }).finally(() => {
+        context.dispatch({
+          type: 'SHOW_MODEL', payload: {
+            open: false
+          }
+        })
+      })
+  }
+  // context.dispatch({ type: 'PUBLISH', payload: {} })
+  // console.log(formRef)
+  // try {
+  //   const values = await formInstance?.validateFields()
+  //   onSubmit(values)
+  // } catch (error) {
+  //   console.log('Failed:', error);
+  // }
+
+  //   formInstance?.validateFields()
+  //     .then((values: any) => {
+  //       // context.dispatch({ type: 'PUBLISH', payload: values })
+  //       if (formValues.id) {
+  //         values["id"] = formValues.id
+  //       }
+  //       // props.onSubmit(values)
+  //       onSubmit(values)
+  //     }).catch((e) => {
+  //       console.log('e', e)
+  //       return;
+  //     })
+  // }
+
+  const onCancel = () => {
+    // formInstance?.resetFields();
+    // setOpen(false)
+    context.dispatch({
+      type: 'SHOW_MODEL', payload: {
+        open: false
+      }
+    })
+  }
+
+  return (
+    <React.Fragment>
+      <Modal
+        open={context.state.open}
+        title="创建菜单"
+        okText="确定"
+        cancelText="取消"
+        okButtonProps={{ autoFocus: true }}
+        onCancel={onCancel}
+        destroyOnClose
+        onOk={onOk}
+      // afterOpenChange={afterOpenChange}
+      // onOk={async () => {
+      //   try {
+      //     const values = await formInstance?.validateFields();
+      //     formInstance?.resetFields();
+      //     onOK(values);
+      //   } catch (error) {
+      //     console.log('Failed:', error);
+      //   }
+      // }}
+      >
+        <ModelForm
+          initialValues={{}}
+          onFormInstanceReady={(instance) => {
+            setFormInstance(instance);
+          }}
+          isUpdate={false}
+        />
+      </Modal>
+    </React.Fragment>
+  )
 })
+
+
 
 const reducer = (preState: any, action: any) => {
 
@@ -180,9 +404,28 @@ const reducer = (preState: any, action: any) => {
   }
   switch (action.type) {
     case 'READ':
-      return preState
+      preState.loading = true
+      return {
+        ...preState
+      }
     case 'READ_DONE':
+      preState.loading = false
+      return {
+        ...preState
+      }
+    case 'CREATE':
+      preState.loading = true
+      return {
+        ...preState
+      }
+    case 'UPDATE':
       return preState
+    case 'SHOW_MODEL':
+      const { open, data } = action.payload
+      preState.open = open
+      return {
+        ...preState
+      }
     default:
       return preState
   }
@@ -196,6 +439,9 @@ const AppMenu = () => {
     },
   } = theme.useToken();
 
+  const [formInstance, setFormInstance] = React.useState<FormInstance>();
+  const dialogRef: any = React.useRef()
+
   const [state, dispatch] = React.useReducer(reducer, initialState)
 
   // 定义action 
@@ -208,6 +454,26 @@ const AppMenu = () => {
     }
   }
 
+  const showModel = (event: any, data?: any) => {
+    dispatch({ type: 'SHOW_MODEL', payload: { open: true } })
+  }
+
+  // submit 方法
+  const onSubmit = (dispatch: React.Dispatch<any>, data: any) => {
+    console.log('dispatch', dispatch)
+    console.log('data', data)
+    dispatch({ type: 'CREATE', payload: { data } })
+    request({
+      url: `/api/user/v1/account/menus/`,
+      method: 'POST',
+      data
+    }).then((r: any) => {
+    }).finally(() => {
+      dispatch({ type: 'READ_DOWN', payload: { data } })
+    })
+  }
+
+
   return (
     <React.Fragment>
       <div
@@ -218,9 +484,17 @@ const AppMenu = () => {
         }}
       >
         <MenuContext.Provider value={{ state, dispatch: dispatchF }}>
-          <AppMenuSearch />
+          <AppMenuSearch
+            showModel={showModel}
+            onFormInstanceReady={(instance: any) => {
+              setFormInstance(instance);
+            }}
+          />
           <AppMenuTable />
-          <AppMenuDialog />
+          <AppMenuDialog
+            ref={dialogRef}
+            onSubmit={onSubmit}
+          />
         </MenuContext.Provider>
       </div>
 

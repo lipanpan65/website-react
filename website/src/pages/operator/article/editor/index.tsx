@@ -36,15 +36,12 @@ const removeMarkdownSyntax = (markdownText: string, maxLength: number) => {
   // markdownText = markdownText.replace(/`([^`]+)`/g, '$1');
   // // 移除代码块
   // markdownText = markdownText.replace(/```[^`]+```/g, '');
-
   markdownText = markdownText.replace(/```[^`\n]*\n+[^```]+```\n+/g, "")
   markdownText = markdownText.replace(/`([^`\n]+)`/g, "$1")
-
   // 移除多余的换行符和空白行
   markdownText = markdownText.replace(/\n+/g, ' ');
   // 移除多余的空格
   markdownText = markdownText.trim();
-
   return markdownText.substring(0, maxLength);
 }
 
