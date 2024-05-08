@@ -7,7 +7,9 @@ import {
 
 import {
   Col,
-  List, Row, Typography, theme
+  List, Row,
+  Typography,
+  theme
   // Space,
   // Dropdown,
   // Menu,
@@ -122,8 +124,9 @@ const Article: React.FC = () => {
             // paddingTop: '2.667rem'
           }}>
             <List
+              itemLayout="vertical"
               loading={state.loading}
-              itemLayout="horizontal"
+              // itemLayout="horizontal"
               dataSource={state.data}
               pagination={{
                 ...state.page,
@@ -134,7 +137,14 @@ const Article: React.FC = () => {
               }}
               rowKey={rowKeyF}
               renderItem={(item: any, index: number) => (
-                <List.Item style={{ padding: '12px 12px 0' }}>
+                <List.Item
+                  style={{ padding: '12px 12px 0' }}
+                  actions={[
+                    // <span>{item.creator}</span>,
+                    <span>{item.create_time}</span>,
+                    <span>{item.category_name}</span>,
+                  ]}
+                >
                   <List.Item.Meta
                     // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
                     title={ArticleTitle(item)}

@@ -35,10 +35,18 @@ export const list2Tree = (data: any, id?: any, pid?: any) => {
   return data.filter((o: any) => o['parentid'] === '0')
 }
 
-
 export const delay = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+// TODO 如何使用全部
+// export const rowKeyF = (record: { id: number }): number => record.id
+export const rowKeyF = (record: any): number => record.id || record.pk
+export const showTotal = (total: any) => `共${total}条记录`
+
+
+
+
 
 // https://blog.csdn.net/hfdxmz_3/article/details/106637270
 

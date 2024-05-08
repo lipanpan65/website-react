@@ -1,7 +1,28 @@
 import * as React from 'react'
-import { Col, MenuProps, Row, Menu, theme, Tabs } from 'antd'
+import { Col, MenuProps, Row, Menu, theme, Tabs, Space } from 'antd'
+
+/**
+ * 
+ * 
+ * import * as Icon from '@ant-design/icons';
+//iconName是icon名字字符串
+  const createAntdIcon = (iconName) => {
+    return React.createElement(Icon[iconName]);
+  }
+  list 的页面
+  const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
+  <Space>
+    {React.createElement(icon)}
+    {text}
+  </Space>
+);
+
+ * 
+ */
 
 import {
+  UnorderedListOutlined,
+  EditOutlined,
   MenuOutlined,
   HomeOutlined
 } from '@ant-design/icons'
@@ -9,6 +30,18 @@ import {
 import type { TabsProps } from 'antd';
 
 import CreatorAriticle from './article'
+
+const TabTitle = () => {
+  return (
+    <React.Fragment>
+      <Space>
+        {/* React.createElement('') */}
+        <EditOutlined />
+        草稿
+      </Space>
+    </React.Fragment>
+  )
+}
 
 const CreatorOverView: React.FC = () => {
 
@@ -20,19 +53,20 @@ const CreatorOverView: React.FC = () => {
   } = theme.useToken();
 
   const onChange = (key: string) => {
+    console.log('key===>', key)
     console.log(key);
   };
 
   const items: TabsProps['items'] = [
     {
-      key: '1',
+      key: 'article',
       label: '文章',
       children: <CreatorAriticle />,
     },
     {
-      key: '2',
-      label: '草稿',
-      children: 'Content of Tab Pane 2',
+      key: 'draft',
+      label: TabTitle(),
+      children: <CreatorAriticle />,
     },
   ];
 
@@ -44,7 +78,7 @@ const CreatorOverView: React.FC = () => {
         // border: '1px solid green',
         background: colorBgContainer
       }}>
-        <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+        <Tabs defaultActiveKey="article" items={items} onChange={onChange} />
       </div>
     </React.Fragment>
   )
