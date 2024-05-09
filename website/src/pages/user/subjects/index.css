@@ -1,0 +1,9 @@
+.edit-button {
+    display: none;
+    /* 初始状态下按钮隐藏 */
+}
+
+.titleRender:hover .edit-button {
+    display: inline-block;
+    /* 当 li 元素悬停时，显示编辑按钮 */
+}

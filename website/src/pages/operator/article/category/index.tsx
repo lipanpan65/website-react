@@ -158,7 +158,7 @@ const data: DataType[] = [
 
 const CategoryTable = (props: any) => {
   const { data: { page, data }, columns, onChange, loading } = props
-
+  
   // 分页参数
   const pagination = {
     total: page?.total || 0, // 数据总数
@@ -426,7 +426,6 @@ const ArticleCategory = (props: any) => {
   const onChange = (pagination: any) => {
     setLoading(true)
     // Promise.name
-    console.log('onChange')
     // TODO 这里是异步执行的 https://blog.csdn.net/weixin_41697143/article/details/81837076
     // https://blog.csdn.net/qq_37581764/article/details/134213648
     // setTimeout(() => {
@@ -457,7 +456,6 @@ const ArticleCategory = (props: any) => {
     })
   }
 
-
   const onDelete = (event: any, data?: any) => {
     // const completeLoading = ()
     const onOk = () => new Promise<void>((resolve, reject) => {
@@ -476,7 +474,6 @@ const ArticleCategory = (props: any) => {
         reject()
       })
     }).then((r: any) => {
-      // console.log('r==>', r)
     }).finally(() => {
       modelRef.current.setOpen(false)
       getArticleCategory()
@@ -546,8 +543,6 @@ const ArticleCategory = (props: any) => {
   const showModel = (event: any, data?: any) => {
     modelRef.current.showModel(true, data)
   }
-
-
 
   /**
    * 按照顺序执行

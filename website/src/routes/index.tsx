@@ -5,32 +5,21 @@ import {
   useRoutes
 } from 'react-router-dom'
 
+{/* <SecurityScanOutlined /> */ }
+{/* <UserOutlined /> */}
 import {
-  AlertOutlined,
-  // ApartmentOutlined,
-  // CloudServerOutlined,
-  DesktopOutlined,
-  // UsergroupAddOutlined,
-  // UserOutlined,
-  // UserAddOutlined,
-  // BookOutlined,
+  GroupOutlined,
+  GatewayOutlined,
+  OrderedListOutlined,
+  MenuOutlined,
   AppstoreOutlined,
-  // SettingOutlined,
-  // DeploymentUnitOutlined,
-  // InboxOutlined,
-  // DatabaseOutlined,
   BugOutlined,
-  // NodeIndexOutlined,
-  // VerifiedOutlined,
-  // BlockOutlined,
-  // FileTextOutlined,
   SwitcherOutlined,
-  EditOutlined,
   HomeOutlined,
-  ProfileOutlined
+  ProfileOutlined,
+  SecurityScanOutlined,
+  UserOutlined
 } from '@ant-design/icons'
-
-{/* <ProfileOutlined /> */ }
 
 import AppLayout from '@/components/AppLayout'
 import BaseLayout from '@/components/BaseLayout'
@@ -97,27 +86,40 @@ export const routeMap: any = [
             name: "文章管理",
             url: "/user/creator/overview",
             hash: "#/user/creator/overview",
-            icon: <AppstoreOutlined />,
+            icon: <OrderedListOutlined />,
           },
           {
             id: "222",
             name: "分类管理",
             url: "/user/creator/article-category",
             hash: "#/user/creator/article-category",
-            icon: <AppstoreOutlined />,
+            icon: <GroupOutlined />,
           }, {
             id: "223",
             name: "菜单管理",
             url: "/user/creator/menu",
             hash: "#/user/creator/menu",
-            icon: <AppstoreOutlined />,
+            icon: <MenuOutlined />,
           },
           {
             id: "224",
             name: "专题管理",
             url: "/user/creator/subjects",
             hash: "#/user/creator/subjects",
-            icon: <AppstoreOutlined />,
+            icon: <GatewayOutlined />,
+          },
+        ]
+      }, {
+        id: "23",
+        name: "用户管理",
+        icon: <SecurityScanOutlined />,
+        childs: [
+          {
+            id: "231",
+            name: "用户管理",
+            url: "/user/creator/subjects",
+            hash: "#/user/creator/subjects",
+            icon: <UserOutlined />,
           },
         ]
       }
