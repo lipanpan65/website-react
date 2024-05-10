@@ -14,11 +14,13 @@ import {
 
 import AppHeader from '../AppLayout/AppHeader';
 
+import { matchPath } from '@/utils'
+
 import { routeMap } from '@/routes'
 
 const { Header, Content, Footer } = Layout;
 
-const matchPath = (menuUrl: any, curPath: any) => curPath.indexOf(menuUrl) === 0
+// const matchPath = (menuUrl: any, curPath: any) => curPath.indexOf(menuUrl) === 0
 
 const getLeftActive = (func: any, curPath: any, parent = []) => {
   console.log("getLeftActive func curPath parent", func, curPath, parent)
