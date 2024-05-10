@@ -78,7 +78,6 @@ const contentStyle: React.CSSProperties = {
   // textAlign: 'center',
   // minHeight: 540,
   minHeight: '100vh',
-  
   // minHeight: '80vh',
   // lineHeight: '120px',
   // color: '#fff',
