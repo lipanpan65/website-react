@@ -1,9 +1,7 @@
 import * as React from 'react'
 
 import {
-  Breadcrumb,
   Layout,
-  Menu,
   theme
 } from 'antd'
 
@@ -12,47 +10,13 @@ import {
   Outlet
 } from "react-router-dom"
 
-import { routeMap } from '../../routes'
-
 import AppHeader from './AppHeader'
+import { routeMap } from '@/routes'
+import { getLeftActive, matchPath } from '@/utils'
 
 import './index.css'
 
 const { Header, Content, Footer } = Layout;
-
-const items = new Array(5).fill(null).map((_, index) => ({
-  key: index + 1,
-  label: `nav ${index + 1}`,
-}));
-
-const matchPath = (menuUrl: any, curPath: any) => curPath.indexOf(menuUrl) === 0
-
-const getLeftActive = (func: any, curPath: any, parent = []) => {
-  let active: any;
-  func.every((item: any) => {
-    if (item.childs) {
-      // 递归调用获取 activate,如果菜单存在子级菜单则 parent 即为 item 本身
-      active = getLeftActive(item.childs, curPath, item)
-      if (active) {
-        // 如果层级嵌套可能存在多个 item
-        if (!Array.isArray(active.parent)) {
-          active.parent = [active.parent]
-        }
-        active.parent = parent
-        return false;
-      }
-      return true
-    } else {
-      if (matchPath(item.hash, curPath)) {
-        item.parent = parent;
-        active = item;
-        return false;
-      }
-      return true;
-    }
-  })
-  return active;
-}
 
 const App: React.FC = () => {
   const {
@@ -86,26 +50,6 @@ const App: React.FC = () => {
   })
 
   console.log(appMenu)
-
-
-  const [leftMenu, setLeftMenu] = React.useState<any>(() => {
-    let [funcs, leftFuncs, topActive, leftActive]: any = [routeMap]
-    if (funcs) {
-      funcs.every((top: any) => {
-        if (matchPath(top.hash, window.location.hash)) {
-          topActive = top;
-          leftFuncs = top.childs;
-          // if (funcs) {
-          if (leftFuncs) {
-            leftActive = getLeftActive(leftFuncs, window.location.hash);
-          }
-          return false;
-        }
-        return true;
-      })
-    }
-    return { funcs, leftFuncs, topActive, leftActive }
-  })
 
   // React.useEffect(() => {
   //   console.log("leftMenu===>", leftMenu)

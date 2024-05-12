@@ -27,6 +27,7 @@ const { Header } = Layout
 const MenuLable = (v: any) => <Link to={`${v.url}`}>{v.name}</Link>
 
 const AppHeader: any = (props: any) => {
+  console.log("AppHeader.props", props)
   let { funcs = [], active = {}, top, appMenu } = props
   // selectedKeys = [active.id];
   // const { appMenu } = props
@@ -34,7 +35,6 @@ const AppHeader: any = (props: any) => {
 
   const [items, setItems] = React.useState<any>(() => {
     return topMenu.map((v: any) => {
-      // console.log(v)
       return {
         key: v.id,
         icon: v.icon,
@@ -47,20 +47,8 @@ const AppHeader: any = (props: any) => {
     return topActive?.id
   })
 
-  // console.log("items", items)
-
   const navigate = useNavigate()
-  console.log("AppHeader.props===>", props)
-
-  const [leftMunu, setLeftMenu] = React.useState<any>(() => {
-    // console.log("=========")
-    // console.log(top)
-    // console.log("=========")
-
-    // const leftMunu = menu.childs || []
-    // console.log("leftMunu===>", leftMunu)
-    // return leftMunu
-  })
+  // console.log("AppHeader.props===>", props)
 
   const handleLinkTo = () => {
     navigate('/')

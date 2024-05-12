@@ -12,7 +12,6 @@ const { confirm } = Modal;
 
 type TableRowSelection<T> = TableProps<T>['rowSelection'];
 
-
 interface DataType {
   key: React.ReactNode;
   name: string;
