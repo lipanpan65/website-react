@@ -1,13 +1,15 @@
 import * as React from 'react'
 import BaseLayout from '../BaseLayout'
 import type { MenuProps } from 'antd';
-import { Layout, Flex, Menu, Row, Col, theme } from 'antd'
+import {
+  Layout,
+  theme
+} from 'antd'
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
 import VerticalMenu from './VerticalMenu';
 import './index.css'
 import { Outlet } from 'react-router-dom'
 import { routeMap } from '../../routes'
-import AppHeader from '../AppLayout/AppHeader';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -132,33 +134,55 @@ const getLeftActive = (func: any, curPath: any, parent = []) => {
   return active;
 }
 
-
 const CreatorLayout: React.FC = () => {
 
-  const [leftMenu, setLeftMenu] = React.useState<any>(() => {
-    // console.log("initleftmenu===>", routeMap)
+  const [appMenu, setAppMeun] = React.useState<any>(() => {
     const newRoteMap = routeMap.filter((v: any) => v.name === '创作者中心')
     console.log('newRoteMap===>', newRoteMap)
-    let [funcs, leftFuncs, topActive, leftActive]: any = [newRoteMap]
-    if (funcs) {
-      funcs.every((top: any) => {
+    let [topMenu, topActive, leftMenu, , leftActive]: any = [newRoteMap]
+    if (topMenu) {
+      topMenu.every((top: any) => {
         if (matchPath(top.hash, window.location.hash)) {
-          topActive = top;
-          leftFuncs = top.childs;
-          if (funcs) {
-            leftActive = getLeftActive(leftFuncs, window.location.hash);
+          topActive = top
+          leftMenu = top.childs
+          if (leftMenu) {
+            leftActive = getLeftActive(leftMenu, window.location.hash);
           }
           return false;
         }
-        return true;
+        return true
       })
     }
-    console.log("CreatorLayout funcs", funcs)
-    console.log("CreatorLayout leftFuncs", leftFuncs)
-    console.log("CreatorLayout topActive", topActive)
-    console.log("CreatorLayout leftActive", leftActive)
-    return { funcs, leftFuncs, topActive, leftActive }
+    return {
+      topMenu, topActive,
+      leftMenu, leftActive
+    }
   })
+
+  // const [leftMenu, setLeftMenu] = React.useState<any>(() => {
+  //   // console.log("initleftmenu===>", routeMap)
+  //   const newRoteMap = routeMap.filter((v: any) => v.name === '创作者中心')
+  //   console.log('newRoteMap===>', newRoteMap)
+  //   let [funcs, leftFuncs, topActive, leftActive]: any = [newRoteMap]
+  //   if (funcs) {
+  //     funcs.every((top: any) => {
+  //       if (matchPath(top.hash, window.location.hash)) {
+  //         topActive = top;
+  //         leftFuncs = top.childs;
+  //         if (funcs) {
+  //           leftActive = getLeftActive(leftFuncs, window.location.hash);
+  //         }
+  //         return false;
+  //       }
+  //       return true;
+  //     })
+  //   }
+  //   console.log("CreatorLayout funcs", funcs)
+  //   console.log("CreatorLayout leftFuncs", leftFuncs)
+  //   console.log("CreatorLayout topActive", topActive)
+  //   console.log("CreatorLayout leftActive", leftActive)
+  //   return { funcs, leftFuncs, topActive, leftActive }
+  // })
 
   const {
     token: { colorBgContainer,
@@ -173,7 +197,6 @@ const CreatorLayout: React.FC = () => {
     <BaseLayout>
       <React.Fragment>
         <Layout style={layoutStyle}>
-          {/* <AppHeader funcs={leftMenu.funcs} active={leftMenu.topActive} top={'创作者中心'} /> */}
           <Layout style={{
             paddingTop: '1rem',
             // minHeight: '100vh',
@@ -181,10 +204,9 @@ const CreatorLayout: React.FC = () => {
             margin: 'auto'
           }}>
             <Sider width="20%" style={{ ...siderStyle, background: colorBgContainer, marginRight: '1rem', borderRadius: borderRadiusLG }}>
-              <VerticalMenu funcs={leftMenu.leftFuncs} active={leftMenu.leftActive} />
+              <VerticalMenu funcs={appMenu.leftFuncs} active={appMenu.leftActive} appMenu={appMenu} />
             </Sider>
             <Content style={{ ...contentStyle, borderRadius: borderRadiusLG }}>
-              {/* Outlet 相当于组件 */}
               <Outlet />
             </Content>
           </Layout>
