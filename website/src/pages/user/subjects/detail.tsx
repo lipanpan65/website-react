@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { Tree, Space } from 'antd';
-
+import { Tree, Space, Layout, theme } from 'antd';
 import {
   EditOutlined,
   PlusOutlined,
@@ -9,12 +8,7 @@ import {
 } from '@ant-design/icons';
 
 import './index.css'
-
-{/* <PlusOutlined /> */ }
-
-{/* <EditOutlined /> */ }
-{/* <DeleteOutlined /> */ }
-
+const { Header, Content, Footer, Sider } = Layout;
 
 interface DataNode {
   title: string;
@@ -28,27 +22,22 @@ const titleRender = (nodeData: any) => {
   console.log(nodeData)
   const { title, key, children } = nodeData
 
-
-
   return (
     <React.Fragment>
       <div
         className='titleRender'
         key={key}>
-        <span>{title}</span>
-        <span className='edit-button'>
-          <Space>
-            <EditOutlined />
-            <PlusOutlined />
-            <DeleteOutlined />
-          </Space>
-        </span>
+        <Space>
+          <span>{title}</span>
+          <span className='edit-button'>
+            <Space>
+              <EditOutlined />
+              <PlusOutlined />
+              <DeleteOutlined />
+            </Space>
+          </span>
+        </Space>
       </div>
-      {/* <div> */}
-      {/* <Space> */}
-
-      {/* </Space> */}
-      {/* </div> */}
     </React.Fragment>
   )
 }
@@ -123,9 +112,28 @@ const SubjectEditor: React.FC = () => {
 }
 
 const SubjectDetail: React.FC = () => {
+
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
+
   return (
     <React.Fragment>
-      <SubjectTree />
+      <Layout
+        style={{ padding: '24px 0', background: colorBgContainer, borderRadius: borderRadiusLG }}
+      >
+        <Sider style={{ background: colorBgContainer }} width={200}>
+          {/* <Menu
+            mode="inline"
+            defaultSelectedKeys={['1']}
+            defaultOpenKeys={['sub1']}
+            style={{ height: '100%' }}
+            items={items2}
+          /> */}
+          <SubjectTree />
+        </Sider>
+        <Content style={{ padding: '0 24px', minHeight: 280 }}>Content</Content>
+      </Layout>
     </React.Fragment>
   )
 }
