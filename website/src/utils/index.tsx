@@ -1,4 +1,7 @@
-import { theme } from 'antd'
+import { Space, theme } from 'antd'
+import * as Icon from '@ant-design/icons';
+import * as React from 'react';
+
 export { request } from './request'
 export { dateFormate, timedeltaFormate } from './date-formate'
 export { getCookie, clearCookie } from './cookie'
@@ -71,6 +74,41 @@ export const getLeftActive = (func: any, curPath: any, parent = []) => {
   return active;
 }
 
+export const IconText = (icon: string, text: string) => {
+  const Icons: any = Icon
+  return (
+    <React.Fragment>
+      <Space>
+        {React.createElement(Icons[icon])}
+        {text}
+      </Space>
+    </React.Fragment>
+  )
+}
+
+const style: React.CSSProperties = {
+  // background: '#0092ff', 
+  padding: '16px 0'
+};
+
+
+/**
+ * 
+ * 
+ * import * as Icon from '@ant-design/icons';
+//iconName是icon名字字符串
+  const createAntdIcon = (iconName) => {
+    return React.createElement(Icon[iconName]);
+  }
+  list 的页面
+  const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
+  <Space>
+    {React.createElement(icon)}
+    {text}
+  </Space>
+);
+ * 
+ */
 
 
 
