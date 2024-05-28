@@ -19,11 +19,16 @@ import {
 
 import { dateFormate, request } from '@/utils';
 
-import './index.css'
 import modal from 'antd/es/modal';
 
-const rowKeyF = (record: { id: number }): number => record.id
-const showTotal = (total: any) => `共${total}条记录`
+import './index.css'
+
+
+import { rowKeyF, showTotal } from '@/utils';
+
+// const rowKeyF = (record: { id: number }): number => record.id
+// const showTotal = (total: any) => `共${total}条记录`
+
 // 文章标题
 const ArticleTitle = (article: any) => <Link
   className='title'
@@ -66,12 +71,7 @@ const reducer = (state: any, action: any) => {
   }
 }
 
-
-
-
-// 这是编辑页面
-
-const CratorArticle: any = (props:any) => {
+const CratorArticle: any = (props: any) => {
 
   const {
     token: {

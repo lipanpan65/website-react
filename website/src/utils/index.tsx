@@ -1,9 +1,7 @@
-// import request from "./request"
-
+import { theme } from 'antd'
 export { request } from './request'
 export { dateFormate, timedeltaFormate } from './date-formate'
 export { getCookie, clearCookie } from './cookie'
-
 
 // TODO arrary 的
 // const list2Tree = (data:Array<{}>,id:any,pid:any)
@@ -37,10 +35,44 @@ export const list2Tree = (data: any, id?: any, pid?: any) => {
   return data.filter((o: any) => o['parentid'] === '0')
 }
 
-
 export const delay = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+// TODO 如何使用全部
+// export const rowKeyF = (record: { id: number }): number => record.id
+export const rowKeyF = (record: any): number => record.id || record.pk
+export const showTotal = (total: any) => `共${total}条记录`
+export const matchPath = (menuUrl: any, curPath: any) => curPath.indexOf(menuUrl) === 0
+export const getLeftActive = (func: any, curPath: any, parent = []) => {
+  let active: any;
+  func.every((item: any) => {
+    if (item.childs) {
+      // 递归调用获取 activate,如果菜单存在子级菜单则 parent 即为 item 本身
+      active = getLeftActive(item.childs, curPath, item)
+      if (active) {
+        // 如果层级嵌套可能存在多个 item
+        if (!Array.isArray(active.parent)) {
+          active.parent = [active.parent]
+        }
+        active.parent = parent
+        return false;
+      }
+      return true
+    } else {
+      if (matchPath(item.hash, curPath)) {
+        item.parent = parent;
+        active = item;
+        return false;
+      }
+      return true;
+    }
+  })
+  return active;
+}
+
+
+
 
 // https://blog.csdn.net/hfdxmz_3/article/details/106637270
 

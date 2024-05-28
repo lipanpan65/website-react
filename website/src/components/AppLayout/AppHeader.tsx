@@ -2,8 +2,6 @@ import * as React from 'react'
 
 import {
   Button,
-  Row,
-  Col,
   Menu,
   Layout,
   MenuProps,
@@ -13,14 +11,11 @@ import {
   Dropdown
 } from 'antd'
 
-// import { Col, MenuProps, Row, Menu, theme, Tabs, List, Dropdown, message } from 'antd'
-
-// import { Button, Flex, Segmented } from 'antd';
-
 import {
   Link,
   useNavigate,
 } from "react-router-dom"
+
 import { FileTextOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
 
 const UserList = ['U', 'Lucy', 'Tom', 'Edward'];
@@ -32,30 +27,41 @@ const { Header } = Layout
 const MenuLable = (v: any) => <Link to={`${v.url}`}>{v.name}</Link>
 
 const AppHeader: any = (props: any) => {
+  console.log("AppHeader.props", props)
+  let { funcs = [], active = {}, top, appMenu } = props
+  // selectedKeys = [active.id];
+  // const { appMenu } = props
+  const { topMenu = [], topActive } = appMenu
 
-  console.log("AppHeader===>", props)
+  const [items, setItems] = React.useState<any>(() => {
+    return topMenu.map((v: any) => {
+      return {
+        key: v.id,
+        icon: v.icon,
+        label: MenuLable(v)
+      }
+    })
+  })
+
+  const [selectedKeys, setSelectedKeys] = React.useState(() => {
+    return topActive?.id
+  })
 
   const navigate = useNavigate()
-
-  let { funcs = [], active = {}, top } = props,
-    selectedKeys = [active.id];
-  console.log("selectedKeys===>", selectedKeys)
-
-  const items = funcs.filter((v: any) => v.name === top || v.name === '专题').map((v: any) => {
-    return {
-      key: v.id,
-      icon: v.icon,
-      label: MenuLable(v)
-    }
-  })
+  // console.log("AppHeader.props===>", props)
 
   const handleLinkTo = () => {
     navigate('/')
   }
 
   const onClick: MenuProps['onClick'] = (e) => {
-    console.log('click ', e);
-    // setCurrent(e.key);
+    const { key } = e
+    topMenu.filter((v: any) => v.id === key)
+    setSelectedKeys((preSelectedKeys: any) => {
+      const active = topMenu.find((v: any) => v.id === key)
+      console.log("active", active)
+      return active?.id
+    })
   };
 
   const items2: MenuProps['items'] = [
@@ -74,10 +80,15 @@ const AppHeader: any = (props: any) => {
       label: <Link to={`/user/creator/overview`}>创作者中心</Link>,
       icon: <HomeOutlined />,
     },
+    {
+      key: 'admin',
+      label: <Link to={`/user/creator/overview`}>后台管理</Link>,
+      icon: <HomeOutlined />,
+    },
   ];
 
-  console.log("AppHeader.props===>", props)
-  console.log("items===>", items)
+  // console.log("AppHeader.props===>", props)
+  // console.log("items===>", items)
   return (
     <React.Fragment>
       <Header style={{
@@ -114,7 +125,6 @@ const AppHeader: any = (props: any) => {
                 items: items2,
                 onClick: (e: any) => console.log(e)
               }}>
-
                 <Avatar style={{ backgroundColor: ColorList[0], verticalAlign: 'middle' }} size="default" gap={GapList[0]}>
                   {/* {UserList[0]} */}
                   李

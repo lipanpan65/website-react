@@ -5,32 +5,21 @@ import {
   useRoutes
 } from 'react-router-dom'
 
+{/* <SecurityScanOutlined /> */ }
+{/* <UserOutlined /> */ }
 import {
-  AlertOutlined,
-  // ApartmentOutlined,
-  // CloudServerOutlined,
-  DesktopOutlined,
-  // UsergroupAddOutlined,
-  // UserOutlined,
-  // UserAddOutlined,
-  // BookOutlined,
+  GroupOutlined,
+  GatewayOutlined,
+  OrderedListOutlined,
+  MenuOutlined,
   AppstoreOutlined,
-  // SettingOutlined,
-  // DeploymentUnitOutlined,
-  // InboxOutlined,
-  // DatabaseOutlined,
   BugOutlined,
-  // NodeIndexOutlined,
-  // VerifiedOutlined,
-  // BlockOutlined,
-  // FileTextOutlined,
   SwitcherOutlined,
-  EditOutlined,
   HomeOutlined,
-  ProfileOutlined
+  ProfileOutlined,
+  SecurityScanOutlined,
+  UserOutlined
 } from '@ant-design/icons'
-
-{/* <ProfileOutlined /> */ }
 
 import AppLayout from '@/components/AppLayout'
 import BaseLayout from '@/components/BaseLayout'
@@ -45,7 +34,7 @@ import NotFound from '@/components/NotFound'
 import ArticleCategory from '@/pages/operator/article/category'
 import Subject from '@/pages/user/subjects/overview'
 import SubjectDetail from '@/pages/user/subjects/detail'
-
+import AppMenu from '@/pages/operator/account/menu'
 
 export const routeMap: any = [
   {
@@ -97,14 +86,40 @@ export const routeMap: any = [
             name: "文章管理",
             url: "/user/creator/overview",
             hash: "#/user/creator/overview",
-            icon: <AppstoreOutlined />,
+            icon: <OrderedListOutlined />,
           },
           {
             id: "222",
             name: "分类管理",
             url: "/user/creator/article-category",
             hash: "#/user/creator/article-category",
-            icon: <AppstoreOutlined />,
+            icon: <GroupOutlined />,
+          }, {
+            id: "223",
+            name: "菜单管理",
+            url: "/user/creator/menu",
+            hash: "#/user/creator/menu",
+            icon: <MenuOutlined />,
+          },
+          {
+            id: "224",
+            name: "专题管理",
+            url: "/user/creator/subjects",
+            hash: "#/user/creator/subjects",
+            icon: <GatewayOutlined />,
+          },
+        ]
+      }, {
+        id: "23",
+        name: "用户管理",
+        icon: <SecurityScanOutlined />,
+        childs: [
+          {
+            id: "231",
+            name: "用户管理",
+            url: "/user/creator/subjects",
+            hash: "#/user/creator/subjects",
+            icon: <UserOutlined />,
           },
         ]
       }
@@ -136,6 +151,7 @@ export const routeMap: any = [
 ]
 
 const Routes = () => {
+
   return useRoutes(
     [
       {
@@ -208,145 +224,12 @@ const Routes = () => {
             path: '/user/creator/article-category',
             element: <ArticleCategory />
           },
+          {
+            path: '/user/creator/menu',
+            element: <AppMenu />
+          },
         ]
       },
-      // {
-      //   path: "/login",
-      //   element: <Login />
-      // },
-      // {
-      //   path: "/operation/dashboard",
-      //   element: <RouteWrapper><AppLayout /></RouteWrapper>,
-      //   children: [
-      //     {
-      //       path: "/operation/dashboard",
-      //       element: <Navigate to='/operation/dashboard/workbench' />,
-      //     },
-      //     {
-      //       path: "/operation/dashboard/workbench",
-      //       element: <Workbench />
-      //     },
-      //     {
-      //       path: "/operation/dashboard/duty",
-      //       element: <Duty />
-      //     },
-      //     {
-      //       path: "/operation/dashboard/problems",
-      //       element: <MonitorProblems />
-      //     },
-      //     // {
-      //     //   path: "/operation/dashboard/overview",
-      //     //   element: <OverView />
-      //     // },
-      //   ]
-      // },
-      // {
-      //   path: "/operation/configure",
-      //   element: <AppLayout />,
-      //   children: [
-      //     {
-      //       path: "/operation/configure",
-      //       element: <Navigate to='/operation/configure/user/overview' />,
-      //     },
-      //     {
-      //       path: "/operation/configure/user/overview",
-      //       element: <User />
-      //     },
-      //     {
-      //       path: "/operation/configure/user/group",
-      //       element: <UserGroup />
-      //     },
-      //     {
-      //       path: "/operation/configure/user/permission",
-      //       element: <UserPermissonMain />
-      //     },
-      //     // {
-      //     //   path: "/operation/configure/user/role",
-      //     //   element: <UserRole />
-      //     // },
-      //     {
-      //       path: "/operation/configure/segment",
-      //       element: <Segment />
-      //     },
-      //     {
-      //       path: "/operation/configure/tag",
-      //       element: <Tag />
-      //     },
-      //     {
-      //       path: "/operation/configure/dict",
-      //       element: <GlobalDict />
-      //     },
-      //     {
-      //       path: "/operation/configure/organize",
-      //       element: <Organize />
-      //     },
-      //     {
-      //       path: "models",
-      //       element: <ModelsView />,
-      //       // children: [
-      //       //   {
-      //       //     path: "overview",
-      //       //     element: <ModelOverView />
-      //       //   }
-      //       // ]
-      //     },
-      //     {
-      //       path: "/operation/configure/model-graph",
-      //       element: <ModelGraph />
-      //     },
-      //     {
-      //       path: "/operation/configure/models/:model_key/overview",
-      //       element: <ModelOverView />
-      //     },
-      //     {
-      //       path: "/operation/configure/model-store",
-      //       element: <ModelStore />
-      //     },
-      //     {
-      //       path: "/operation/configure/model-store/:id/data/",
-      //       element: <ModelData />
-      //     },
-      //     {
-      //       path: "/operation/configure/model-store/:id/detail",
-      //       element: <ModelDetail />
-      //     },
-      //     {
-      //       path: "/operation/configure/workorder",
-      //       element: <WorkOrderOverview />
-      //     },
-      //     // 开发文档
-      //     {
-      //       path: 'development/json-form/',
-      //       element: <JsonForm />
-      //     },
-      //   ]
-      // },
-      // {
-      //   path: "/operation/subjects",
-      //   element: <AppLayout withoutLeft />,
-      //   children: [
-      //     {
-      //       path: "/operation/subjects",
-      //       element: <Navigate to='/operation/subjects/overview' />,
-      //     },
-      //     {
-      //       path: "/operation/subjects/:id",
-      //       element: <PostsDetail />,
-      //     },
-      //     {
-      //       path: "/operation/subjects/overview",
-      //       element: <SubjectOverview />
-      //     },
-      //     {
-      //       path: "/operation/subjects/edit/",
-      //       element: <EditPosts />
-      //     },
-      //     {
-      //       path: "/operation/subjects/creator",
-      //       element: <Creator />
-      //     }
-      //   ]
-      // },
       {
         path: "*",
         element: <NotFound />

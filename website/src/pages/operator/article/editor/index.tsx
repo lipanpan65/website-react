@@ -36,15 +36,12 @@ const removeMarkdownSyntax = (markdownText: string, maxLength: number) => {
   // markdownText = markdownText.replace(/`([^`]+)`/g, '$1');
   // // 移除代码块
   // markdownText = markdownText.replace(/```[^`]+```/g, '');
-
   markdownText = markdownText.replace(/```[^`\n]*\n+[^```]+```\n+/g, "")
   markdownText = markdownText.replace(/`([^`\n]+)`/g, "$1")
-
   // 移除多余的换行符和空白行
   markdownText = markdownText.replace(/\n+/g, ' ');
   // 移除多余的空格
   markdownText = markdownText.trim();
-
   return markdownText.substring(0, maxLength);
 }
 
@@ -81,27 +78,27 @@ const reducer = (preState: any, action: any) => {
   if (typeof action == 'function') {
     type = action()
   }
+
   switch (action.type) {
     case 'READ':
       return {
         loading: true,
         article: { ...preState.article },
-        // ...preState
       }
     case 'READ_DONE':
       return {
         loading: false,
-        article: { ...preState.article }
+        article: action.payload.article,
+        // article: { ...preState.article }
       }
-    // case 'UPDATE':
-    //   const { content, content_html } = action.payload
-    //   state.article.content = content
-    //   state.article.content_html = content_html
-    //   // console.log("update===>", state)
-    //   return {
-    //     loading: false,
-    //     article: state.article
-    //   }
+    case 'UPDATE':
+      // const { article } = action.payload
+      // console.log('UPDATE===>', article)
+      return {
+        loading: false,
+        article: action.payload.article,
+        // article: state.article
+      }
     case 'UPDATE_TITLE':
       const { title } = action.payload
       preState.article.title = title
@@ -153,44 +150,11 @@ const mdParser = new MarkdownIt(/* Markdown-it options */);
 const EditorArticle: any = (props: any) => {
   // 获取请求参数
   const params = useParams();
-  const timerId: any = React.useRef()
-  // const [timerId, setTimerId] = React.useState(undefined)
+  const timerId: any = React.useRef(undefined)
+  // const [timerId, setTimerId] = React.useState<any>(undefined)
   const navigator = useNavigate()
   const [status, setStatus] = React.useState<boolean | undefined>(undefined);
-
-  const intervalRef: any = React.useRef();
   const publishRef: any = React.useRef();
-  const titleRef: any = React.useRef();
-
-  // intervalRef.current = () => {
-  //   console.log("updateArticle.state===>", state)
-  //   const { article } = state
-  //   request({ url: `/api/user/v1/article/${article.id}/`, method: 'PUT', data: { ...article } }).then((r: any) => {
-  //     console.log('updateArticle===>', r)
-  //   }).catch((e) => {
-  //     console.log('updateArticle.err===>', e)
-  //   }).finally(() => {
-  //   })
-  // }
-
-  // const [state, dispatch] = React.useReducer(reducer, initialState, (initialState) => {
-  //   if (params.id && params.id != 'new') {
-  //     // 此处为编辑页面
-  //     const { article } = initialState
-  //     const articleId = Number(params.id)
-  //     return {
-  //       loading: initialState.loading,
-  //       article: {
-  //         id: articleId,
-  //         title: article.title,
-  //         content: article.content,
-  //         content_html: article.content_html
-  //       }
-  //     }
-  //   }
-  //   return initialState;
-  // });
-  const [save, setSave] = React.useState();
   const [state, dispatch] = React.useReducer(reducer, initialState)
 
   // 定义action 
@@ -208,8 +172,7 @@ const EditorArticle: any = (props: any) => {
   // 来源：稀土掘金
   // 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
-
-
+  // const throttle: any = (fn: any, delay: number) => {
   // const throttle: any = (fn: any, delay: number) => {
   const throttle: any = (delay: number) => {
 
@@ -239,21 +202,16 @@ const EditorArticle: any = (props: any) => {
     console.log('--执行完成后timer----->', timerId)
   }
 
-  console.log("---------sssssssssssss-------------")
-  console.log("timerId====>", timerId)
-  // console.log("---------*************-------------")
 
   const getArticle = async (id: any) => {
     dispatch({ type: 'READ' })
-    await delay(5000)
+    await delay(3000)
     request({
       url: `/api/user/v1/article/${id}`, method: 'GET'
     }).then((r: any) => {
       const { data: { code, success, data } } = r
       if (code === '0000' && success) {
-        intervalRef.current = data.content
-        titleRef.current = data.title
-        dispatch({ type: 'READ_DONE_UPDATE', payload: { article: { ...data } } })
+        dispatch({ type: 'READ_DONE', payload: { article: { ...data } } })
       } else if (code === '9999') {
         message.error('操作失败')
       }
@@ -279,7 +237,6 @@ const EditorArticle: any = (props: any) => {
       }).finally(() => {
       })
     }
-    return
   }
 
   React.useEffect(() => {
@@ -287,7 +244,6 @@ const EditorArticle: any = (props: any) => {
       const articleId = params.id
       getArticle(articleId)
     }
-    // }, [state.article.id])
   }, [])
 
   const updateArticle = () => {
@@ -297,46 +253,36 @@ const EditorArticle: any = (props: any) => {
         ...article
       }
     }).then((r: any) => {
+      console.log('更新完成')
+      // timerId.current = null
     }).catch((e) => {
     }).finally(() => {
       setStatus(false)
     })
   }
 
-  // React.useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     console.log(intervalRef.current)
-  //     if (params.id === 'new' && state.article.id === null) {
-  //       console.log('创建文章 params.id', params.id, "state.article.id", state.article.id)
-  //       createArticle()
-  //     } else if (state.article.id) {
-  //       console.log('更新文档 params.id', params.id, "state.article.id", state.article.id)
-  //       updateArticle()
-  //     }
-  //   }, 5000 * 1);
-  //   return () => clearInterval(interval)
-  // }, [])
-
   const onChange = (e: any) => {
     const title = e.target.value
-    titleRef.current = title
-    dispatch({ type: 'UPDATE_TITLE', payload: { title } })
-    // throttle(5000)
+    const { article: preArticle } = state
+    const article: any = Object.assign({}, preArticle, { title })
+    dispatch({ type: 'UPDATE', payload: { article: { ...article } } })
+    // throttle(3000)
   }
 
   const handleEditorChange = ({ html, text }: any) => {
-    // console.log("handleEditorChange===>", html)
-    // console.log("handleEditorChange===>", text)
-    intervalRef.current = text
+    // intervalRef.current = text
+    const { article: preArticle } = state
+    const article: any = Object.assign({}, preArticle, { html, content: text })
     // const newValue = text.replace(/\d/g, "");
-    dispatch({ type: 'UPDATE_CONTENT', payload: { html, content: text } })
-    console.log("handleEditorChange=timerId", timerId)
-    throttle(5000)
+    dispatch({ type: 'UPDATE', payload: { article } })
+    // throttle(3000)
   };
 
   const showModel = (event: any, data?: any) => {
     publishRef.current.showModel(true, data)
   }
+
+  React.useEffect(() => throttle(3000), [state.article])
 
   const handLinkToDrafts = () => {
     navigator(`/user/creator/overview`, {
@@ -347,6 +293,8 @@ const EditorArticle: any = (props: any) => {
       }
     })
   }
+
+  console.log("timerId====>", timerId)
 
   return (
     <React.Fragment>
@@ -365,9 +313,11 @@ const EditorArticle: any = (props: any) => {
               </div>
               <div>
                 {state.tip}
+                {timerId.current}
               </div>
               {
                 timerId.current === undefined ? <div>文章自动保存到草稿中...</div> : (timerId.current === null ? <div>保存成功...</div> : <div>保存中...</div>)
+                // timerId === undefined ? <div>文章自动保存到草稿中...</div> : (timerId === null ? <div>保存成功...</div> : <div>保存中...</div>)
               }
               <div className="header-right">
                 <Button type="primary" onClick={showModel} >发布</Button>
@@ -381,7 +331,6 @@ const EditorArticle: any = (props: any) => {
                 value={state.article.content || ""}
                 style={{ height: "100vh" }}
                 onChange={handleEditorChange}
-                // renderHTML={text => <ReactMarkdown children={text} />}
                 renderHTML={text => mdParser.render(text)}
               />
             </div>

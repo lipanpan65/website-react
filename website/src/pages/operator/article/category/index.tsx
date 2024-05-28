@@ -4,12 +4,14 @@ import {
   Form,
   Input, Modal,
   Radio, Row, Space, Table,
+  Flex,
   Tag, message, theme
 } from 'antd'
 import type { TableProps, FormInstance } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { request } from '@/utils';
 import { dateFormate } from '@/utils';
+import './index.css'
 
 const { confirm } = Modal;
 
@@ -60,7 +62,6 @@ const CategorySearch = (props: any) => {
   };
 
   const onFinish = (values: any) => {
-    console.log('sss')
     console.log(values);
   };
 
@@ -88,35 +89,31 @@ const CategorySearch = (props: any) => {
     })
   }
 
-
   return (
     <React.Fragment>
       <Form
-        {...layout}
+        // {...layout}
         form={form}
         name="control-hooks"
       // onFinish={onFinish}
       // style={{ maxWidth: 600 }}
       >
-        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-          <Col span={4}>
-            <Button type="primary" onClick={(event: any) => showModel(event, {})}>添加</Button>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="search" label="搜索" rules={[{ required: false }]}>
-              <Input
-                // onPressEnter={onPressEnter}
-                onPressEnter={(e: any) => onPressEnter(e, 'search')}
-                onFocus={() => { console.log('onFocus') }}
-                onBlur={() => { console.log('onBlur') }}
-
-              />
-            </Form.Item>
-          </Col>
+        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className='search'>
+          <Button type="primary" onClick={(event: any) => showModel(event, {})}>添加</Button>
+          <Form.Item
+            name="search" label="搜索" rules={[{ required: false }]}>
+            <Input
+              placeholder='请搜索...'
+              allowClear
+              // onPressEnter={onPressEnter}
+              onPressEnter={(e: any) => onPressEnter(e, 'search')}
+              onFocus={() => { console.log('onFocus') }}
+              onBlur={() => { console.log('onBlur') }}
+            />
+          </Form.Item>
         </Row>
       </Form>
-    </React.Fragment>
+    </React.Fragment >
   )
 }
 
@@ -127,7 +124,6 @@ interface DataType {
   address: string;
   tags: string[];
 }
-
 
 const data: DataType[] = [
   {
@@ -162,7 +158,7 @@ const data: DataType[] = [
 
 const CategoryTable = (props: any) => {
   const { data: { page, data }, columns, onChange, loading } = props
-
+  
   // 分页参数
   const pagination = {
     total: page?.total || 0, // 数据总数
@@ -373,7 +369,7 @@ const CategoryModel: any = React.forwardRef((props: any, ref: any) => {
 })
 
 
-const ArticleCategory = () => {
+const ArticleCategory = (props: any) => {
 
   const {
     token: {
@@ -411,8 +407,6 @@ const ArticleCategory = () => {
     },
   ];
 
-
-
   const modelRef: any = React.useRef()
   const tableRef: any = React.useRef()
   const [formValues, setFormValues] = React.useState<ArticleCategory>();
@@ -432,7 +426,6 @@ const ArticleCategory = () => {
   const onChange = (pagination: any) => {
     setLoading(true)
     // Promise.name
-    console.log('onChange')
     // TODO 这里是异步执行的 https://blog.csdn.net/weixin_41697143/article/details/81837076
     // https://blog.csdn.net/qq_37581764/article/details/134213648
     // setTimeout(() => {
@@ -463,7 +456,6 @@ const ArticleCategory = () => {
     })
   }
 
-
   const onDelete = (event: any, data?: any) => {
     // const completeLoading = ()
     const onOk = () => new Promise<void>((resolve, reject) => {
@@ -482,7 +474,6 @@ const ArticleCategory = () => {
         reject()
       })
     }).then((r: any) => {
-      // console.log('r==>', r)
     }).finally(() => {
       modelRef.current.setOpen(false)
       getArticleCategory()
@@ -553,8 +544,6 @@ const ArticleCategory = () => {
     modelRef.current.showModel(true, data)
   }
 
-
-
   /**
    * 按照顺序执行
    */
@@ -573,11 +562,12 @@ const ArticleCategory = () => {
 
   return (
     <React.Fragment>
-      <div style={{
-        height: '100vh',
-        padding: '20px 20px',
-        background: colorBgContainer
-      }}>
+      <div
+        style={{
+          height: '100vh',
+          padding: '20px 20px',
+          background: colorBgContainer
+        }}>
         <CategorySearch
           showModel={showModel}
           onFormInstanceReady={(instance: any) => {

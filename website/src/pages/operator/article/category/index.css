@@ -1,0 +1,9 @@
+.search {
+    margin-left: 0 !important;
+    /* display: flex; */
+    /* align-items: center; */
+}
+
+.search button {
+    margin-right: 8px;
+}
