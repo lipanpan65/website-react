@@ -73,14 +73,8 @@ const CategorySearch = (props: any) => {
     form.setFieldsValue({ note: 'Hello world!', gender: 'male' });
   };
 
-  const onPressEnter = (e: any, k: any) => {
+  const onPressEnter = (k: string, e: any) => {
     console.log('onPressEnter') // 优先执行
-    const name = 'lipanpan'
-    const info = {
-      [name]: 'nan',
-      age: 18
-    }
-    console.log(info)
     setQqueryParams((preQuerys: any) => {
       return {
         ...preQuerys,
@@ -101,12 +95,14 @@ const CategorySearch = (props: any) => {
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className='search'>
           <Button type="primary" onClick={(event: any) => showModel(event, {})}>添加</Button>
           <Form.Item
-            name="search" label="搜索" rules={[{ required: false }]}>
+            name="search"
+            // label="搜索" 
+            rules={[{ required: false }]}>
             <Input
               placeholder='请搜索...'
               allowClear
               // onPressEnter={onPressEnter}
-              onPressEnter={(e: any) => onPressEnter(e, 'search')}
+              onPressEnter={(e: any) => onPressEnter('search', e)}
               onFocus={() => { console.log('onFocus') }}
               onBlur={() => { console.log('onBlur') }}
             />

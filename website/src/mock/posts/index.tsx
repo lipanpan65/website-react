@@ -2,7 +2,6 @@ import axios from 'axios'
 // import Mock from 'mockjs'
 // const Random = Mock.Random // tpl中的@符号等价于Random
 
-
 const mockRoutes = [
   // 发送get请求
   {

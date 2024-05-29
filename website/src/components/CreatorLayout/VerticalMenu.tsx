@@ -1,6 +1,10 @@
 import * as React from 'react'
 import type { MenuProps } from 'antd';
-import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import {
+  AppstoreOutlined,
+  MailOutlined,
+  SettingOutlined
+} from '@ant-design/icons';
 import {
   Link
 } from "react-router-dom"
@@ -47,10 +51,6 @@ const items: MenuProps['items'] = [
   ]),
   getItem('Group', 'grp', null, [getItem('Option 13', '13'), getItem('Option 14', '14')], 'group'),
 ];
-
-console.log('==============================')
-console.log('items====>', items)
-console.log('==============================')
 
 
 const MenuLable = (v: any) => v.url ? <Link to={`${v.url}`}>{v.name}</Link> : v.name
@@ -127,21 +127,21 @@ const formatTree = (data: any) => {
     return newItem
   })
   return newData
-  // data.forEach((v: any) => {
-  //   console.log('formatTree', v)
-  //   return {
-  //     key: v.id,
-  //     // icon: v.icon,
-  //     label: v.name
-  //   }
-  // })
-  // return data
 }
 
 const VerticalMenu: any = (props: any) => {
 
-  let { funcs = [], active = {} } = props,
-    selectedKeys = [active.id];
+  // let { funcs = [], active = {} } = props,
+  //   selectedKeys = [active.id];
+
+  let { funcs = [], active = {}, top, appMenu } = props
+  // selectedKeys = [active.id];
+  // const { appMenu } = props
+  const { leftMenu = [], leftActive } = appMenu
+
+  const [selectedKeys, setSelectedKeys] = React.useState(() => {
+    return leftActive?.id
+  })
 
   console.log('VerticalMenu===>', props)
 
@@ -157,7 +157,7 @@ const VerticalMenu: any = (props: any) => {
   //   }
   // })
 
-  const newItems = formatTree(funcs)
+  const newItems = formatTree(leftMenu)
   console.log('newItems===>', newItems)
 
   const onClick: MenuProps['onClick'] = (e) => {
@@ -185,7 +185,6 @@ const VerticalMenu: any = (props: any) => {
       ]
     }
   ]
-
 
   return (
     <React.Fragment>
