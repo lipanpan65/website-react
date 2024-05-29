@@ -12,7 +12,6 @@ const { confirm } = Modal;
 
 type TableRowSelection<T> = TableProps<T>['rowSelection'];
 
-
 interface DataType {
   key: React.ReactNode;
   name: string;
@@ -429,7 +428,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
   )
 }
 
-
 const AppMenuDialog = React.forwardRef((props: any, ref) => {
   const { onSubmit } = props
   const context = React.useContext(MenuContext)
@@ -750,7 +748,6 @@ const AppMenu = () => {
   }
 
   React.useEffect(() => getMenus(), [state.params])
-  // React.useEffect(() => getMenus(), [])
 
   return (
     <React.Fragment>

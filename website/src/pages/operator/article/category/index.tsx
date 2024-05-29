@@ -158,7 +158,7 @@ const data: DataType[] = [
 
 const CategoryTable = (props: any) => {
   const { data: { page, data }, columns, onChange, loading } = props
-  
+
   // 分页参数
   const pagination = {
     total: page?.total || 0, // 数据总数
@@ -168,7 +168,6 @@ const CategoryTable = (props: any) => {
     // showQuickJumper: true, // 是否显示快速跳转
     showTotal: (total: number) => `总共 ${total} 条数据`, // 自定义显示总数的格式
   };
-
 
   return (
     <React.Fragment>
