@@ -117,50 +117,48 @@ const Article: React.FC = () => {
   return (
     <React.Fragment>
 
-      <div className='container'>
-        <article style={{
-          background: colorBgContainer,
-          minHeight: '100vh',
-          // paddingTop: '2.667rem'
-        }}>
-          <List
-            itemLayout="vertical"
-            loading={state.loading}
-            // itemLayout="horizontal"
-            dataSource={state.data}
-            pagination={{
-              ...state.page,
-              showTotal,
-              align: 'center',
-              showSizeChanger: false,
-              onChange // function(page, pageSize)
-            }}
-            rowKey={rowKeyF}
-            renderItem={(item: any, index: number) => (
-              <List.Item
-                style={{ padding: '12px 12px 0' }}
-                actions={[
-                  // <span>{item.creator}</span>,
-                  <span>{item.create_time}</span>,
-                  <span>{item.category_name}</span>,
-                ]}
-              >
-                <List.Item.Meta
-                  // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
-                  title={ArticleTitle(item)}
-                  description={<div style={{ width: '85%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.summary}</div>}
-                />
-              </List.Item>
-            )}
-          />
-        </article>
-      </div>
+      
 
-      {/* <Row style={{ paddingTop: '1rem' }}>
+      <Row style={{ paddingTop: '1rem' }}>
         <Col span={12} offset={6}>
-
+          <article style={{
+            background: colorBgContainer,
+            minHeight: '100vh',
+            // paddingTop: '2.667rem'
+          }}>
+            <List
+              itemLayout="vertical"
+              loading={state.loading}
+              // itemLayout="horizontal"
+              dataSource={state.data}
+              pagination={{
+                ...state.page,
+                showTotal,
+                align: 'center',
+                showSizeChanger: false,
+                onChange // function(page, pageSize)
+              }}
+              rowKey={rowKeyF}
+              renderItem={(item: any, index: number) => (
+                <List.Item
+                  style={{ padding: '12px 12px 0' }}
+                  actions={[
+                    // <span>{item.creator}</span>,
+                    <span>{item.create_time}</span>,
+                    <span>{item.category_name}</span>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
+                    title={ArticleTitle(item)}
+                    description={<div style={{ width: '85%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.summary}</div>}
+                  />
+                </List.Item>
+              )}
+            />
+          </article>
         </Col>
-      </Row> */}
+      </Row>
     </React.Fragment>
   )
 }

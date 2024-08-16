@@ -91,52 +91,42 @@ const AppHeader: any = (props: any) => {
   // console.log("items===>", items)
   return (
     <React.Fragment>
-      <Header style={{
-        display: 'flex',
-        alignItems: 'center', // 文字上下巨中
-      }}>
-        {/* <Flex align='center' justify='center' style={{
-          // width: 'calc(40%-16px)',
-          // margin: 'auto'
-        }}> */}
-        <div className="demo-logo" onClick={handleLinkTo} />
-        {/* <div> */}
-        <Menu
-          selectedKeys={selectedKeys}
-          theme="dark"
-          mode="horizontal"
-          items={items}
-          onClick={onClick}
-          style={{
-            flex: 1,
-            minWidth: 0,
-            // width: '400px',
-            // width: 'calc(50%-16px)',
-            // margin: 'auto'
-          }}
-        />
-        {/* </div> */}
-        <div>
-          <Space>
-            <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button>
-            {/* <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }} size={'default'}>U</Avatar> */}
-            <React.Fragment>
-              <Dropdown menu={{
-                items: items2,
-                onClick: (e: any) => console.log(e)
-              }}>
-                <Avatar style={{ backgroundColor: ColorList[0], verticalAlign: 'middle' }} size="default" gap={GapList[0]}>
-                  {/* {UserList[0]} */}
-                  李
-                </Avatar>
-              </Dropdown>
-            </React.Fragment>
-          </Space>
-        </div>
-        <div>
-        </div>
-        {/* </Flex> */}
-      </Header>
+      <div className="navbar">
+        <Header className='container'>
+          <div className="demo-logo" onClick={handleLinkTo} />
+          <Menu
+            selectedKeys={selectedKeys}
+            theme="dark"
+            mode="horizontal"
+            items={items}
+            onClick={onClick}
+            style={{
+              flex: 1,
+              minWidth: 0,
+            }}
+          />
+
+          <div>
+            <Space>
+              <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button>
+              {/* <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }} size={'default'}>U</Avatar> */}
+              <React.Fragment>
+                <Dropdown menu={{
+                  items: items2,
+                  onClick: (e: any) => console.log(e)
+                }}>
+                  <Avatar style={{ backgroundColor: ColorList[0], verticalAlign: 'middle' }} size="default" gap={GapList[0]}>
+                    {/* {UserList[0]} */}
+                    李
+                  </Avatar>
+                </Dropdown>
+              </React.Fragment>
+            </Space>
+          </div>
+
+        </Header>
+      </div>
+
     </React.Fragment>
   )
 }

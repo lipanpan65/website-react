@@ -6,8 +6,12 @@ import {
   UnorderedListOutlined,
   EditOutlined,
   MenuOutlined,
-  HomeOutlined
+  HomeOutlined,
+  BookOutlined,
+  ProfileOutlined
 } from '@ant-design/icons'
+
+
 
 import type { TabsProps } from 'antd';
 
@@ -50,7 +54,7 @@ const CreatorOverView: React.FC = () => {
   const items: TabsProps['items'] = [
     {
       key: 'article',
-      label: IconText('EditOutlined', '文章'),
+      label: IconText('ProfileOutlined', '文章'),
       children: <CreatorAriticle />,
     },
     {

@@ -1,15 +1,5 @@
 /* .main- */
 
-.index-container {
-  max-width: 1200px;
-}
-
-.container {
-  position: relative;
-  margin: 0 auto;
-  width: 100%;
-  max-width: 960px;
-}
 
 .demo-logo {
   width: 120px;
@@ -19,3 +9,96 @@
   border-radius: 6px;
   margin-inline-end: 24px;
 }
+
+/* body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+} */
+
+/* 容器样式 */
+.content {
+  width: 100%;
+  max-width: 800px;
+  /* 设置最大宽度 */
+  /* padding: 20px; */
+  /* 添加内边距 */
+  /* background-color: #fff; */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+/* 导航栏容器 */
+.navbar {
+  background-color: #001529;
+  width: 100%;
+  overflow: hidden;
+}
+
+.navbar .container {
+  display: flex;
+  justify-content: space-between;
+  /* 子元素水平分布 */
+  align-items: center;
+  /* 垂直居中 */
+  max-width: 1200px;
+  /* 内容最大宽度 */
+  margin: 0 auto;
+  /* 内容居中 */
+  /* padding: 10px 20px; */
+  /* 内边距 */
+  box-sizing: border-box;
+  /* 包含内边距和边框 */
+}
+
+/* 导航项样式 */
+/* .navbar a {
+  color: white;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+  font-size: 17px;
+} */
+
+/* 鼠标悬停时的样式 */
+/* .navbar a:hover {
+  background-color: #ddd;
+  color: black;
+} */
+
+/* 小屏幕适配 */
+@media (max-width: 768px) {
+  .navbar .container {
+    flex-direction: column;
+    /* 导航项垂直排列 */
+  }
+
+  .navbar a {
+    padding: 10px 15px;
+    width: 100%;
+    /* 每个导航项占满整行 */
+  }
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+    /* 小屏幕时减少内边距 */
+  }
+}
+
+.index-container {
+  max-width: 1200px;
+}
+
+/* .container {
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 960px;
+} */

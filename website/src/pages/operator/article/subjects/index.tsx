@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Form, FormInstance, Input, Row, Space, Table, TableProps, theme } from 'antd';
+import { Button, Col, Form, FormInstance, Input, Row, Space, Table, TableProps, theme } from 'antd';
 import { dateFormate, request, rowKeyF } from '@/utils';
 
 // 初始化参数
@@ -21,6 +21,11 @@ const initialState = {
   },
   data: [],
   params: {}
+};
+
+const layout = {
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 },
 };
 
 // 定义context
@@ -57,6 +62,112 @@ const api: any = {
     method: 'DELETE',
   }),
 }
+
+
+interface ModelFormProps {
+  isUpdate: boolean;
+  initialValues: any; // todo 
+  onFormInstanceReady: (instance: FormInstance<any>) => void;
+}
+
+const ModelForm: React.FC<ModelFormProps> = ({
+  onFormInstanceReady
+}) => {
+  const context = React.useContext(SubjectContext)
+  const [form] = Form.useForm();
+
+  React.useEffect(() => onFormInstanceReady(form), [])
+
+  return (
+    <React.Fragment>
+      <Form form={form}
+        // {...formLayout}
+        name="form_in_modal" initialValues={{}}>
+        <Row gutter={[16, 16]}>
+          <Col span={11}>
+            <Form.Item
+              name="menu_name"
+              label="菜单名称"
+              rules={[
+                { required: true, message: '请输入菜单名称' },
+                // { validator: validateNameExists }
+              ]}
+            >
+              <Input
+                placeholder='请输入菜单名称'
+              // disabled={isUpdate}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={11}>
+            <Form.Item
+              name="url"
+              label="URL"
+              rules={[
+                { required: true, message: '请输入路由地址' },
+                // { validator: validateNameExists }
+              ]}
+            >
+              <Input
+                placeholder='请输入路由地址'
+              // disabled={isUpdate}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={11}>
+            <Form.Item
+              name="icon"
+              label="图标"
+              rules={[
+                { required: true, message: '请输入路由地址' },
+                // { validator: validateNameExists }
+              ]}
+            >
+              <Input
+                placeholder='请输入路由地址'
+              // disabled={isUpdate}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={11}>
+            <Form.Item
+              name="element"
+              label="组件"
+              rules={[
+                { required: true, message: '请输入路由地址' },
+                // { validator: validateNameExists }
+              ]}
+            >
+              <Input
+                placeholder='请输入路由地址'
+              // disabled={isUpdate}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={22}>
+            <Form.Item name="remark" label="备注">
+              <Input.TextArea
+                placeholder='请输入备注'
+                showCount maxLength={100} />
+            </Form.Item>
+          </Col>
+        </Row>
+
+      </Form>
+    </React.Fragment>
+  )
+}
+
+const SubjectModal = React.forwardRef((props: any, ref) => {
+
+
+
+  return (
+    <React.Fragment>
+
+    </React.Fragment>
+  )
+})
 
 
 const SubjectSearch = (props: any) => {
@@ -107,7 +218,7 @@ const SubjectSearch = (props: any) => {
   return (
     <React.Fragment>
       <Form
-        // {...layout}
+        {...layout}
         form={form}
         name="control-hooks"
       // onFinish={onFinish}
@@ -257,7 +368,6 @@ const Subject = () => {
     // getArticleCategory()
   }, [queryParams])
 
-
   return (
     <React.Fragment>
       <div
@@ -278,6 +388,7 @@ const Subject = () => {
           ref={tableRef}
           columns={columns}
         />
+
       </div>
     </React.Fragment>
   )

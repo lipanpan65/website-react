@@ -53,8 +53,8 @@ export const MenuContext = React.createContext<{
 })
 
 const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
+  labelCol: { span: 6 },
+  wrapperCol: { span: 18 },
 };
 
 const api: any = {
@@ -140,7 +140,7 @@ const AppMenuSearch = (props: any) => {
   return (
     <React.Fragment>
       <Form
-        {...layout}
+
         form={form}
         name="control-hooks"
       // onFinish={onFinish}
@@ -149,6 +149,7 @@ const AppMenuSearch = (props: any) => {
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className='search'>
           <Button type="primary" onClick={(event: any) => showModel(event, {})}>添加</Button>
           <Form.Item
+            // {...layout}
             name="search"
             rules={[{ required: false }]}>
             <Input
@@ -352,6 +353,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
     <React.Fragment>
       <Form form={form}
         // {...formLayout}
+        {...layout}
         name="form_in_modal" initialValues={{}}>
         <Row gutter={[16, 16]}>
           <Col span={11}>
@@ -415,14 +417,17 @@ const ModelForm: React.FC<ModelFormProps> = ({
             </Form.Item>
           </Col>
           <Col span={22}>
-            <Form.Item name="remark" label="备注">
+            <Form.Item
+              name="remark" label="备注"
+              labelCol={{ span: 3 }}
+              wrapperCol={{ span: 21 }}
+            >
               <Input.TextArea
                 placeholder='请输入备注'
                 showCount maxLength={100} />
             </Form.Item>
           </Col>
         </Row>
-
       </Form>
     </React.Fragment>
   )
@@ -456,7 +461,6 @@ const AppMenuDialog = React.forwardRef((props: any, ref) => {
     formInstance?.validateFields()
       .then((entry: any) => {
         const { pid } = context.state.entry
-        // alert(pid)
         context.dispatch((f: any) => onSubmit(f, {
           ...entry,
           pid
@@ -505,7 +509,7 @@ const AppMenuDialog = React.forwardRef((props: any, ref) => {
   return (
     <React.Fragment>
       <Modal
-        // width={'45%'}
+        width={'65%'}
         open={context.state.open}
         title={title}
         okText="确定"
