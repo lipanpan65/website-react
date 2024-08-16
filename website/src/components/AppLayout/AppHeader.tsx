@@ -87,8 +87,6 @@ const AppHeader: any = (props: any) => {
     },
   ];
 
-  // console.log("AppHeader.props===>", props)
-  // console.log("items===>", items)
   return (
     <React.Fragment>
       <div className="navbar">
@@ -105,7 +103,6 @@ const AppHeader: any = (props: any) => {
               minWidth: 0,
             }}
           />
-
           <div>
             <Space>
               <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button>
