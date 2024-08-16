@@ -1,5 +1,4 @@
 # 开发环境部署
-
 安装nvm
 ```
 nvm install v20.10.0
@@ -14,6 +13,7 @@ pnpm start
 nvm use website
 cd website 
 pnpm install
+pnpm start
 ```
 
 基于docker部署前端代码

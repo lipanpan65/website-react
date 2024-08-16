@@ -60,32 +60,44 @@ const App: React.FC = () => {
   // }, [])
 
   return (
-    <Layout>
-      <AppHeader
-        funcs={appMenu.topMenu} active={appMenu.topActive} top={'首页'}
-        appMenu={appMenu}
-      />
-      <Content style={{ padding: '0 48px' }}>
-        {/* <Breadcrumb style={{ margin: '16px 0' }}>
+    <React.Fragment>
+      <div className='containersss'>
+        <Layout>
+          <AppHeader
+            funcs={appMenu.topMenu} active={appMenu.topActive} top={'首页'}
+            appMenu={appMenu}
+          />
+          <Content
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              padding: 24
+            }}
+          >
+            {/* <Breadcrumb style={{ margin: '16px 0' }}>
           <Breadcrumb.Item>Home</Breadcrumb.Item>
           <Breadcrumb.Item>List</Breadcrumb.Item>
           <Breadcrumb.Item>App</Breadcrumb.Item>
         </Breadcrumb> */}
-        {/* <main className='index-container container'>
-        </main> */}
-        <div
-          style={{
-            // background: colorBgContainer,
-            minHeight: '100vh',
-            // padding: 24,
-            borderRadius: borderRadiusLG,
-          }}
-        >
-          <Outlet />
-        </div>
-      </Content>
-      <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
-    </Layout>
+            <div
+              className='content'
+              style={{
+                // background: colorBgContainer,
+                // minHeight: '100vh',
+                // padding: 24,
+                borderRadius: borderRadiusLG,
+              }}
+            >
+              <Outlet />
+            </div>
+          </Content>
+          <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
+        </Layout>
+
+      </div>
+
+    </React.Fragment>
+
   );
 };
 

@@ -1,47 +1,41 @@
 import * as React from 'react'
 import { Col, MenuProps, Row, Menu, theme, Tabs, Space } from 'antd'
 
-/**
- * 
- * 
- * import * as Icon from '@ant-design/icons';
-//iconName是icon名字字符串
-  const createAntdIcon = (iconName) => {
-    return React.createElement(Icon[iconName]);
-  }
-  list 的页面
-  const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
-  <Space>
-    {React.createElement(icon)}
-    {text}
-  </Space>
-);
-
- * 
- */
 
 import {
   UnorderedListOutlined,
   EditOutlined,
   MenuOutlined,
-  HomeOutlined
+  HomeOutlined,
+  BookOutlined,
+  ProfileOutlined
 } from '@ant-design/icons'
+
+
 
 import type { TabsProps } from 'antd';
 
 import CreatorAriticle from './article'
+import { IconText } from '@/utils'
 
-const TabTitle = () => {
-  return (
-    <React.Fragment>
-      <Space>
-        {/* React.createElement('') */}
-        <EditOutlined />
-        草稿
-      </Space>
-    </React.Fragment>
-  )
-}
+// const IconText = (icon: React.FC, text: string) => (
+//   <Space>
+//     {React.createElement(icon)}
+//     {text}
+//   </Space>
+// );
+
+// const IconText = (icon: string, text: string) => {
+//   const Icons: any = Icon
+//   return (
+//     <React.Fragment>
+//       <Space>
+//         {React.createElement(Icons[icon])}
+//         {text}
+//       </Space>
+//     </React.Fragment>
+//   )
+// }
 
 const CreatorOverView: React.FC = () => {
 
@@ -60,12 +54,12 @@ const CreatorOverView: React.FC = () => {
   const items: TabsProps['items'] = [
     {
       key: 'article',
-      label: '文章',
+      label: IconText('ProfileOutlined', '文章'),
       children: <CreatorAriticle />,
     },
     {
       key: 'draft',
-      label: TabTitle(),
+      label: IconText('EditOutlined', '草稿'),
       children: <CreatorAriticle />,
     },
   ];

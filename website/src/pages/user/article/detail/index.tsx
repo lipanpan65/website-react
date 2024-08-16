@@ -16,7 +16,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import MarkDownTOC from '@/components/MarkDownTOC';
 import './style.css'
-import { Col, Row, message, theme } from 'antd'
+import { Col, Row, message, theme, Card } from 'antd'
 import CodeCopy from '@/components/CodeCopy';
 import Article from '..';
 
@@ -172,7 +172,14 @@ const ArticleDetail: React.FC = () => {
           // background: colorBgContainer,
           // borderRadius: '4px 4px 0 0',
         }}>
-          <div style={{
+          <Card title="目录">
+            {state.article.content &&
+              <div className="navigation">
+                <MarkDownTOC source={state.article.content || ""} />
+              </div>
+            }
+          </Card>
+          {/* <div style={{
             background: colorBgContainer,
             borderRadius: '4px 4px 0 0',
           }}>
@@ -182,7 +189,7 @@ const ArticleDetail: React.FC = () => {
                 <MarkDownTOC source={state.article.content || ""} />
               </div>
             }
-          </div>
+          </div> */}
         </Col>
       </Row>
     </React.Fragment>

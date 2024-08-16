@@ -35,6 +35,7 @@ import ArticleCategory from '@/pages/operator/article/category'
 import Subject from '@/pages/user/subjects/overview'
 import SubjectDetail from '@/pages/user/subjects/detail'
 import AppMenu from '@/pages/operator/account/menu'
+import SubjectManager from '@/pages/operator/article/subjects'
 
 export const routeMap: any = [
   {
@@ -223,6 +224,10 @@ const Routes = () => {
           {
             path: '/user/creator/article-category',
             element: <ArticleCategory />
+          },
+          {
+            path: '/user/creator/subjects',
+            element: <SubjectManager />
           },
           {
             path: '/user/creator/menu',
