@@ -122,13 +122,18 @@ const ArticleDetail: React.FC = () => {
 
   return (
     <React.Fragment>
-      <div style={{
-        display: 'flex',
-      }}>
-        <div className="left-box">
-          <main className='container main-container' style={{
-            padding: '2.667rem'
-          }}>
+      <Row style={{ paddingTop: '1rem' }}>
+        <Col span={12} offset={6} style={{
+          background: colorBgContainer,
+          borderRadius: '4px 4px 0 0',
+          // paddingLeft: '2.667rem',
+          // paddingRight: '2.667rem',
+          // paddingTop: '2.667rem',
+          padding: '2.667rem',
+          minHeight: '100vh',
+          marginRight: '16px'
+        }}>
+          <main className='container main-container'>
             <h1 className='article-title'>{state.article.title}</h1>
             <div className='article-body' style={{ position: 'relative' }}>
               <Markdown
@@ -159,29 +164,31 @@ const ArticleDetail: React.FC = () => {
               </Markdown>
             </div>
           </main>
-        </div>
-        <div className="right-container">
-          <div>
-            <Card title="目录" >
-              {state.article.content &&
-                <div className="navigation">
-                  <MarkDownTOC source={state.article.content || ""} />
-                </div>
-              }
-            </Card>
-          </div>
-          <div>
-            <Card title="目录">
-              {state.article.content &&
-                <div className="navigation">
-                  <MarkDownTOC source={state.article.content || ""} />
-                </div>
-              }
-            </Card>
-          </div>
-
-        </div>
-      </div>
+        </Col>
+        <Col span={4} style={{
+          // background: colorBgContainer,
+          // borderRadius: '4px 4px 0 0',
+        }}>
+          <Card title="目录">
+            {state.article.content &&
+              <div className="navigation">
+                <MarkDownTOC source={state.article.content || ""} />
+              </div>
+            }
+          </Card>
+          {/* <div style={{
+            background: colorBgContainer,
+            borderRadius: '4px 4px 0 0',
+          }}>
+            <div className='sidebar-title'><span>目录</span></div>
+            {state.article.content &&
+              <div className="navigation">
+                <MarkDownTOC source={state.article.content || ""} />
+              </div>
+            }
+          </div> */}
+        </Col>
+      </Row>
     </React.Fragment>
   )
 }

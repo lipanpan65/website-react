@@ -116,17 +116,14 @@ const Article: React.FC = () => {
 
   return (
     <React.Fragment>
-
       <div className='container'>
         <article style={{
           background: colorBgContainer,
           minHeight: '100vh',
-          // paddingTop: '2.667rem'
         }}>
           <List
             itemLayout="vertical"
             loading={state.loading}
-            // itemLayout="horizontal"
             dataSource={state.data}
             pagination={{
               ...state.page,
@@ -138,7 +135,9 @@ const Article: React.FC = () => {
             rowKey={rowKeyF}
             renderItem={(item: any, index: number) => (
               <List.Item
-                style={{ padding: '12px 12px 0' }}
+                style={{
+                  padding: '12px 12px 12px 12px'
+                }}
                 actions={[
                   // <span>{item.creator}</span>,
                   <span>{item.create_time}</span>,
@@ -155,12 +154,6 @@ const Article: React.FC = () => {
           />
         </article>
       </div>
-
-      {/* <Row style={{ paddingTop: '1rem' }}>
-        <Col span={12} offset={6}>
-
-        </Col>
-      </Row> */}
     </React.Fragment>
   )
 }

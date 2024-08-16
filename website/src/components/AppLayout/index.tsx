@@ -61,39 +61,21 @@ const App: React.FC = () => {
 
   return (
     <React.Fragment>
-      <div className='containersss'>
-        <Layout>
-          <AppHeader
-            funcs={appMenu.topMenu} active={appMenu.topActive} top={'首页'}
-            appMenu={appMenu}
-          />
-          <Content
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              padding: 24
-            }}
-          >
-            {/* <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-          <Breadcrumb.Item>List</Breadcrumb.Item>
-          <Breadcrumb.Item>App</Breadcrumb.Item>
-        </Breadcrumb> */}
-            <div
-              className='content'
-              style={{
-                // background: colorBgContainer,
-                // minHeight: '100vh',
-                // padding: 24,
-                borderRadius: borderRadiusLG,
-              }}
-            >
-              <Outlet />
-            </div>
-          </Content>
-          <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
-        </Layout>
-
+      <div style={{
+        height: '100vh'
+      }}>
+        {/* <Layout> */}
+        <AppHeader
+          funcs={appMenu.topMenu} active={appMenu.topActive} top={'首页'}
+          appMenu={appMenu}
+        />
+        <div className='content'>
+          <div className="content-container">
+            <Outlet />
+          </div>
+        </div>
+        {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer> */}
+        {/* </Layout> */}
       </div>
 
     </React.Fragment>
