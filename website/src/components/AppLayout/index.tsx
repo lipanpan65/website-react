@@ -62,7 +62,7 @@ const App: React.FC = () => {
   return (
     <React.Fragment>
       <div style={{
-        height: '100vh'
+        // height: '100vh', // 去掉该高度则会有盒子自己撑开
       }}>
         {/* <Layout> */}
         <AppHeader

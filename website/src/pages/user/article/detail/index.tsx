@@ -20,7 +20,7 @@ import { Col, Row, message, theme, Card } from 'antd'
 import CodeCopy from '@/components/CodeCopy';
 import Article from '..';
 
-
+const { Meta } = Card;
 // const headerStyle: React.CSSProperties = {
 //   textAlign: 'center',
 //   color: '#fff',
@@ -124,13 +124,17 @@ const ArticleDetail: React.FC = () => {
     <React.Fragment>
       <div style={{
         display: 'flex',
+        // height: '100vh' 
       }}>
         <div className="left-box">
-          <main className='container main-container' style={{
-            padding: '2.667rem'
+          <div className='container main-container' style={{
+            padding: '2.667rem',
+            boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)"
           }}>
             <h1 className='article-title'>{state.article.title}</h1>
-            <div className='article-body' style={{ position: 'relative' }}>
+            <div className='article-body' style={{
+              position: 'relative'
+            }}>
               <Markdown
                 className={'markdown-body'}
                 remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
@@ -158,11 +162,14 @@ const ArticleDetail: React.FC = () => {
                 {state.article.content}
               </Markdown>
             </div>
-          </main>
+          </div>
         </div>
         <div className="right-container">
           <div>
-            <Card title="目录" >
+            <Card title="目录" style={{
+              padding: '8px',
+              // width: "300px"
+            }}>
               {state.article.content &&
                 <div className="navigation">
                   <MarkDownTOC source={state.article.content || ""} />

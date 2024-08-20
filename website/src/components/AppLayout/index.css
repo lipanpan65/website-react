@@ -19,8 +19,8 @@
 /* 内容容器样式 */
 .content-container {
   padding: 16px;
-  max-width: 850px;
-  width: 100%;
+  /* max-width: 850px; 不能在最顶部设置宽度
+  width: 100%; */
   /* 确保内容容器占满可用宽度 */
   margin: 0 auto;
   /* 保持水平居中 */
