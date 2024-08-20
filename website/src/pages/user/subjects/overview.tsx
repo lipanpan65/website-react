@@ -13,7 +13,7 @@ const { Meta } = Card;
 
 const style: React.CSSProperties = {
   // background: '#0092ff', 
-  padding: '16px 0'
+  // padding: '16px 0'
 };
 
 const Subject: React.FC = () => {
@@ -26,7 +26,7 @@ const Subject: React.FC = () => {
   return (
     <React.Fragment>
       <Row gutter={[16, 16]} style={style}>
-        <Col className="gutter-row" span={6} >
+        <Col className="gutter-row" span={8} >
           {/* <div style={style}>col-6</div> */}
           <Card
             // style={{ width: 300, marginTop: 16 }}
@@ -47,7 +47,7 @@ const Subject: React.FC = () => {
             </Skeleton>
           </Card>
         </Col>
-        <Col className="gutter-row" span={6}>
+        <Col className="gutter-row" span={8}>
           {/* <div style={style}>col-6</div> */}
           <Card
             // style={{ width: 300, marginTop: 16 }}
@@ -66,7 +66,7 @@ const Subject: React.FC = () => {
             </Skeleton>
           </Card>
         </Col>
-        <Col className="gutter-row" span={6}>
+        <Col className="gutter-row" span={8}>
           {/* <div style={style}>col-6</div> */}
           <Card
             // style={{ width: 300, marginTop: 16 }}
@@ -85,7 +85,7 @@ const Subject: React.FC = () => {
             </Skeleton>
           </Card>
         </Col>
-        <Col className="gutter-row" span={6}>
+        <Col className="gutter-row" span={8}>
           {/* <div style={style}>col-6</div> */}
           <Card
             // style={{ width: 300, marginTop: 16 }}
@@ -104,7 +104,7 @@ const Subject: React.FC = () => {
             </Skeleton>
           </Card>
         </Col>
-        <Col className="gutter-row" span={6}>
+        <Col className="gutter-row" span={8}>
           {/* <div style={style}>col-6</div> */}
           <Card
             // style={{ width: 300, marginTop: 16 }}

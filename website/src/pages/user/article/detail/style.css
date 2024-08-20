@@ -1,8 +1,9 @@
 .left-box {
-  flex: 5;
+  flex: 3;
+  max-width: 650px;
   /* 左边盒子占2份 */
   margin-right: 16px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
   box-sizing: border-box;
   height: '100vh'
 }
@@ -11,7 +12,7 @@
   display: flex;
   flex-direction: column;
   /* 纵向排列 */
-  flex: 2;
+  flex: 1;
   /* 右边盒子占3份 */
   gap: 16px;
   /* 盒子之间的间距 */
@@ -20,8 +21,14 @@
   height: '100vh'
 }
 
+.right-container .ant-card-body {
+  padding: 8px;
+}
+
+
 .main-container {
   background-color: #fff;
+  /* padding: 20px; */
 }
 
 /* 文章标题 */

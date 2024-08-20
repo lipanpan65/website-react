@@ -120,6 +120,7 @@ const Article: React.FC = () => {
         <article style={{
           background: colorBgContainer,
           minHeight: '100vh',
+          width: '850px'
         }}>
           <List
             itemLayout="vertical"
