@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Col, Form, FormInstance, Input, Row, Space, Table, TableProps, theme } from 'antd';
+import { Button, Col, Form, FormInstance, Input, Modal, Row, Space, Table, TableProps, theme } from 'antd';
 import { dateFormate, request, rowKeyF } from '@/utils';
 
 // 初始化参数
@@ -71,100 +71,97 @@ interface ModelFormProps {
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
-  onFormInstanceReady
+  onFormInstanceReady,
+  initialValues
 }) => {
-  const context = React.useContext(SubjectContext)
+
   const [form] = Form.useForm();
+  const context = React.useContext(SubjectContext)
 
   React.useEffect(() => onFormInstanceReady(form), [])
 
   return (
     <React.Fragment>
-      <Form form={form}
-        // {...formLayout}
-        name="form_in_modal" initialValues={{}}>
-        <Row gutter={[16, 16]}>
-          <Col span={11}>
-            <Form.Item
-              name="menu_name"
-              label="菜单名称"
-              rules={[
-                { required: true, message: '请输入菜单名称' },
-                // { validator: validateNameExists }
-              ]}
-            >
-              <Input
-                placeholder='请输入菜单名称'
-              // disabled={isUpdate}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={11}>
-            <Form.Item
-              name="url"
-              label="URL"
-              rules={[
-                { required: true, message: '请输入路由地址' },
-                // { validator: validateNameExists }
-              ]}
-            >
-              <Input
-                placeholder='请输入路由地址'
-              // disabled={isUpdate}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={11}>
-            <Form.Item
-              name="icon"
-              label="图标"
-              rules={[
-                { required: true, message: '请输入路由地址' },
-                // { validator: validateNameExists }
-              ]}
-            >
-              <Input
-                placeholder='请输入路由地址'
-              // disabled={isUpdate}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={11}>
-            <Form.Item
-              name="element"
-              label="组件"
-              rules={[
-                { required: true, message: '请输入路由地址' },
-                // { validator: validateNameExists }
-              ]}
-            >
-              <Input
-                placeholder='请输入路由地址'
-              // disabled={isUpdate}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={22}>
-            <Form.Item name="remark" label="备注">
-              <Input.TextArea
-                placeholder='请输入备注'
-                showCount maxLength={100} />
-            </Form.Item>
-          </Col>
-        </Row>
-
+      <Form layout="vertical"
+        form={form}
+        initialValues={initialValues}
+      >
+        <Form.Item
+          name="subject_name"
+          label="专题名称"
+          rules={[
+            { required: true, message: '请输入分类名称' },
+            // { validator: validateNameExists }
+          ]}
+        >
+          <Input
+            placeholder='请输入专题名称'
+          // disabled={isUpdate}
+          />
+        </Form.Item>
+        <Form.Item name="remark" label="备注">
+          <Input.TextArea
+            placeholder='请输入备注'
+            showCount maxLength={100} />
+        </Form.Item>
       </Form>
     </React.Fragment>
   )
 }
 
 const SubjectModal = React.forwardRef((props: any, ref) => {
+  const { onSubmit } = props
+  const context = React.useContext(SubjectContext)
+  const [title, setTitle] = React.useState<string>('添加专题')
+  const [formInstance, setFormInstance] = React.useState<FormInstance>();
 
 
+  const onOk = () => {
+    formInstance?.validateFields()
+      .then((entry: any) => {
+        const { pid } = context.state.entry
+        context.dispatch((f: any) => onSubmit(f, {
+          ...entry,
+          pid
+        }))
+      }).finally(() => {
+        context.dispatch({
+          type: 'SHOW_MODEL', payload: {
+            open: false
+          }
+        })
+      })
+  }
+
+  const onCancel = () => {
+    context.dispatch({
+      type: 'SHOW_MODEL', payload: {
+        open: false
+      }
+    })
+  }
 
   return (
     <React.Fragment>
-
+      <Modal
+        // width={'65%'}
+        open={context.state.open}
+        title={title}
+        okText="确定"
+        cancelText="取消"
+        okButtonProps={{ autoFocus: true }}
+        onCancel={onCancel}
+        destroyOnClose
+        onOk={onOk}
+      >
+        <ModelForm
+          initialValues={{}}
+          onFormInstanceReady={(instance) => {
+            setFormInstance(instance);
+          }}
+          isUpdate={false}
+        />
+      </Modal>
     </React.Fragment>
   )
 })
@@ -312,13 +309,55 @@ interface DataType {
   tags: string[];
 }
 
+
+const reducer = (preState: any, action: any) => {
+
+  let { type } = action;
+  if (typeof action == 'function') {
+    type = action()
+  }
+  switch (action.type) {
+    case 'READ':
+      const { params } = action.payload
+      preState.loading = true
+      preState.params = params
+      return {
+        ...preState
+      }
+    case 'READ_DONE':
+      const { data, page } = action.payload
+      preState.loading = false
+      preState.data = data
+      preState.page = page
+      return {
+        ...preState
+      }
+    case 'CREATE':
+      preState.loading = true
+      return {
+        ...preState
+      }
+    case 'UPDATE':
+      return preState
+    case 'SHOW_MODEL':
+      const { open, entry } = action.payload
+      preState.open = open
+      preState.entry = entry
+      return {
+        ...preState
+      }
+    default:
+      return preState
+  }
+}
+
 const Subject = () => {
 
   const columns: TableProps<DataType>['columns'] = [
     {
       title: '专题名称',
-      dataIndex: 'category_name',
-      key: 'category_name',
+      dataIndex: 'subject_name',
+      key: 'subject_name',
       render: (text) => <a>{text}</a>,
     },
     {
@@ -345,9 +384,7 @@ const Subject = () => {
   ];
 
   const {
-    token: {
-      colorBgContainer,
-    },
+    token: { colorBgContainer }
   } = theme.useToken();
 
   const modelRef: any = React.useRef()
@@ -355,8 +392,55 @@ const Subject = () => {
   const [queryParams, setQqueryParams] = React.useState<any>({})
   const [formInstance, setFormInstance] = React.useState<FormInstance>();
 
-  const showModel = (event: any, data?: any) => {
-    modelRef.current.showModel(true, data)
+  const [state, dispatch] = React.useReducer(reducer, initialState)
+
+  const showModel = (event: any, data?: any, key?: any) => {
+    console.log('showModel')
+    dispatch({
+      type: 'SHOW_MODEL', payload: {
+        open: true, entry: {
+          id: data.id,
+          menu_name: data.menu_name,
+          pid: data.id
+        }
+      }
+    })
+    // if (key === 'add') {
+    //   dispatch({
+    //     type: 'SHOW_MODEL', payload: {
+    //       open: true, entry: {
+    //         id: data.id,
+    //         menu_name: data.menu_name,
+    //         pid: data.id
+    //       }
+    //     }
+    //   })
+    // } else {
+    //   dispatch({ type: 'SHOW_MODEL', payload: { open: true, entry: { ...data } } })
+    // }
+  }
+
+  // 定义action 
+  const dispatchF: React.Dispatch<any> = (action: any) => {
+    // 判断action是不是函数，如果是函数，就执行,并且把dispatch传进去
+    if (typeof action === 'function') {
+      action(dispatch)
+    } else {
+      dispatch(action)
+    }
+  }
+
+
+  // submit 方法
+  const onSubmit = (dispatch: React.Dispatch<any>, data: any) => {
+    console.log('dispatch', dispatch)
+    console.log('data===>', data)
+    dispatch({ type: 'CREATE', payload: { data } })
+    api.create(data).then((r: any) => {
+      console.log('onSubmit.r===>', r)
+    }).finally(() => {
+      // dispatch({ type: 'READ_DONE', payload: {} })
+    })
   }
 
   /**
@@ -377,18 +461,23 @@ const Subject = () => {
           background: colorBgContainer
         }}
       >
-        <SubjectSearch
-          showModel={showModel}
-          onFormInstanceReady={(instance: any) => {
-            setFormInstance(instance);
-          }}
-          setQqueryParams={setQqueryParams}
-        />
-        <SubjectTable
-          ref={tableRef}
-          columns={columns}
-        />
-
+        <SubjectContext.Provider value={{ state, dispatch: dispatchF }} >
+          <SubjectSearch
+            showModel={showModel}
+            onFormInstanceReady={(instance: any) => {
+              setFormInstance(instance);
+            }}
+            setQqueryParams={setQqueryParams}
+          />
+          <SubjectTable
+            ref={tableRef}
+            columns={columns}
+          />
+          <SubjectModal
+            ref={modelRef}
+            onSubmit={onSubmit}
+          />
+        </SubjectContext.Provider>
       </div>
     </React.Fragment>
   )

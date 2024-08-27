@@ -140,7 +140,6 @@ const AppMenuSearch = (props: any) => {
   return (
     <React.Fragment>
       <Form
-
         form={form}
         name="control-hooks"
       // onFinish={onFinish}
@@ -650,7 +649,6 @@ const AppMenu = () => {
   }
 
   const showModel = (event: any, data?: any, key?: any) => {
-    console.log('showModel.data', data)
     if (key === 'add') {
       dispatch({
         type: 'SHOW_MODEL', payload: {
