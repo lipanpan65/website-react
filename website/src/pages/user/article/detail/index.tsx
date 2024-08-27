@@ -124,7 +124,7 @@ const ArticleDetail: React.FC = () => {
     <React.Fragment>
       <div style={{
         display: 'flex',
-        // height: '100vh' 
+        // height: '100vh' // 不能设置该高度 
       }}>
         <div className="left-box">
           <div className='container main-container' style={{

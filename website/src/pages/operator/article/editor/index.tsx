@@ -54,12 +54,11 @@ const initialState = {
     title: null,
     content: null,
     summary: null,
-    html: null
+    html: null,
+    category_id: null
   },
   options: []
 };
-
-
 
 // 定义context
 export const EditArticleContext = React.createContext<{
@@ -198,14 +197,13 @@ const EditorArticle: any = (props: any) => {
       timerId.current = null
       console.log('timer----->', timerId)
     }, delay)
-
     console.log('--执行完成后timer----->', timerId)
   }
 
 
   const getArticle = async (id: any) => {
     dispatch({ type: 'READ' })
-    await delay(3000)
+    await delay(1000)
     request({
       url: `/api/user/v1/article/${id}`, method: 'GET'
     }).then((r: any) => {
@@ -279,6 +277,7 @@ const EditorArticle: any = (props: any) => {
   };
 
   const showModel = (event: any, data?: any) => {
+    // 将模态框弹起
     publishRef.current.showModel(true, data)
   }
 

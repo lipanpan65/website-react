@@ -47,18 +47,13 @@ const ModelForm: React.FC<DaliogFormProps> = ({
   options,
   onFormInstanceReady,
 }) => {
+  console.log("initialValues", initialValues)
   const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } }
   const [form] = Form.useForm();
   const context = React.useContext(EditArticleContext)
-
-  React.useEffect(() => {
-    console.log('ModelForm===>', 'ModelForm')
-  }, [])
-
   React.useEffect(() => {
     onFormInstanceReady(form);
   }, []);
-
 
   const onResetFields = () => form.resetFields()
 
@@ -69,10 +64,7 @@ const ModelForm: React.FC<DaliogFormProps> = ({
   return (
     <React.Fragment>
       <Form form={form}
-        initialValues={{
-          summary: context.state.article.summary
-        }}
-      // layout={'vertical'}
+        initialValues={initialValues}
       >
         <Row gutter={[16, 0]}>
           <Col span={20} >
@@ -243,14 +235,11 @@ const Publish = React.forwardRef((props: any, ref: any) => {
   const [formValues, setFormValues] = React.useState<any>({})
   const [options, setOptions] = React.useState<any>()
   const [initialValues, setInitialValues] = React.useState<any>(() => ({
-    summary: context.state.article.summary
+    summary: context.state.article.summary,
+    category_id: context.state.article.category_id
   }))
-
-  // console.log('initialValues===>', initialValues)
-
   const publishArticle = (dispatch: React.Dispatch<any>, values: any) => {
     dispatch({ type: 'PUBLISH', payload: values })
-    console.log('publishArticle===>', values)
     const id = context.state.article.id
     // https://juejin.cn/post/7156123099522400293
     request({
@@ -279,17 +268,16 @@ const Publish = React.forwardRef((props: any, ref: any) => {
     Promise.resolve().then(() => {
       setOpen(preState => open)
     }).then(() => {
-      // setInitialValues(() => ({
-      //   summary: context.state.article.summary
-      // }))
+      setInitialValues(() => ({
+        summary: context.state.article.summary,
+        category_id: context.state.article.category_id
+      }))
     })
   }
 
   const onOk = () => {
-    // context.dispatch({ type: 'PUBLISH', payload: {} })
     formInstance?.validateFields()
       .then((values: any) => {
-        console.log("Publish===ok", values)
         context.dispatch((f: any) => publishArticle(f, values))
       }).finally(() => {
         formInstance.resetFields()
@@ -312,6 +300,11 @@ const Publish = React.forwardRef((props: any, ref: any) => {
         const options = data.data.map((v: any) => ({ value: v.id, label: v.category_name }))
         // https://juejin.cn/s/antd%20select%20%E5%8A%A8%E6%80%81option
         setOptions(() => options)
+      }).then(() => {
+        formInstance?.setFieldsValue({
+          summary: context.state.article.summary,
+          category_id: context.state.article.category_id
+        })
       })
     }
   }
