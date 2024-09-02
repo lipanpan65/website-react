@@ -231,13 +231,12 @@ export class MarkDownTOC extends Component<any, any>{
 
 	initHeadingsId() {
 		debugger
-		// const headingId = decodeURIComponent(
-		// 	this.props.declarative
-		// 		? window.location.hash.replace(/^#/, '').trim()
-		// 		: (window.location.hash.match(/heading-\d+/g) || [])[0]
-		// );
-		// const headingId = decodeURIComponent(window.location.hash.replace(/^#/, '').trim())
+		// const uri: any = this.props.declarative
+		// 	? window.location.hash.replace(/^#/, '').trim()
+		// 	: (window.location.hash.match(/heading-\d+/g) || [])[0]
+		// const headingId = decodeURIComponent(uri);
 		const headingId = decodeURIComponent(window.location.hash.replace(/^#/, '').trim())
+		// const headingId = decodeURIComponent(window.location.hash.replace(/^#/, '').trim())
 		this.state.navStructure.forEach((t: any) => {
 			const headings = document.querySelectorAll(`h${t.level}`);
 			const curHeading = Array.prototype.slice
@@ -288,6 +287,7 @@ export class MarkDownTOC extends Component<any, any>{
 	}
 
 	getCurrentHashValue = () => decodeURIComponent(window.location.hash.replace(/^#/, ''));
+	// getCurrentHashValue = () => decodeURIComponent(window.location.href.replace(/#([^#]*)$/, ''));
 
 	winScroll = throttle(() => {
 		if (this.scrollEventLock) return;
@@ -347,10 +347,15 @@ export class MarkDownTOC extends Component<any, any>{
 		}
 
 		this.updateHashTimeout = setTimeout(() => {
+			// debugger
+			// const newUril = `${window.location.pathname}${window.location.hash}#${value}`
+			const newUril = `${window.location.pathname}${window.location.hash}`
+			console.log(newUril)
 			window.history.replaceState(
 				{},
 				'',
 				`${window.location.pathname}${window.location.search}#${value}`
+				// `${window.location.pathname}${window.location.hash}#${value}`
 			);
 		}, 0);
 	}

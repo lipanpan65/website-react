@@ -11,10 +11,14 @@ import {
   Dropdown
 } from 'antd'
 
+
 import {
   Link,
   useNavigate,
 } from "react-router-dom"
+
+// import logo from './logo.svg';
+import logo from '@/logo.svg'
 
 import { FileTextOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
 
@@ -27,7 +31,6 @@ const { Header } = Layout
 const MenuLable = (v: any) => <Link to={`${v.url}`}>{v.name}</Link>
 
 const AppHeader: any = (props: any) => {
-  console.log("AppHeader.props", props)
   let { funcs = [], active = {}, top, appMenu } = props
   // selectedKeys = [active.id];
   // const { appMenu } = props
@@ -48,7 +51,6 @@ const AppHeader: any = (props: any) => {
   })
 
   const navigate = useNavigate()
-  // console.log("AppHeader.props===>", props)
 
   const handleLinkTo = () => {
     navigate('/')
@@ -82,7 +84,7 @@ const AppHeader: any = (props: any) => {
     },
     {
       key: 'admin',
-      label: <Link to={`/user/creator/overview`}>后台管理</Link>,
+      label: <Link to={`/operator/overview`}>后台管理</Link>,
       icon: <HomeOutlined />,
     },
   ];
@@ -91,7 +93,8 @@ const AppHeader: any = (props: any) => {
     <React.Fragment>
       <div className="navbar">
         <Header className='container'>
-          <div className="demo-logo" onClick={handleLinkTo} />
+          {/* <div className="demo-logo" onClick={handleLinkTo} /> */}
+          <img src={logo} className='logo' onClick={handleLinkTo} />
           <Menu
             selectedKeys={selectedKeys}
             theme="dark"
