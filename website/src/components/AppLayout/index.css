@@ -1,10 +1,11 @@
-.demo-logo {
-  width: 120px;
-  min-width: 120px;
-  height: 32px;
-  background: rgba(255, 255, 255, .2);
-  border-radius: 6px;
-  margin-inline-end: 24px;
+.logo {
+  /* width: 120px; */
+  min-width: 40px;
+  text-align: center;
+  height: 40px;
+  /* margin-inline-end: 24px; */
+  margin-inline-end: 8px;
+  cursor: pointer;
 }
 
 /* 主容器样式 */
@@ -19,6 +20,7 @@
 /* 内容容器样式 */
 .content-container {
   padding: 16px;
+  min-width: 650px;
   /* max-width: 850px; 不能在最顶部设置宽度
   width: 100%; */
   /* 确保内容容器占满可用宽度 */

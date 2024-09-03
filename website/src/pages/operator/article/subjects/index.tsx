@@ -39,7 +39,7 @@ export const SubjectContext = React.createContext<{
 
 const api: any = {
   fetch: (params: any) => request({
-    url: `/api/user/v1/account/menus/`,
+    url: `/api/v1/users/`,
     method: 'GET',
     params
   }),
@@ -430,6 +430,21 @@ const Subject = () => {
     }
   }
 
+  const querySubjects = () => {
+    console.log('--------没有执行-----')
+    const { params } = state
+    api.fetch(params).then((r: any) => {
+      console.log("-------")
+      console.log(r)
+      console.log("-------")
+    }).catch((e: any) => {
+      console.log(e)
+    })
+  }
+
+  // React.useEffect(() => querySubjects(), [state.params])
+  React.useEffect(() => querySubjects(), [])
+
 
   // submit 方法
   const onSubmit = (dispatch: React.Dispatch<any>, data: any) => {
@@ -449,7 +464,7 @@ const Subject = () => {
   React.useEffect(() => {
     console.log('组件加载queryParams', queryParams)
     console.log('-queryParams-', queryParams)
-    // getArticleCategory()
+    querySubjects()
   }, [queryParams])
 
   return (

@@ -23,6 +23,8 @@
 
 .right-container .ant-card-body {
   padding: 8px;
+  min-height: 80px;
+  min-width: 200px;
 }
 
 

@@ -168,7 +168,7 @@ const ArticleDetail: React.FC = () => {
           <div>
             <Card title="目录" style={{
               padding: '8px',
-              // width: "300px"
+              width: "300px"
             }}>
               {state.article.content &&
                 <div className="navigation">
@@ -178,13 +178,13 @@ const ArticleDetail: React.FC = () => {
             </Card>
           </div>
           <div>
-            <Card title="目录">
+            {/* <Card title="目录">
               {state.article.content &&
                 <div className="navigation">
                   <MarkDownTOC source={state.article.content || ""} />
                 </div>
               }
-            </Card>
+            </Card> */}
           </div>
 
         </div>
