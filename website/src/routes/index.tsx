@@ -236,6 +236,10 @@ const Routes = () => {
         ]
       },
       {
+        path: '/operator',
+        element: <Navigate to='/operator/overview' />,
+      },
+      {
         path: "*",
         element: <NotFound />
       }

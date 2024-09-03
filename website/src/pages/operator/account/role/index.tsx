@@ -168,19 +168,16 @@ const AppRole: React.FC<IProps> = (props) => {
       dispatch(action)
     }
   }
-
   return (
     <React.Fragment>
       <RoleContext.Provider value={{ state, dispatch: dispatchF }}>
         <AppRoleSearch />
         <AppRoleTable
-
           columns={columns}
         />
       </RoleContext.Provider>
     </React.Fragment>
   )
-
 }
 
 export default AppRole

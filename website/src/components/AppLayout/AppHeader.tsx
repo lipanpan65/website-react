@@ -94,7 +94,20 @@ const AppHeader: any = (props: any) => {
       <div className="navbar">
         <Header className='container'>
           {/* <div className="demo-logo" onClick={handleLinkTo} /> */}
-          <img src={logo} className='logo' onClick={handleLinkTo} />
+          <div>
+          </div>
+          <img src={logo} className='logo' onClick={handleLinkTo} style={{
+            margin: '0px'
+          }} />
+          <span
+            onClick={handleLinkTo}
+            style={{
+              fontSize: '1.5em',
+              fontWeight: 'bold',
+              color: 'white',
+              marginInlineEnd: '16px'
+            }}>皮皮虾教程</span>
+
           <Menu
             selectedKeys={selectedKeys}
             theme="dark"
