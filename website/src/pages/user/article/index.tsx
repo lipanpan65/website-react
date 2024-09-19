@@ -6,28 +6,17 @@ import {
 } from "react-router-dom"
 
 import {
-  Col,
-  List, Row,
-  Typography,
+  List,
   theme
-  // Space,
-  // Dropdown,
-  // Menu,
-  // Row,
-  // Col,
-  // Avatar,
 } from 'antd'
 
-// const { Paragraph, Text } = Typography;
+import { request, rowKeyF, showTotal } from '@/utils'
 
-import { request } from '@/utils'
-import { ArticleApi } from '@/api'
+import './index.css';
 
 // 导入本地的开发环境
 import { postsMock } from '@/mock';
 
-const rowKeyF = (record: { id: number }): number => record.id
-const showTotal = (total: any) => `共${total}条记录`
 const ArticleTitle = (article: any) => <Link className='title'
   to={{
     pathname: `/user/article/detail/${article.id}`,

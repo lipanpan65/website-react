@@ -7,7 +7,7 @@ import {
 import AppHeader from '../AppLayout/AppHeader';
 import { getLeftActive, matchPath } from '@/utils'
 
-import { routeMap } from '@/routes'
+import { AppRoute } from '@/routes'
 
 const BaseLayout: any = (props: any) => {
   const {
@@ -18,7 +18,7 @@ const BaseLayout: any = (props: any) => {
   } = theme.useToken();
 
   const [appMenu, setAppMeun] = React.useState<any>(() => {
-    let [topMenu, topActive, leftMenu, , leftActive]: any = [routeMap]
+    let [topMenu, topActive, leftMenu, , leftActive]: any = [AppRoute]
     if (topMenu) {
       topMenu.every((top: any) => {
         if (matchPath(top.hash, window.location.hash)) {
