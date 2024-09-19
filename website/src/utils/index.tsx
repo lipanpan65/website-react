@@ -43,7 +43,6 @@ export const delay = (ms: number) => {
 }
 
 // TODO 如何使用全部
-// export const rowKeyF = (record: { id: number }): number => record.id
 export const rowKeyF = (record: any): number => record.id || record.pk
 export const showTotal = (total: any) => `共${total}条记录`
 export const matchPath = (menuUrl: any, curPath: any) => curPath.indexOf(menuUrl) === 0
@@ -117,7 +116,6 @@ const style: React.CSSProperties = {
 // const statusTag = (status:boolean,STATUS_COLOR?:any=) => {
 //   <Tag color={STATUS_COLOR[status]}>{USER_STATUS[text]}</Tag>
 // }
-
 
 // export {
 //   getCookie, list2Tree, clearCookie

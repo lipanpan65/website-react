@@ -11,12 +11,10 @@ import {
 } from "react-router-dom"
 
 import AppHeader from './AppHeader'
-import { routeMap } from '@/routes'
+import { AppRoute } from '@/routes'
 import { getLeftActive, matchPath } from '@/utils'
 
 import './index.css'
-
-const { Header, Content, Footer } = Layout;
 
 const App: React.FC = () => {
   const {
@@ -29,7 +27,7 @@ const App: React.FC = () => {
   console.log("App Main")
 
   const [appMenu, setAppMeun] = React.useState<any>(() => {
-    let [topMenu, topActive, leftMenu, , leftActive]: any = [routeMap]
+    let [topMenu, topActive, leftMenu, , leftActive]: any = [AppRoute]
     if (topMenu) {
       topMenu.every((top: any) => {
         if (matchPath(top.hash, window.location.hash)) {
@@ -49,37 +47,18 @@ const App: React.FC = () => {
     }
   })
 
-  console.log(appMenu)
-
-  // React.useEffect(() => {
-  //   console.log("leftMenu===>", leftMenu)
-  // }, [leftMenu])
-
-  // React.useEffect(() => {
-  //   console.log("routeMap===>", leftMenu)
-  // }, [])
-
   return (
     <React.Fragment>
-      <div style={{
-        // height: '100vh', // 去掉该高度则会有盒子自己撑开
-      }}>
-        {/* <Layout> */}
-        <AppHeader
-          funcs={appMenu.topMenu} active={appMenu.topActive} top={'首页'}
-          appMenu={appMenu}
-        />
-        <div className='content'>
-          <div className="content-container">
-            <Outlet />
-          </div>
-        </div>
-        {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer> */}
-        {/* </Layout> */}
+      <AppHeader
+        funcs={appMenu.topMenu}
+        active={appMenu.topActive}
+        top={'首页'}
+        appMenu={appMenu}
+      />
+      <div className='container-wrapper'>
+        <Outlet />
       </div>
-
     </React.Fragment>
-
   );
 };
 
