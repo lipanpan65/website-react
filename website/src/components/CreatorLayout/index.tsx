@@ -9,7 +9,7 @@ import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/ico
 import VerticalMenu from './VerticalMenu';
 import './index.css'
 import { Outlet } from 'react-router-dom'
-import { routeMap } from '../../routes'
+import { AppRoute } from '../../routes'
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -137,7 +137,7 @@ const getLeftActive = (func: any, curPath: any, parent = []) => {
 const CreatorLayout: React.FC = () => {
 
   const [appMenu, setAppMeun] = React.useState<any>(() => {
-    const newRoteMap = routeMap.filter((v: any) => v.name === '创作者中心')
+    const newRoteMap = AppRoute.filter((v: any) => v.name === '创作者中心')
     console.log('newRoteMap===>', newRoteMap)
     let [topMenu, topActive, leftMenu, , leftActive]: any = [newRoteMap]
     if (topMenu) {
@@ -159,30 +159,6 @@ const CreatorLayout: React.FC = () => {
     }
   })
 
-  // const [leftMenu, setLeftMenu] = React.useState<any>(() => {
-  //   // console.log("initleftmenu===>", routeMap)
-  //   const newRoteMap = routeMap.filter((v: any) => v.name === '创作者中心')
-  //   console.log('newRoteMap===>', newRoteMap)
-  //   let [funcs, leftFuncs, topActive, leftActive]: any = [newRoteMap]
-  //   if (funcs) {
-  //     funcs.every((top: any) => {
-  //       if (matchPath(top.hash, window.location.hash)) {
-  //         topActive = top;
-  //         leftFuncs = top.childs;
-  //         if (funcs) {
-  //           leftActive = getLeftActive(leftFuncs, window.location.hash);
-  //         }
-  //         return false;
-  //       }
-  //       return true;
-  //     })
-  //   }
-  //   console.log("CreatorLayout funcs", funcs)
-  //   console.log("CreatorLayout leftFuncs", leftFuncs)
-  //   console.log("CreatorLayout topActive", topActive)
-  //   console.log("CreatorLayout leftActive", leftActive)
-  //   return { funcs, leftFuncs, topActive, leftActive }
-  // })
 
   const {
     token: { colorBgContainer,
