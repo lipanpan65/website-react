@@ -6,7 +6,6 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UploadOutlined,
-
   VideoCameraOutlined,
 } from '@ant-design/icons';
 
@@ -27,6 +26,9 @@ import {
 } from "react-router-dom"
 
 const { Header } = Layout
+
+const MenuLable = (v: any) => <Link to={`${v.url}`}>{v.name}</Link>
+
 
 const items1: MenuProps['items'] = ['1', '2', '3'].map((key) => ({
   key,
@@ -57,6 +59,24 @@ const items2: MenuProps['items'] = [UserOutlined, LaptopOutlined, NotificationOu
 const AdminHeader: any = (props: any) => {
 
   const navigate = useNavigate()
+
+  let { funcs = [], active = {}, top, appMenu } = props
+
+  const { topMenu = [], topActive } = appMenu
+
+  const [items, setItems] = React.useState<any>(() => {
+    return topMenu.map((v: any) => {
+      return {
+        key: v.id,
+        icon: v.icon,
+        label: MenuLable(v)
+      }
+    })
+  })
+
+  const [selectedKeys, setSelectedKeys] = React.useState(() => {
+    return topActive?.id
+  })
 
   const { collapsed, onCollapsed } = props
 
@@ -94,7 +114,7 @@ const AdminHeader: any = (props: any) => {
             theme="dark"
             mode="horizontal"
             defaultSelectedKeys={['2']}
-            items={items1}
+            items={items}
             style={{ flex: 1, minWidth: 0 }}
           />
         </Header>

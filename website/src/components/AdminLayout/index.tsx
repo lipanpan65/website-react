@@ -10,6 +10,9 @@ import {
   Outlet
 } from "react-router-dom"
 
+import { AdminRoute } from '@/routes'
+import { getLeftActive, matchPath } from '@/utils';
+
 const { Header, Content, Sider } = Layout;
 
 const items1: MenuProps['items'] = ['1', '2', '3'].map((key) => ({
@@ -44,6 +47,27 @@ const AdminLayout: React.FC = () => {
   } = theme.useToken();
   const [collapsed, setCollapsed] = React.useState(false);
 
+  const [appMenu, setAppMeun] = React.useState<any>(() => {
+    let [topMenu, topActive, leftMenu, leftActive]: any = [AdminRoute]
+    if (topMenu) {
+      topMenu.every((top: any) => {
+        if (matchPath(top.hash, window.location.hash)) {
+          topActive = top
+          leftMenu = top.childs
+          if (leftMenu) {
+            leftActive = getLeftActive(leftMenu, window.location.hash);
+          }
+          return false;
+        }
+        return true
+      })
+    }
+    return {
+      topMenu, topActive,
+      leftMenu, leftActive
+    }
+  })
+
   const onCollapsed = (collapsed: boolean) => {
     setCollapsed(collapsed)
   }
@@ -53,6 +77,10 @@ const AdminLayout: React.FC = () => {
       <AdminHeader
         collapsed={collapsed}
         onCollapsed={onCollapsed}
+        funcs={appMenu.topMenu}
+        active={appMenu.topActive}
+        top={'首页'}
+        appMenu={appMenu}
       />
       <Layout>
         <Sider width={200} style={{ background: colorBgContainer }} trigger={null} collapsible collapsed={collapsed}>
