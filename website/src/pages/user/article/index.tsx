@@ -71,13 +71,12 @@ const Article: React.FC = () => {
   const {
     token: {
       colorBgContainer,
-      // borderRadiusLG
+      borderRadiusLG
     },
   } = theme.useToken();
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   const onChange = (page: any, pageSize: any) => {
-    // console.log('onChange===>', page, pageSize)
     getArticleList({ page, pageSize })
   }
 
@@ -108,6 +107,7 @@ const Article: React.FC = () => {
       <div className='container'>
         <article style={{
           background: colorBgContainer,
+          borderRadius: borderRadiusLG,
           minHeight: '100vh',
           width: '850px'
         }}>

@@ -18,7 +18,8 @@ import {
   HomeOutlined,
   ProfileOutlined,
   SecurityScanOutlined,
-  UserOutlined
+  UserOutlined,
+  SettingOutlined
 } from '@ant-design/icons'
 
 import AppLayout from '@/components/AppLayout'
@@ -37,11 +38,9 @@ import SubjectDetail from '@/pages/user/subjects/detail'
 import AppMenu from '@/pages/operator/account/menu'
 import SubjectManager from '@/pages/operator/article/subjects'
 
-
 // 管理端
 import AdminLayout from '@/components/AdminLayout'
 import WorkBench from '@/pages/operator/workbench'
-
 
 export const AppRoute: any = [
   {
@@ -160,7 +159,7 @@ export const AppRoute: any = [
 export const AdminRoute: any = [
   {
     id: "1",
-    name: "首页",
+    name: "我的工作台",
     icon: <HomeOutlined />,
     url: '/user/article',
     hash: '#/user/article',
@@ -181,6 +180,20 @@ export const AdminRoute: any = [
       },
     ]
   },
+  {
+    id: "2",
+    name: "创作者中心",
+    icon: <HomeOutlined />,
+    url: '/user/article',
+    hash: '#/user/article',
+  },
+  {
+    id: "3",
+    name: "设置",
+    icon: <SettingOutlined/>,
+    url: '/user/article',
+    hash: '#/user/article',
+  }
 ]
 
 
