@@ -1,12 +1,10 @@
 import * as React from 'react'
 
 import {
-  Layout,
   theme
 } from 'antd'
 
 import {
-  NavLink,
   Outlet
 } from "react-router-dom"
 

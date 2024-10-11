@@ -6,11 +6,19 @@ import { Layout, Menu, theme } from 'antd';
 import AdminHeader from './AdminHeader';
 
 import {
+  Link,
   NavLink,
   Outlet
 } from "react-router-dom"
 
+import { AdminRoute } from '@/routes'
+import { getLeftActive, matchPath } from '@/utils';
+
+
 const { Header, Content, Sider } = Layout;
+
+const MenuLable = (v: any) => <Link to={`${v.url}`}>{v.name}</Link>
+
 
 const items1: MenuProps['items'] = ['1', '2', '3'].map((key) => ({
   key,
@@ -44,6 +52,42 @@ const AdminLayout: React.FC = () => {
   } = theme.useToken();
   const [collapsed, setCollapsed] = React.useState(false);
 
+  const [appMenu, setAppMeun] = React.useState<any>(() => {
+    let [topMenu, topActive, leftMenu, leftActive]: any = [AdminRoute]
+    if (topMenu) {
+      topMenu.every((top: any) => {
+        if (matchPath(top.hash, window.location.hash)) {
+          topActive = top
+          leftMenu = top.childs
+          if (leftMenu) {
+            leftActive = getLeftActive(leftMenu, window.location.hash);
+          }
+          return false;
+        }
+        return true
+      })
+    }
+    console.log("============================")
+    console.log("AdminLayout.topMenu", topMenu, topActive)
+    console.log("AdminLayout.leftMenu", leftMenu, leftActive)
+    console.log("============================")
+
+    return {
+      topMenu, topActive,
+      leftMenu, leftActive
+    }
+  })
+
+  // const [items, setItems] = React.useState<any>(() => {
+  //   return appMenu.leftMenu.map((v: any) => {
+  //     return {
+  //       key: v.id,
+  //       icon: v.icon,
+  //       label: MenuLable(v)
+  //     }
+  //   })
+  // })
+
   const onCollapsed = (collapsed: boolean) => {
     setCollapsed(collapsed)
   }
@@ -53,6 +97,10 @@ const AdminLayout: React.FC = () => {
       <AdminHeader
         collapsed={collapsed}
         onCollapsed={onCollapsed}
+        funcs={appMenu.topMenu}
+        active={appMenu.topActive}
+        top={'首页'}
+        appMenu={appMenu}
       />
       <Layout>
         <Sider width={200} style={{ background: colorBgContainer }} trigger={null} collapsible collapsed={collapsed}>
