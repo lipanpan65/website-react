@@ -74,7 +74,7 @@ const AdminHeader: any = (props: any) => {
     })
   })
 
-  const [selectedKeys, setSelectedKeys] = React.useState(() => {
+  const [defaultSelectedKeys, setDefaultSelectedKeys] = React.useState(() => {
     return topActive?.id
   })
 
@@ -88,9 +88,7 @@ const AdminHeader: any = (props: any) => {
     <React.Fragment>
       <div className="admin-navbar">
         <Header style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={logo} className='logo' onClick={handleLinkTo} style={{
-            margin: '0px'
-          }} />
+          <img src={logo} className='logo' onClick={handleLinkTo} style={{ margin: '0px' }} />
           <span
             onClick={handleLinkTo}
             style={{
@@ -113,7 +111,7 @@ const AdminHeader: any = (props: any) => {
           <Menu
             theme="dark"
             mode="horizontal"
-            defaultSelectedKeys={['2']}
+            defaultSelectedKeys={['1']}
             items={items}
             style={{ flex: 1, minWidth: 0 }}
           />

@@ -159,23 +159,23 @@ export const AppRoute: any = [
 export const AdminRoute: any = [
   {
     id: "1",
-    name: "我的工作台",
+    name: "工作台",
     icon: <HomeOutlined />,
-    url: '/user/article',
-    hash: '#/user/article',
+    url: '/operator/workbench',
+    hash: '#/operator/workbench',
     childs: [
       {
         id: "11",
-        name: "首页概览",
-        url: "/user/article/overview",
-        hash: "#/user/article/overview",
+        name: "我的待办",
+        url: "/operator/workbench/overview",
+        hash: "#/operator/workbench/overview",
         icon: <AppstoreOutlined />,
       },
       {
         id: "12",
         name: "研发",
-        url: "/user/article/develop",
-        hash: "#/user/article/develop",
+        url: "/operator/workbench/develop",
+        hash: "#/operator/workbench/develop",
         icon: <BugOutlined />,
       },
     ]
@@ -184,15 +184,36 @@ export const AdminRoute: any = [
     id: "2",
     name: "创作者中心",
     icon: <HomeOutlined />,
-    url: '/user/article',
-    hash: '#/user/article',
+    url: '/operator/creator',
+    hash: '#/operator/creator',
   },
   {
     id: "3",
     name: "设置",
-    icon: <SettingOutlined/>,
-    url: '/user/article',
-    hash: '#/user/article',
+    icon: <SettingOutlined />,
+    url: '/operator/system',
+    hash: '#/operator/system',
+    childs: [
+      {
+        id: "31",
+        name: "用户管理",
+        icon: <SettingOutlined />,
+        url: '/operator/system/account',
+        hash: '#/operator/system/account',
+      }, {
+        id: "32",
+        name: "字典管理",
+        icon: <SettingOutlined />,
+        url: '/operator/system/dict',
+        hash: '#/operator/system/dict',
+      }, {
+        id: "32",
+        name: "任务管理",
+        icon: <SettingOutlined />,
+        url: '/operator/system/dict',
+        hash: '#/operator/system/dict',
+      }
+    ]
   }
 ]
 

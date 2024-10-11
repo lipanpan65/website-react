@@ -6,6 +6,7 @@ import { Layout, Menu, theme } from 'antd';
 import AdminHeader from './AdminHeader';
 
 import {
+  Link,
   NavLink,
   Outlet
 } from "react-router-dom"
@@ -13,7 +14,11 @@ import {
 import { AdminRoute } from '@/routes'
 import { getLeftActive, matchPath } from '@/utils';
 
+
 const { Header, Content, Sider } = Layout;
+
+const MenuLable = (v: any) => <Link to={`${v.url}`}>{v.name}</Link>
+
 
 const items1: MenuProps['items'] = ['1', '2', '3'].map((key) => ({
   key,
@@ -62,11 +67,26 @@ const AdminLayout: React.FC = () => {
         return true
       })
     }
+    console.log("============================")
+    console.log("AdminLayout.topMenu", topMenu, topActive)
+    console.log("AdminLayout.leftMenu", leftMenu, leftActive)
+    console.log("============================")
+
     return {
       topMenu, topActive,
       leftMenu, leftActive
     }
   })
+
+  // const [items, setItems] = React.useState<any>(() => {
+  //   return appMenu.leftMenu.map((v: any) => {
+  //     return {
+  //       key: v.id,
+  //       icon: v.icon,
+  //       label: MenuLable(v)
+  //     }
+  //   })
+  // })
 
   const onCollapsed = (collapsed: boolean) => {
     setCollapsed(collapsed)
