@@ -1,136 +1,87 @@
-import React from 'react';
-import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { Layout, Menu, theme } from 'antd';
-
+import React, { useMemo, useState } from 'react';
+import { Layout, theme } from 'antd';
+import { Outlet, useLocation } from 'react-router-dom';
 import AdminHeader from './AdminHeader';
+import AdminSider from './AdminSider';
+import { AdminRoute } from '@/routes';
+import { matchPath, getLeftActive } from '@/utils';
 
-import {
-  Link,
-  NavLink,
-  Outlet
-} from "react-router-dom"
+const { Content } = Layout;
 
-import { AdminRoute } from '@/routes'
-import { getLeftActive, matchPath } from '@/utils';
+interface MenuItem {
+  id: string;
+  name: string;
+  url: string;
+  icon: React.ReactNode;
+  hash: string;
+  childs?: MenuItem[];
+}
 
-
-const { Header, Content, Sider } = Layout;
-
-const MenuLable = (v: any) => <Link to={`${v.url}`}>{v.name}</Link>
-
-
-const items1: MenuProps['items'] = ['1', '2', '3'].map((key) => ({
-  key,
-  label: `nav ${key}`,
-}));
-
-const items2: MenuProps['items'] = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
-  (icon, index) => {
-    const key = String(index + 1);
-
-    return {
-      key: `sub${key}`,
-      icon: React.createElement(icon),
-      label: `subnav ${key}`,
-
-      children: new Array(4).fill(null).map((_, j) => {
-        const subKey = index * 4 + j + 1;
-        return {
-          key: subKey,
-          label: `option${subKey}`,
-        };
-      }),
-    };
-  },
-);
+interface AppMenu {
+  topMenu: MenuItem[];
+  topActive: MenuItem | null;
+  leftMenu: MenuItem[];
+  leftActive: MenuItem | null;
+}
 
 const AdminLayout: React.FC = () => {
-  console.log("Admin Layout")
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer },
   } = theme.useToken();
-  const [collapsed, setCollapsed] = React.useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
 
-  const [appMenu, setAppMeun] = React.useState<any>(() => {
-    let [topMenu, topActive, leftMenu, leftActive]: any = [AdminRoute]
-    if (topMenu) {
-      topMenu.every((top: any) => {
-        if (matchPath(top.hash, window.location.hash)) {
-          topActive = top
-          leftMenu = top.childs
-          if (leftMenu) {
-            leftActive = getLeftActive(leftMenu, window.location.hash);
-          }
-          return false;
-        }
-        return true
-      })
-    }
-    console.log("============================")
-    console.log("AdminLayout.topMenu", topMenu, topActive)
-    console.log("AdminLayout.leftMenu", leftMenu, leftActive)
-    console.log("============================")
+  // 使用 useMemo 缓存菜单数据
+  // const appMenu = useMemo(() => initializeAppMenu(location.pathname), [location.pathname]);
+  const appMenu = useMemo(() => initializeAppMenu(window.location.hash), [window.location.hash]);
 
-    return {
-      topMenu, topActive,
-      leftMenu, leftActive
-    }
-  })
-
-  // const [items, setItems] = React.useState<any>(() => {
-  //   return appMenu.leftMenu.map((v: any) => {
-  //     return {
-  //       key: v.id,
-  //       icon: v.icon,
-  //       label: MenuLable(v)
-  //     }
-  //   })
-  // })
-
-  const onCollapsed = (collapsed: boolean) => {
-    setCollapsed(collapsed)
-  }
+  const onCollapsed = (collapsed: boolean) => setCollapsed(collapsed);
 
   return (
     <Layout>
       <AdminHeader
+        appMenu={appMenu}
         collapsed={collapsed}
         onCollapsed={onCollapsed}
-        funcs={appMenu.topMenu}
-        active={appMenu.topActive}
-        top={'首页'}
-        appMenu={appMenu}
       />
       <Layout>
-        <Sider width={200} style={{ background: colorBgContainer }} trigger={null} collapsible collapsed={collapsed}>
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={['1']}
-            defaultOpenKeys={['sub1']}
-            style={{ height: '100%', borderRight: 0 }}
-            items={items2}
-          />
-        </Sider>
-        <div>
+        <AdminSider collapsed={collapsed} appMenu={appMenu} />
+        {/* <div>
           <Outlet />
-        </div>
-        {/* <Layout style={{ padding: '0 24px 24px' }}>
-          <Content
-            style={{
-              // padding: 24,
-              margin: 0,
-              minHeight: 280,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            Content
+        </div> */}
+        <Layout style={{
+          // padding: '0 24px 24px'
+        }}>
+          <Content style={{
+            // background: colorBgContainer, 
+            // borderRadius: 0
+          }}>
+            <Outlet />
           </Content>
-        </Layout> */}
+        </Layout>
       </Layout>
     </Layout>
   );
+};
+
+// 初始化菜单信息
+const initializeAppMenu = (currentPath: string): AppMenu => {
+  const topMenu: MenuItem[] = AdminRoute;
+  let topActive: MenuItem | null = null;
+  let leftMenu: MenuItem[] = [];
+  let leftActive: MenuItem | null = null;
+  topMenu.some((top) => {
+    if (matchPath(top.hash, currentPath)) {
+      topActive = top;
+      leftMenu = top.childs || [];
+      leftActive = getLeftActive(leftMenu, currentPath);
+      return true;
+    }
+    return false;
+  });
+  console.log("initializeAppMenu.currentPath===>", currentPath)
+  console.log("initializeAppMenu.leftActive===>", leftActive)
+  return { topMenu, topActive, leftMenu, leftActive };
 };
 
 export default AdminLayout;

@@ -1,0 +1,126 @@
+import * as React from 'react';
+import { Link } from 'react-router-dom';
+import { List, theme } from 'antd';
+import { request, rowKeyF, showTotal } from '@/utils';
+import './index.css';
+
+const ArticleTitle = (article: any) => (
+  <Link
+    className='title'
+    to={{
+      pathname: `/user/article/detail/${article.id}`,
+    }}
+    target='_blank'
+  >
+    {article.title ?? '无标题'}
+  </Link>
+);
+
+const initialState = {
+  loading: false,
+  data: [],
+  page: {
+    total: 0,
+    current: 0,
+    pageSize: 5,
+  },
+  hasMore: true, // 添加 hasMore 状态
+};
+
+const reducer = (state: any, action: any) => {
+  switch (action.type) {
+    case 'READ':
+      return {
+        ...state,
+        loading: true,
+      };
+    case 'READ_DONE':
+      const { payload: { data, page } } = action;
+      return {
+        ...state,
+        data: [...state.data, ...data], // 追加新数据
+        page,
+        hasMore: data.length === page.pageSize, // 判断是否有更多数据
+        loading: false,
+      };
+    default:
+      return state;
+  }
+};
+
+const Article: React.FC = () => {
+  const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+
+  const getArticleList = (params?: any): any => {
+    if (state.loading || !state.hasMore) return; // 检查是否需要继续加载
+    dispatch({ type: 'READ' });
+    request({
+      url: `/api/user/v1/article/?status=publish`,
+      method: 'GET',
+      params: { ...params, page: state.page.current + 1, pageSize: state.page.pageSize },
+    }).then((response: any) => {
+      const { status, statusText } = response;
+      if (status === 200 && statusText === 'OK') {
+        const { data: { page, data } } = response.data;
+        dispatch({ type: 'READ_DONE', payload: { data, page } });
+      }
+    });
+  };
+
+  const handleScroll = () => {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+      getArticleList(); // 滚动到底部时加载更多数据
+    }
+  };
+
+  React.useEffect(() => {
+    getArticleList(); // 初始加载
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <div className='container'>
+      <article
+        style={{
+          background: colorBgContainer,
+          borderRadius: borderRadiusLG,
+          minHeight: '100vh',
+          width: '850px',
+        }}
+      >
+        <List
+          itemLayout="vertical"
+          loading={state.loading}
+          dataSource={state.data}
+          rowKey={rowKeyF}
+          renderItem={(item: any) => (
+            <List.Item
+              style={{
+                padding: '12px 12px 12px 12px',
+              }}
+              actions={[
+                <span>{item.create_time}</span>,
+                <span>{item.category_name}</span>,
+              ]}
+            >
+              <List.Item.Meta
+                title={ArticleTitle(item)}
+                description={
+                  <div style={{ width: '85%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                    {item.summary}
+                  </div>
+                }
+              />
+            </List.Item>
+          )}
+        />
+        {!state.hasMore && <p style={{ textAlign: 'center' }}>没有更多数据了</p>}
+      </article>
+    </div>
+  );
+};
+
+export default Article;

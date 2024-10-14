@@ -5,8 +5,8 @@ import {
   useRoutes
 } from 'react-router-dom'
 
-{/* <SecurityScanOutlined /> */ }
-{/* <UserOutlined /> */ }
+// import { useSelector } from 'react-redux';
+
 import {
   GroupOutlined,
   GatewayOutlined,
@@ -37,10 +37,16 @@ import Subject from '@/pages/user/subjects/overview'
 import SubjectDetail from '@/pages/user/subjects/detail'
 import AppMenu from '@/pages/operator/account/menu'
 import SubjectManager from '@/pages/operator/article/subjects'
+// 用户登陆主页面
+import Authenticate from '@/pages/operator/account/authenticate'
+import System from '@/pages/operator/system'
 
 // 管理端
 import AdminLayout from '@/components/AdminLayout'
 import WorkBench from '@/pages/operator/workbench'
+
+import RequireAuth from '@/components/RequireAuth';
+import Account from '@/pages/operator/system/account'
 
 export const AppRoute: any = [
   {
@@ -174,9 +180,18 @@ export const AdminRoute: any = [
       {
         id: "12",
         name: "研发",
-        url: "/operator/workbench/develop",
-        hash: "#/operator/workbench/develop",
+        url: "/operator/workbench",
+        hash: "#/operator/workbench",
         icon: <BugOutlined />,
+        // childs: [
+        //   {
+        //     id: "121",
+        //     name: "研发1",
+        //     url: "/operator/workbench/develops",
+        //     hash: "#/operator/workbench/develops",
+        //     icon: <BugOutlined />,
+        //   }
+        // ],
       },
     ]
   },
@@ -195,35 +210,39 @@ export const AdminRoute: any = [
     hash: '#/operator/system',
     childs: [
       {
-        id: "31",
+        id: "311",
         name: "用户管理",
         icon: <SettingOutlined />,
         url: '/operator/system/account',
         hash: '#/operator/system/account',
       }, {
-        id: "32",
+        id: "312",
         name: "字典管理",
         icon: <SettingOutlined />,
         url: '/operator/system/dict',
         hash: '#/operator/system/dict',
       }, {
-        id: "32",
+        id: "313",
         name: "任务管理",
         icon: <SettingOutlined />,
-        url: '/operator/system/dict',
-        hash: '#/operator/system/dict',
+        url: '/operator/system/task',
+        hash: '#/operator/system/task',
       }
     ]
   }
 ]
 
-
-
-
 const Routes = () => {
+
+  // const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
+  const isAuthenticated = false;
 
   return useRoutes(
     [
+      {
+        path: '/authenticate',
+        element: <Authenticate />,
+      },
       {
         path: '/',
         element: <Navigate to='/user/article' />,
@@ -306,15 +325,28 @@ const Routes = () => {
       },
       {
         path: '/operator/workbench',
-        element: <AdminLayout />,
+        element: <RequireAuth isAuthenticated={isAuthenticated} />,
         children: [
           {
-            path: '/operator/workbench',
-            element: <Navigate to='/operator/workbench/overview' />,
+            element: <AdminLayout />,
+            children: [
+              { index: true, element: <Navigate to="overview" /> }, // 使用 index 路由来表示默认路径
+              { path: 'overview', element: <WorkBench /> },
+            ],
           },
+        ]
+      },
+      {
+        path: '/operator/system',
+        element: <RequireAuth isAuthenticated={isAuthenticated} />,
+        children: [
           {
-            path: '/operator/workbench/overview',
-            element: <WorkBench />
+            element: <AdminLayout />,
+            children: [
+              { index: true, element: <Navigate to="account" /> }, // 使用 index 路由来表示默认路径
+              // { path: 'overview', element: <Account /> },
+              { path: 'account', element: <Account /> },
+            ],
           },
         ]
       },

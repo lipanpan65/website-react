@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import {
   Link,
+  // NavLink,
 } from "react-router-dom"
 
 import {
@@ -23,6 +24,18 @@ const ArticleTitle = (article: any) => <Link className='title'
   }}
   // state={{ id: article.id, status: 'drafts' }}
   target='_blank'>{article.title ?? '无标题'}</Link>
+// const ArticleDescription = (article: any) => (
+//   <Text style={true ? { width: 200 } : undefined}>{article.content}</Text>
+// )
+// const ArticleTitle = (article: any) => (
+//   <div className='title-row'>
+//     <div className='title'>
+//       <Link to={`/user/article/detail/${article.id}`}>{article.title ?? '无标题'}</Link>
+//     </div>
+//   </div>
+// )
+
+// const TabTitle = (i: any, t: any) => (<span>{i}{t}</span>)
 
 // 接口返回的数据
 const initialState = {
@@ -31,7 +44,7 @@ const initialState = {
   page: {
     total: 0,
     current: 0,
-    pageSize: 10
+    pageSize: 5
   }
 };
 
@@ -73,6 +86,7 @@ const Article: React.FC = () => {
       method: 'GET',
       params: params || {}
     }).then((response: any) => {
+      console.log('getArticleList===>', response)
       const { status, statusText } = response
       if (status === 200 && statusText === 'OK') {
         const { success, message, data: { page, data } } = response.data
@@ -81,21 +95,10 @@ const Article: React.FC = () => {
     })
   }
 
-  // const handleScroll = () => {
-  //   const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-  //   if (scrollTop + clientHeight >= scrollHeight - 50) {
-  //     console.log("state", state)
-  //     const { page, pageSize, data } = state
-  //     console.log("page", page, pageSize, data)
-  //     getArticleList(); // 滚动到底部时加载更多数据
-  //   }
-  // };
-
-  // React.useEffect(() => {
-  //   getArticleList(); // 初始加载
-  //   window.addEventListener('scroll', handleScroll);
-  //   return () => window.removeEventListener('scroll', handleScroll);
-  // }, []);
+  React.useEffect(() => {
+    // console.log('分页发生变化')
+    // getArticleList()
+  }, [state.page])
 
   React.useEffect(() => getArticleList(), [])
 
@@ -145,7 +148,8 @@ const Article: React.FC = () => {
   )
 }
 
-export default Article
+// export default Article
+
 
 
 

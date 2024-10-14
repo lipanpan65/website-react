@@ -18,7 +18,7 @@ import MarkDownTOC from '@/components/MarkDownTOC';
 import './style.css'
 import { Col, Row, message, theme, Card } from 'antd'
 import CodeCopy from '@/components/CodeCopy';
-import Article from '..';
+// import Article from '..';
 
 
 // const headerStyle: React.CSSProperties = {
