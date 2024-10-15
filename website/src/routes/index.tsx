@@ -44,9 +44,10 @@ import System from '@/pages/operator/system'
 // 管理端
 import AdminLayout from '@/components/AdminLayout'
 import WorkBench from '@/pages/operator/workbench'
+// import AppUserInfo from '@/pages/operator/account/user'
 
 import RequireAuth from '@/components/RequireAuth';
-import Account from '@/pages/operator/system/account'
+import AppUserInfo from '@/pages/operator/system/account'
 
 export const AppRoute: any = [
   {
@@ -227,7 +228,20 @@ export const AdminRoute: any = [
         icon: <SettingOutlined />,
         url: '/operator/system/task',
         hash: '#/operator/system/task',
-      }
+      }, {
+        id: "314",
+        name: "角色管理",
+        icon: <SettingOutlined />,
+        url: '/operator/system/role',
+        hash: '#/operator/system/role',
+      },
+      {
+        id: "315",
+        name: "权限管理",
+        icon: <SettingOutlined />,
+        url: '/operator/system/role',
+        hash: '#/operator/system/role',
+      },
     ]
   }
 ]
@@ -346,7 +360,8 @@ const Routes = () => {
             children: [
               { index: true, element: <Navigate to="account" /> }, // 使用 index 路由来表示默认路径
               // { path: 'overview', element: <Account /> },
-              { path: 'account', element: <Account /> },
+              { path: 'account', element: <AppUserInfo /> },
+              { path: 'role', element: <AppUserInfo /> },
             ],
           },
         ]
