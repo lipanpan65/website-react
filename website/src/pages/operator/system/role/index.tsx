@@ -100,7 +100,7 @@ const AppRoleTable: React.FC<ITableProps> = (props) => {
   const context = React.useContext(RoleContext)
   const { page, data, } = context.state
   const { columns } = props
-
+  
   const pagination = {
     total: page?.total || 0, // 数据总数
     current: page?.current || 1, // 当前页码
@@ -122,11 +122,7 @@ const AppRoleTable: React.FC<ITableProps> = (props) => {
       />
     </React.Fragment>
   )
-
 }
-
-
-
 
 interface IProps {
 
@@ -168,6 +164,7 @@ const AppRole: React.FC<IProps> = (props) => {
       dispatch(action)
     }
   }
+
   return (
     <React.Fragment>
       <RoleContext.Provider value={{ state, dispatch: dispatchF }}>
