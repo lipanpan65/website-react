@@ -61,6 +61,7 @@ const Article: React.FC = () => {
       borderRadiusLG
     },
   } = theme.useToken();
+  
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   const onChange = (page: any, pageSize: any) => {

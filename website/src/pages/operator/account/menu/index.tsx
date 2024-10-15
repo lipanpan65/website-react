@@ -298,13 +298,13 @@ const AppMenuTable = (props: any) => {
   }
 
   const rowSelection: TableRowSelection<DataType> = {
-    onChange: (selectedRowKeys, selectedRows) => {
+    onChange: (selectedRowKeys: any, selectedRows: any) => {
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
-    onSelect: (record, selected, selectedRows) => {
+    onSelect: (record: any, selected: any, selectedRows: any) => {
       console.log(record, selected, selectedRows);
     },
-    onSelectAll: (selected, selectedRows, changeRows) => {
+    onSelectAll: (selected: any, selectedRows: any, changeRows: any) => {
       console.log(selected, selectedRows, changeRows);
     },
   };

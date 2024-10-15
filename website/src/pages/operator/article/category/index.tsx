@@ -259,6 +259,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
     </React.Fragment>
   )
 }
+
 // React.FC<CategoryModelProps>
 const CategoryModel: any = React.forwardRef((props: any, ref: any) => {
   const { initialValues, onSubmit } = props
@@ -269,7 +270,6 @@ const CategoryModel: any = React.forwardRef((props: any, ref: any) => {
   const [formValues, setFormValues] = React.useState<any>({})
 
   React.useEffect(() => {
-    console.log('======经典======', formValues)
     formInstance?.setFieldsValue({ ...formValues })
   }, [formInstance, data])
 
@@ -284,24 +284,13 @@ const CategoryModel: any = React.forwardRef((props: any, ref: any) => {
   }
 
   const onOk = () => {
-    // context.dispatch({ type: 'PUBLISH', payload: {} })
-    // console.log(formRef)
-    // try {
-    //   const values = await formInstance?.validateFields()
-    //   onSubmit(values)
-    // } catch (error) {
-    //   console.log('Failed:', error);
-    // }
-
     formInstance?.validateFields()
       .then((values: any) => {
-        // context.dispatch({ type: 'PUBLISH', payload: values })
         if (formValues.id) {
           values["id"] = formValues.id
         }
-        // props.onSubmit(values)
         onSubmit(values)
-      }).catch((e) => {
+      }).catch((e: any) => {
         console.log('e', e)
         return;
       })
@@ -340,16 +329,6 @@ const CategoryModel: any = React.forwardRef((props: any, ref: any) => {
         onCancel={onCancel}
         destroyOnClose
         onOk={onOk}
-      // afterOpenChange={afterOpenChange}
-      // onOk={async () => {
-      //   try {
-      //     const values = await formInstance?.validateFields();
-      //     formInstance?.resetFields();
-      //     onOK(values);
-      //   } catch (error) {
-      //     console.log('Failed:', error);
-      //   }
-      // }}
       >
         <ModelForm
           initialValues={initialValues}
@@ -377,7 +356,7 @@ const ArticleCategory = (props: any) => {
       title: '分类名称',
       dataIndex: 'category_name',
       key: 'category_name',
-      render: (text) => <a>{text}</a>,
+      render: (text: any) => <a>{text}</a>,
     },
     {
       title: '更新人',
@@ -393,10 +372,10 @@ const ArticleCategory = (props: any) => {
     {
       title: '操作',
       key: 'action',
-      render: (_, record) => (
+      render: (_: any, record: any) => (
         <Space size="middle">
           <a onClick={(event: any) => showModel(event, record)}>编辑</a>
-          <a onClick={(event: any) => onDelete(event, record)}>删除</a>
+          <a onClick={(event: any) => handleDelete(event, record)}>删除</a>
         </Space>
       ),
     },
@@ -411,12 +390,6 @@ const ArticleCategory = (props: any) => {
   const [formInstance, setFormInstance] = React.useState<FormInstance>();
   const [loading, setLoading] = React.useState<boolean>()
 
-  // const onOK = (values: Values) => {
-  //   console.log('Received values of form: ', values);
-  //   setFormValues(values); // 讲 存入 该组件中
-  //   setOpen(false);
-  // };
-
   // pagination, filters, sorter, extra: { currentDataSource: [], action: paginate | sort | filter }
   const onChange = (pagination: any) => {
     setLoading(true)
@@ -428,9 +401,6 @@ const ArticleCategory = (props: any) => {
     //   setLoading(true)
     //   console.log('onChange==doing')
     // }, 1000)
-    console.log('onChange==done')
-    // completeLoading = ()
-    console.log('onChange===>', pagination)
     setQqueryParams((preQueryParams: any) => {
       return {
         ...preQueryParams,
@@ -443,7 +413,6 @@ const ArticleCategory = (props: any) => {
 
   const getArticleCategory = () => {
     api.fetch(queryParams).then((r: any) => {
-      console.log('r===>', r)
       const { code, success, data } = r
       setData(data)
     }).finally(() => {
@@ -451,8 +420,7 @@ const ArticleCategory = (props: any) => {
     })
   }
 
-  const onDelete = (event: any, data?: any) => {
-    // const completeLoading = ()
+  const handleDelete = (event: any, data?: any) => {
     const onOk = () => new Promise<void>((resolve, reject) => {
       request({
         url: `/api/user/v1/article_category/${data.id}/`,
@@ -479,17 +447,10 @@ const ArticleCategory = (props: any) => {
       icon: <ExclamationCircleFilled />,
       content: `确认删除该分类${data.category_name}吗？`,
       onOk,
-      // onOk() {
-      //   return new Promise((resolve, reject) => {
-      //     setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-      //   }).catch(() => console.log('Oops errors!'));
-      // },
-      // onCancel() { },
     });
   }
 
   const onSubmit = (data: any) => {
-    console.log('onSubmit', data)
     if (!!data.id) {
       console.log("更新")
       request({
@@ -543,17 +504,8 @@ const ArticleCategory = (props: any) => {
    * 按照顺序执行
    */
   React.useEffect(() => {
-    console.log('组件加载queryParams', queryParams)
-    console.log('-queryParams-', queryParams)
     getArticleCategory()
   }, [queryParams])
-
-  React.useEffect(() => {
-    console.log('组件加载')
-    return () => {
-      console.log('组件销毁')
-    }
-  }, [])
 
   return (
     <React.Fragment>
@@ -581,15 +533,11 @@ const ArticleCategory = (props: any) => {
           ref={modelRef}
           open={open}
           onSubmit={onSubmit}
-          // onOK={onOK}
-          // onCancel={() => onCancel}
           initialValues={{ modifier: 'public' }}
         />
       </div>
-
     </React.Fragment>
   )
-
 }
 
 export default ArticleCategory

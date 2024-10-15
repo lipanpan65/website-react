@@ -10,4 +10,3 @@ const AppContent: React.FC = (props: any) => {
     </React.Fragment>
   )
 }
-
