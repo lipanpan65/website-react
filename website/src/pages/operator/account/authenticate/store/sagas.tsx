@@ -35,7 +35,7 @@ export function* authSaga(): Generator {
   yield takeEvery(actions.login.type, function* (action: ReturnType<typeof actions.login>): Generator<any, void, any> {
     try {
       // const response: { data: AuthResponse } = yield handleAuthRequest('/api/operation/configure/user/login/', action.payload);
-      const response: any = yield handleAuthRequest('/api/operator/v1/authentication/login', action.payload);
+      const response: any = yield handleAuthRequest('/api/operator/v1/authentication/login/', action.payload);
       yield put(actions.authenticateSuccess({ action: 'login', ...response.data }));
     } catch (error: any) {
       yield put(actions.authenticateFailed(error.toString())); // 处理错误

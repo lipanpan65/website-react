@@ -235,7 +235,8 @@ export const AdminRoute: any = [
 const Routes = () => {
 
   // const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
-  const isAuthenticated = false;
+  // const isAuthenticated = false;
+  const isAuthenticated = true;
 
   return useRoutes(
     [
