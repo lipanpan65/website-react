@@ -1,9 +1,8 @@
 import * as React from 'react'
-// import { Table, theme } from 'antd'
-
+import { useDispatch } from 'react-redux';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Flex } from 'antd';
-
+import { actions } from './store';
 import {
   Navigate,
   useLocation,
@@ -12,19 +11,20 @@ import {
 } from 'react-router-dom'
 
 import './index.css'
-import { ceil } from 'lodash';
-
-
 const Authenticate = () => {
+
+  const dispatch = useDispatch();
 
   const navigate = useNavigate()
 
   const handleLinkTo = () => {
     navigate('/')
   }
-  
+
   const onFinish = (values: any) => {
     console.log('Received values of form: ', values);
+    const { username, password } = values
+    dispatch(actions.login({ username, password }));
   };
 
   return (

@@ -36,9 +36,6 @@ const AdminSider: React.FC<AdminSiderProps> = ({ collapsed, appMenu }) => {
   // 自动选择当前路径对应的菜单项
   const defaultSelectedKeys = appMenu.leftActive ? [appMenu.leftActive.id] : [];
   // const defaultOpenKeys = appMenu.leftMenu.map((item) => item.id);
-  console.log("AdminSider.appMenu", appMenu)
-  console.log("AdminSider.defaultSelectedKeys", defaultSelectedKeys)
-
   return (
     <Sider
       width={200}

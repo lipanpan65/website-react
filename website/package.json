@@ -12,7 +12,7 @@
     "@types/node": "^16.18.66",
     "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.17",
-    "antd": "^5.12.5",
+    "antd": "^5.21.4",
     "axios": "^1.6.2",
     "copy-to-clipboard": "^3.3.3",
     "dotenv": "^16.4.5",
