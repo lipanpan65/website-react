@@ -46,6 +46,7 @@ export const delay = (ms: number) => {
 export const rowKeyF = (record: any): number => record.id || record.pk
 export const showTotal = (total: any) => `共${total}条记录`
 export const matchPath = (menuUrl: any, curPath: any) => curPath.indexOf(menuUrl) === 0
+
 export const getLeftActive = (func: any, curPath: any, parent = []) => {
   let active: any;
   func.every((item: any) => {

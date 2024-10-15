@@ -6,13 +6,14 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 
 import { ConfigProvider } from 'antd'
+
 import {
   HashRouter as Router
 } from 'react-router-dom'
 
 import zhCN from 'antd/es/locale/zh_CN'
 import "moment/locale/zh-cn"
-// import store from './store';
+import store from './store';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -25,13 +26,13 @@ const root = ReactDOM.createRoot(
 // );
 
 root.render(
-  // <Provider store={store}>
+  <Provider store={store}>
     <ConfigProvider locale={zhCN}>
       <Router>
         <App />
       </Router>
     </ConfigProvider>
-  // </Provider>
+  </Provider>
 );
 
 
