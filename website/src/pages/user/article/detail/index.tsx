@@ -18,7 +18,8 @@ import MarkDownTOC from '@/components/MarkDownTOC';
 import './style.css'
 import { Col, Row, message, theme, Card } from 'antd'
 import CodeCopy from '@/components/CodeCopy';
-import Article from '..';
+// import Article from '..';
+// import Article from '..';
 
 const { Meta } = Card;
 // const headerStyle: React.CSSProperties = {
@@ -41,7 +42,7 @@ interface Article {
 // TODO 文章的接口
 const initialState = {
   loading: false,
-  article: Article
+  article: {}
 };
 
 const reducer = (preState: any, action: any) => {
