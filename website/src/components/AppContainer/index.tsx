@@ -32,7 +32,11 @@ const AppContainer: React.FC<AppContainerProps> = ({
   };
 
   const innerContentStyle: React.CSSProperties = {
-    background: background || colorBgContainer,
+    // background: background || colorBgContainer,
+    display: 'flex',              // 设置 flex 布局
+    flexDirection: 'column',      // 垂直方向排列子元素
+    gap: '10px',                  // 子元素之间的间隔
+    background: background,
     borderRadius: borderRadius || borderRadiusLG,
     minHeight,
     width,

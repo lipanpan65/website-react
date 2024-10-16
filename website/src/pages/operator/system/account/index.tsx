@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Table, theme, Space, message, Modal } from 'antd'
+import { Table, theme, Space, message, Modal, Flex } from 'antd'
 
 import {
   Navigate,
@@ -13,13 +13,28 @@ import type { TableProps, FormInstance } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 
 import { dateFormate, request } from '@/utils'
+import AppContent from '@/components/AppContent';
+import AppContainer from '@/components/AppContainer';
 
 const { confirm } = Modal;
 
 const AppUserInfoSearch = () => {
   return (
     <React.Fragment>
-      search 组件
+      <AppContent>
+        search 组件
+      </AppContent>
+    </React.Fragment>
+  )
+}
+
+const AppUserInfoTable = () => {
+
+  return (
+    <React.Fragment>
+      <AppContent>
+        表格组件 组件
+      </AppContent>
     </React.Fragment>
   )
 }
@@ -106,16 +121,10 @@ const AppUserInfo = () => {
   }
 
   return (
-    <div className="container" >
-      <div style={{
-        background: colorBgContainer,
-        borderRadius: borderRadiusLG,
-        minHeight: '100vh',
-        width: '100%'
-      }}>
-        <AppUserInfoSearch />
-      </div>
-    </div>
+    <AppContainer>
+      <AppUserInfoSearch />
+      <AppUserInfoTable />
+    </AppContainer>
   )
 }
 
