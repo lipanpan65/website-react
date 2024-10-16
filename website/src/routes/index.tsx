@@ -45,9 +45,11 @@ import System from '@/pages/operator/system'
 import AdminLayout from '@/components/AdminLayout'
 import WorkBench from '@/pages/operator/workbench'
 // import AppUserInfo from '@/pages/operator/account/user'
-
+import AppGlobalDict from '@/pages/operator/system/global-dictionary'
 import RequireAuth from '@/components/RequireAuth';
 import AppUserInfo from '@/pages/operator/system/account'
+
+
 
 export const AppRoute: any = [
   {
@@ -362,6 +364,7 @@ const Routes = () => {
               // { path: 'overview', element: <Account /> },
               { path: 'account', element: <AppUserInfo /> },
               { path: 'role', element: <AppUserInfo /> },
+              { path: 'dict', element: <AppGlobalDict /> }
             ],
           },
         ]

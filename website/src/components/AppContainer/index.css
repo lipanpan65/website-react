@@ -1,7 +1,9 @@
 /* containerStyles.css */
-.container {
-    display: flex;
+.container-wrap {
+    background-color: #fff;
+    padding: 16px;
+    /* display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 20px; */
 }

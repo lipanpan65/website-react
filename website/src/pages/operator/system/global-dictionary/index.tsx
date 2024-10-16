@@ -1,10 +1,16 @@
 import * as React from 'react'
 
-const GlobalDict = () => {
+import AppContainer from '@/components/AppContainer'
+
+const AppGlobalDict = () => {
 
   return (
-    <div></div>
+    <AppContainer>
+      <div>
+        全局字典
+      </div>
+    </AppContainer>
   )
 }
 
-export default GlobalDict
+export default AppGlobalDict

@@ -7,7 +7,8 @@ interface AppContainerProps {
   minHeight?: string;
   width?: string;
   children: React.ReactNode;
-  style?: React.CSSProperties;
+  style?: React.CSSProperties; // 外层容器样式
+  contentStyle?: React.CSSProperties; // 内层内容容器样式
   className?: string;
 }
 
@@ -18,6 +19,7 @@ const AppContainer: React.FC<AppContainerProps> = ({
   width = '100%',      // 默认宽度
   children,
   style = {},
+  contentStyle = {},
   className = '',
 }) => {
   const {
@@ -25,16 +27,23 @@ const AppContainer: React.FC<AppContainerProps> = ({
   } = theme.useToken();
 
   const containerStyle: React.CSSProperties = {
+    padding: '16px', // 外层容器的默认样式
+    ...style,
+  };
+
+  const innerContentStyle: React.CSSProperties = {
     background: background || colorBgContainer,
     borderRadius: borderRadius || borderRadiusLG,
     minHeight,
     width,
-    ...style,
+    ...contentStyle,
   };
 
   return (
-    <div className={`container ${className}`} style={containerStyle}>
-      {children}
+    <div className={`container-wrap ${className}`} style={containerStyle}>
+      <div style={innerContentStyle}>
+        {children}
+      </div>
     </div>
   );
 };
