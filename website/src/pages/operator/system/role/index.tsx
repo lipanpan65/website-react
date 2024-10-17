@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { Space, Table, theme } from 'antd'
 import { rowKeyF, showTotal } from '@/utils'
+import AppContent from '@/components/AppContent';
+import AppContainer from '@/components/AppContainer';
 
 // 初始化参数
 const initialState = {
@@ -84,7 +86,9 @@ const AppRoleSearch: React.FC<ISearchProps> = (props) => {
 
   return (
     <React.Fragment>
-      search 组件
+      <AppContent>
+        search 组件
+      </AppContent>
     </React.Fragment>
   )
 }
@@ -126,8 +130,6 @@ interface IProps {
 
 }
 
-
-
 const AppRole: React.FC<IProps> = (props) => {
 
   const columns = [
@@ -166,10 +168,12 @@ const AppRole: React.FC<IProps> = (props) => {
   return (
     <React.Fragment>
       <RoleContext.Provider value={{ state, dispatch: dispatchF }}>
-        <AppRoleSearch />
-        <AppRoleTable
-          columns={columns}
-        />
+        <AppContainer>
+          <AppRoleSearch />
+          <AppRoleTable
+            columns={columns}
+          />
+        </AppContainer>
       </RoleContext.Provider>
     </React.Fragment>
   )

@@ -39,6 +39,11 @@ const AppUserInfoTable = () => {
   )
 }
 
+const AppUserInfoDialog = () => {
+  
+}
+
+
 const AppUserInfo = () => {
 
   const dialogRef: any = React.useRef()
