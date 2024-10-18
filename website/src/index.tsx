@@ -27,14 +27,23 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <Provider store={store}>
-    <ConfigProvider locale={zhCN}>
+    <ConfigProvider
+      locale={{
+        ...zhCN, // 保留其他中文配置
+        Modal: {
+          ...zhCN.Modal, // 保留 Modal 的其他默认配置
+          okText: '确定',
+          cancelText: '取消',
+          justOkText: '知道了', // 自定义 justOkText 文本
+        },
+      }}
+    >
       <Router>
         <App />
       </Router>
     </ConfigProvider>
   </Provider>
 );
-
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
