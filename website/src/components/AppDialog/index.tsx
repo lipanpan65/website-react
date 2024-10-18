@@ -1,89 +1,82 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { Modal, FormInstance } from 'antd';
+import { Modal, FormInstance, ModalProps } from 'antd';
+import DialogForm from './DialogForm';
 
-interface FormValues {
-  id?: number;  // id 是可选属性
-  [key: string]: any;  // 允许有其他任意属性
-}
-
-interface AppModelProps {
+interface AppDialogProps extends Omit<ModalProps, 'onOk' | 'onCancel'> {
   initialValues?: any;
   onSubmit: (values: any) => void;
+  fields: any[];  // 动态表单字段
   title?: string;
-  onOk?: () => void;
-  onCancel?: () => void;
-  formComponent?: React.FC<any>; // 可选的表单组件
+  dialogFormLayout?: 'horizontal' | 'vertical' | 'inline';  // 可选的表单布局
+  dialogProps?: any;  // 可选的 DialogForm 额外属性
+  setFormInstance: (formInstance: FormInstance) => void;  // 调用者传递的 formInstance 管理
+  onOk?: () => void;  // 可选的 onOk
+  onCancel?: () => void;  // 可选的 onCancel
 }
 
-const AppModel = forwardRef((props: AppModelProps, ref) => {
-  const {
-    initialValues,
-    onSubmit,
-    title = '创建表单',
-    onOk: propsOnOk,
-    onCancel: propsOnCancel,
-    formComponent: FormComponent, // 如果不传 formComponent 则渲染自定义的内容
-  } = props;
+const AppDialog = forwardRef((props: AppDialogProps, ref) => {
+  const { initialValues, onSubmit, title = '创建文章分类', fields, dialogFormLayout = 'vertical', dialogProps, setFormInstance, onOk: propsOnOk, onCancel: propsOnCancel, ...modalProps } = props;
 
-  const [formInstance, setFormInstance] = useState<FormInstance | null>(null);
-  const [modalState, setModalState] = useState<{ open: boolean; formValues: FormValues }>({
-    open: false,
-    formValues: {},
-  });
+  const [open, setOpen] = useState<boolean>(false);
+  const [formInstance, setInternalFormInstance] = useState<FormInstance | null>(null);  // 内部存储 formInstance
 
-  useEffect(() => {
-    if (formInstance) {
-      formInstance.setFieldsValue(modalState.formValues);
-    }
-  }, [formInstance, modalState.formValues]);
-
-  const showModel = (open: boolean, data: any = {}) => {
-    setModalState({ open, formValues: data });
+  const showModel = (open: boolean, data?: any) => {
+    setOpen(open);
   };
 
   const defaultOnOk = async () => {
+    if (!formInstance) {
+      console.error('Form instance is not available');
+      return;
+    }
     try {
-      const values = await formInstance?.validateFields();
-      if (modalState.formValues?.id) values.id = modalState.formValues.id;
+      const values = await formInstance.validateFields();
       onSubmit(values);
     } catch (e) {
       console.error('Validation failed:', e);
     }
+    setOpen(false);
   };
 
   const defaultOnCancel = () => {
     formInstance?.resetFields();
-    setModalState((prevState) => ({ ...prevState, open: false }));
+    setOpen(false);
   };
 
   const handleOk = propsOnOk || defaultOnOk;
   const handleCancel = propsOnCancel || defaultOnCancel;
 
+  useEffect(() => {
+    if (formInstance) {
+      setFormInstance(formInstance);  // 将 formInstance 传递给外部
+    }
+  }, [formInstance, setFormInstance]);
+
   useImperativeHandle(ref, () => ({
+    onOk: handleOk,
+    onCancel: handleCancel,
+    setOpen,
     showModel,
   }));
 
   return (
     <Modal
-      open={modalState.open}
+      open={open}
       title={title}
-      onOk={handleOk}
+      okButtonProps={{ autoFocus: true }}
       onCancel={handleCancel}
+      onOk={handleOk}
       destroyOnClose
-      afterOpenChange={(open) => formInstance?.setFieldsValue(modalState.formValues)}
+      {...modalProps}  // 传递 Modal 其他属性
     >
-      {/* 如果没有传递 formComponent 则渲染默认提示 */}
-      {FormComponent ? (
-        <FormComponent
-          initialValues={initialValues}
-          onFormInstanceReady={setFormInstance}
-          isUpdate={!!modalState.formValues?.id}
-        />
-      ) : (
-        <div>请设置表单内容</div>
-      )}
+      <DialogForm
+        fields={fields}
+        layout={dialogFormLayout}  // 传递 dialogFormLayout
+        onFormInstanceReady={setInternalFormInstance}  // 使用内部函数存储表单实例
+        {...dialogProps}  // 传递额外的 DialogForm 属性
+      />
     </Modal>
   );
 });
 
-export default AppModel;
+export default AppDialog;

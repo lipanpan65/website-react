@@ -32,6 +32,8 @@ const AppTable: React.FC<AppTableProps> = ({
         pageSize: page?.pageSize || 5, // 每页显示条数
         showTotal: (total: number) => `总共 ${total} 条数据`, // 自定义显示总数的格式
     };
+
+    
     
     return (
         <React.Fragment>

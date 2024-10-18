@@ -1,18 +1,14 @@
 import * as React from 'react'
 import {
-  Table,
   theme,
   Space,
   message,
   Modal,
-  Flex,
-  Form
+  Form,
+  Input
 } from 'antd'
 
 import {
-  Navigate,
-  useLocation,
-  useRoutes,
   useNavigate
 } from 'react-router-dom'
 
@@ -25,6 +21,8 @@ import AppContent from '@/components/AppContent';
 import AppContainer from '@/components/AppContainer';
 import AppSearch from '@/components/AppSearch';
 import AppTable from '@/components/AppTable';
+import AppDialog from '@/components/AppDialog';
+
 
 const { confirm } = Modal;
 
@@ -42,15 +40,22 @@ const AppUserInfoSearch: React.FC<AppUserInfoSearchProps> = ({
 }) => {
   const [form] = Form.useForm();
 
+  React.useEffect(() => {
+    onFormInstanceReady(form);
+  }, []);
+
   const handleSearchClick = (event: React.MouseEvent<HTMLElement>) => {
     console.log('搜索按钮点击');
+    // 你可以在这里添加显示模态框的逻辑，例如调用 showModel
   };
 
   const buttonConfig = {
-    label: '搜索',
-    // type: 'primary',
-    // onClick: showModel,
-    onclick: (event: any) => showModel(event, {})
+    label: '添加',
+    type: 'primary' as const,  // 明确指定类型以符合 ButtonConfig
+    onClick: (event: React.MouseEvent<HTMLElement>) => showModel(event, {}),
+    // 你可以添加更多的 Button 属性，如 disabled, icon 等
+    disabled: false,
+    // icon: <SomeIcon />,  // 例如使用 Ant Design 的图标
   };
 
   return (
@@ -59,7 +64,6 @@ const AppUserInfoSearch: React.FC<AppUserInfoSearchProps> = ({
         <AppSearch
           buttonConfig={buttonConfig}  // 动态按钮配置
           onFormInstanceReady={(form) => console.log('Form instance ready:', form)}
-          // showModel={(event, data) => console.log('Show model:', data)}
           setQueryParams={(params) => console.log('Query params:', params)}
           formItems={[
             {
@@ -73,14 +77,15 @@ const AppUserInfoSearch: React.FC<AppUserInfoSearchProps> = ({
               placeholder: '请选择分类',
               type: 'select',
               width: 150,
-              allowClear: true,
-              options: [
-                { label: '科技', value: 'tech' },
-                { label: '健康', value: 'health' },
-              ],
+              selectConfig: {
+                allowClear: true,
+                options: [
+                  { label: '科技', value: 'tech' },
+                  { label: '健康', value: 'health' },
+                ],
+              },
             },
           ]}
-        // buttonLabel="添加"
         />
       </AppContent>
     </React.Fragment>
@@ -101,13 +106,13 @@ interface DataItem {
 }
 
 interface UserInfoTableProps {
-  // data?: any;  // 设置可选
   data?: {
     page: PaginationProps;
     data: any;  // 数据数组，包含 id, name, description
   };
   columns?: any;  // 设置可选
-  onFormInstanceReady: (instance: FormInstance<any>) => void;
+  // onFormInstanceReady: (instance: FormInstance<any>) => void;
+  onChange?: (pagination: PaginationProps, filters?: any, sorter?: any) => void;  // 新增 onChange 属性
 }
 
 const AppUserInfoTable: React.FC<UserInfoTableProps> = ({
@@ -120,23 +125,13 @@ const AppUserInfoTable: React.FC<UserInfoTableProps> = ({
     data: []
   },
   columns = [], // 设置默认值为空数组
-  onFormInstanceReady,
+  onChange
 }) => {
 
-  // const data = {
-  //   page: {
-  //     total: 50,
-  //     current: 1,
-  //     pageSize: 5,
-  //   },
-  //   data: [
-  //     { id: 1, name: '分类1', description: '这是分类1' },
-  //     { id: 2, name: '分类2', description: '这是分类2' },
-  //   ],
-  // };
-
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-    console.log('分页、筛选或排序改变:', pagination, filters, sorter);
+    if (onChange) {
+      onChange(pagination, filters, sorter);  // 确保 onChange 已定义
+    }
   };
 
   return (
@@ -154,9 +149,82 @@ const AppUserInfoTable: React.FC<UserInfoTableProps> = ({
   )
 }
 
-const AppUserInfoDialog = () => {
+const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
+  const [open, setOpen] = React.useState<boolean>(false);
+  const { onSubmit } = props
+  const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
+  const [formValues, setFormValues] = React.useState<any>({});
 
-}
+  const fields = [
+    {
+      name: 'category_name',
+      label: '分类名称',
+      rules: [{ required: true, message: '请输入分类名称' }],
+      component: <Input placeholder="请输入分类名称" />,
+    },
+    {
+      name: 'remark',
+      label: '备注',
+      component: <Input.TextArea placeholder="请输入备注" showCount maxLength={100} />,
+    },
+  ];
+
+  const showModel = (open: boolean, data?: any) => {
+    setOpen(open);
+    if (data) {
+      // setFormValues(() => data)
+    }
+  };
+
+  const handleSubmit = (values: any) => {
+    console.log('提交的数据:', values);
+  };
+
+  React.useEffect(() => {
+    if (formInstance) {
+      formInstance.setFieldsValue({ ...formValues });
+    }
+  }, [formInstance, formValues]);
+
+  const onOk = () => {
+    console.log("ok")
+    formInstance?.validateFields()
+      .then((values: any) => {
+        if (formValues.id) {
+          values["id"] = formValues.id
+        }
+        onSubmit(values)
+      }).catch((e: any) => {
+        console.log('e', e)
+        return;
+      })
+  }
+
+  const onCancel = () => {
+    formInstance?.resetFields();
+    setOpen(false)
+  }
+
+  React.useImperativeHandle(ref, () => ({
+    showModel,
+    onOk,
+    onCancel
+  }));
+
+  return (
+    <React.Fragment>
+      <AppDialog
+        setFormInstance={setFormInstance}  // 管理表单实例
+        fields={fields}
+        title='添加用户'
+        onOk={onOk}
+        onCancel={onCancel}
+        open={open}
+        onSubmit={handleSubmit}
+      />
+    </React.Fragment>
+  );
+});
 
 const AppUserInfo = () => {
   const dialogRef: any = React.useRef()
@@ -164,13 +232,8 @@ const AppUserInfo = () => {
   const navigate = useNavigate()
   const [formInstance, setFormInstance] = React.useState<FormInstance>();
   const [queryParams, setQqueryParams] = React.useState<any>({})
-  
-  const {
-    token: {
-      colorBgContainer,
-      borderRadiusLG
-    },
-  } = theme.useToken();
+  const [loading, setLoading] = React.useState<boolean>()
+
 
   const columns: TableProps<any>['columns'] = [
     {
@@ -230,11 +293,20 @@ const AppUserInfo = () => {
     },
   ];
 
-  const handleLinkTo = () => {
-    navigate('/')
+  const onChange = (pagination: any) => {
+    setLoading(true)
+
+    setQqueryParams((preQueryParams: any) => {
+      return {
+        ...preQueryParams,
+        page: pagination.current,
+        pageSize: pagination.pageSize,
+        total: pagination.total
+      }
+    })
   }
 
-  const showModel = (event: any, data?: any) => {
+  const showModel = (_: any, data?: any) => {
     dialogRef.current.showModel(true, data)
   }
 
@@ -268,6 +340,59 @@ const AppUserInfo = () => {
     });
   }
 
+  /**
+ * 按照顺序执行
+ */
+  React.useEffect(() => {
+    console.log("加载数据")
+  }, [queryParams])
+
+  const onSubmit = (data: any) => {
+    if (!!data.id) {
+      console.log("更新")
+      request({
+        url: `/api/user/v1/article_category/${data.id}/`,
+        method: 'PUT',
+        data
+      }).then((r: any) => {
+        const { status, statusText } = r
+        if (status === 200 && statusText === 'OK') {
+          const { code, success } = r.data
+          if (code === "0000") {
+            message.success('操作成功')
+          } else if (success === false) {
+            message.error(r.data.message)
+          }
+        }
+      }).finally(() => {
+        dialogRef.current.setOpen(false)
+        // 重新拉
+        // getArticleCategory()
+      })
+    } else {
+      request({
+        url: `/api/user/v1/article_category/`,
+        method: 'POST',
+        data
+      }).then((r: any) => {
+        const { status, statusText
+        } = r
+        if (status === 200 && statusText === 'OK') {
+          const { code, success } = r.data
+          if (code === "0000") {
+            message.success('操作成功')
+          } else if (success === false) {
+            message.error(r.data.message)
+          }
+        }
+      }).finally(() => {
+        // modelRef.current.setOpen(false)
+        // 重新拉
+        // getArticleCategory()
+      })
+    }
+  }
+  
   return (
     <AppContainer>
       <AppUserInfoSearch
@@ -278,10 +403,12 @@ const AppUserInfo = () => {
         setQqueryParams={setQqueryParams}
       />
       <AppUserInfoTable
+        onChange={onChange}
         columns={columns}
-        onFormInstanceReady={(instance: any) => {
-          setFormInstance(instance);
-        }}
+      />
+      <AppUserInfoDialog
+        ref={dialogRef}
+        onSubmit={onSubmit}
       />
 
     </AppContainer>

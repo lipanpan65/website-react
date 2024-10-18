@@ -19,8 +19,12 @@ import {
   ProfileOutlined,
   SecurityScanOutlined,
   UserOutlined,
-  SettingOutlined
+  SettingOutlined,
+  ReadOutlined,
+  ClockCircleOutlined
+
 } from '@ant-design/icons'
+
 
 import AppLayout from '@/components/AppLayout'
 import BaseLayout from '@/components/BaseLayout'
@@ -216,19 +220,19 @@ export const AdminRoute: any = [
       {
         id: "311",
         name: "用户管理",
-        icon: <SettingOutlined />,
+        icon: <UserOutlined />,
         url: '/operator/system/account',
         hash: '#/operator/system/account',
       }, {
         id: "312",
         name: "字典管理",
-        icon: <SettingOutlined />,
+        icon: <ReadOutlined />,
         url: '/operator/system/dict',
         hash: '#/operator/system/dict',
       }, {
         id: "313",
         name: "任务管理",
-        icon: <SettingOutlined />,
+        icon: <ClockCircleOutlined />,
         url: '/operator/system/task',
         hash: '#/operator/system/task',
       }, {

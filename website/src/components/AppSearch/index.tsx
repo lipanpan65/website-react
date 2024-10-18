@@ -1,8 +1,10 @@
 import React from 'react';
-import { Form, Input, Row, Col, Button, FormInstance, Select } from 'antd';
+import { Form, Input, Row, Col, Button, FormInstance, Select, ButtonProps, SelectProps } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
+// 定义表单项配置接口
 interface FormItemConfig {
   name: string;
   placeholder?: string;
@@ -10,25 +12,23 @@ interface FormItemConfig {
   type?: 'input' | 'select';
   options?: { label: string; value: string | number }[];
   width?: string | number;
-  span?: number;  // 新增可选的 span 属性
+  span?: number;
   onPressEnter?: (key: string, event: React.KeyboardEvent<HTMLInputElement>) => void;
-  [key: string]: any;  // 允许有其他任意属性
+  selectConfig?: SelectConfig;  // 新增 selectConfig 属性
+  [key: string]: any;
 }
 
-// interface ButtonConfig {
-//   label: string;
-//   type?: 'primary' | 'default' | 'dashed' | 'text' | 'link';
-//   onClick: (event: React.MouseEvent<HTMLElement>) => void;
-//   [key: string]: any;  // 允许其他任意属性
-// }
-
-interface ButtonConfig {
-  label: string;
-  type?: 'primary' | 'default' | 'dashed' | 'text' | 'link';  // 限制为 Button 允许的类型
-  // onClick: (event: React.MouseEvent<HTMLElement>) => void;
-  // onClick: (event: React.MouseEvent<HTMLElement>) => void;
-  [key: string]: any;  // 允许其他任意属性
+// 定义按钮配置接口，扩展 ButtonProps 并排除 children
+interface ButtonConfig extends Omit<ButtonProps, 'children'> {
+  label: string;  // 按钮的显示文本
 }
+
+// 定义 Select 配置接口，扩展 SelectProps 并排除 children
+interface SelectConfig extends Omit<SelectProps<any>, 'children'> {
+  options: { label: string; value: string | number }[];  // 选项
+}
+
+// 定义 AppSearch 组件的 props 接口
 interface AppSearchProps {
   onFormInstanceReady: (form: FormInstance) => void;
   setQueryParams: (params: any) => void;
@@ -76,12 +76,15 @@ const AppSearch: React.FC<AppSearchProps> = ({
       <Form form={form}>
         <Row gutter={[innerSpacing, 16]} className="app-search" style={searchStyle}>
           <Col style={colStyle}>
-            <Button type={buttonConfig.type || 'primary'} {...buttonConfig}>
-              {buttonConfig.label}
+            <Button
+              icon={buttonConfig.icon || <SearchOutlined />}
+              {...buttonConfig}  // 传递所有 Button 相关属性
+            >
+              {buttonConfig.label}  {/* 使用 label 作为按钮内容 */}
             </Button>
           </Col>
           {formItems.map((item) => {
-            const { name, type, options, onPressEnter, rules, width, placeholder, span, ...rest } = item;
+            const { name, type, options, onPressEnter, rules, width, placeholder, span, selectConfig, ...rest } = item;
             return (
               <Col key={name} style={colStyle} {...(span ? { span } : {})}>
                 <Form.Item
@@ -93,12 +96,13 @@ const AppSearch: React.FC<AppSearchProps> = ({
                   }}
                   {...rest}
                 >
-                  {type === 'select' && options ? (
+                  {type === 'select' && selectConfig ? (
                     <Select
                       placeholder={placeholder || '请选择...'}
-                      {...rest}
-                      style={{ width: '100%' }}>
-                      {options.map((option) => (
+                      {...selectConfig}  // 传递 selectConfig 中的所有属性
+                      style={{ width: '100%' }}
+                    >
+                      {selectConfig.options.map((option) => (
                         <Option key={option.value} value={option.value}>
                           {option.label}
                         </Option>
