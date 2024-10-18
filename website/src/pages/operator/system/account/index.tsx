@@ -15,6 +15,7 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import { dateFormate, request } from '@/utils'
 import AppContent from '@/components/AppContent';
 import AppContainer from '@/components/AppContainer';
+import AppSearch from '@/components/AppSearch';
 
 const { confirm } = Modal;
 
@@ -22,7 +23,31 @@ const AppUserInfoSearch = () => {
   return (
     <React.Fragment>
       <AppContent>
-        search 组件
+        <AppSearch
+          onFormInstanceReady={(form) => console.log('Form instance ready:', form)}
+          showModel={(event, data) => console.log('Show model:', data)}
+          setQueryParams={(params) => console.log('Query params:', params)}
+          formItems={[
+            {
+              // label: '搜索',
+              name: 'search',
+              placeholder: '请输入...',
+              type: 'input',
+            },
+            {
+              name: 'category',
+              placeholder: '请选择分类',
+              type: 'select',
+              width: 150,
+              allowClear: true,
+              options: [
+                { label: '科技', value: 'tech' },
+                { label: '健康', value: 'health' },
+              ],
+            },
+          ]}
+          buttonLabel="搜索"
+        />
       </AppContent>
     </React.Fragment>
   )
@@ -40,7 +65,7 @@ const AppUserInfoTable = () => {
 }
 
 const AppUserInfoDialog = () => {
-  
+
 }
 
 
@@ -129,6 +154,7 @@ const AppUserInfo = () => {
     <AppContainer>
       <AppUserInfoSearch />
       <AppUserInfoTable />
+
     </AppContainer>
   )
 }
