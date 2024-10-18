@@ -19,8 +19,12 @@ import {
   ProfileOutlined,
   SecurityScanOutlined,
   UserOutlined,
-  SettingOutlined
+  SettingOutlined,
+  ReadOutlined,
+  ClockCircleOutlined
+
 } from '@ant-design/icons'
+
 
 import AppLayout from '@/components/AppLayout'
 import BaseLayout from '@/components/BaseLayout'
@@ -45,9 +49,12 @@ import System from '@/pages/operator/system'
 import AdminLayout from '@/components/AdminLayout'
 import WorkBench from '@/pages/operator/workbench'
 // import AppUserInfo from '@/pages/operator/account/user'
-
+import AppGlobalDict from '@/pages/operator/system/global-dictionary'
 import RequireAuth from '@/components/RequireAuth';
 import AppUserInfo from '@/pages/operator/system/account'
+import AppRole from '@/pages/operator/system/role'
+
+
 
 export const AppRoute: any = [
   {
@@ -213,19 +220,19 @@ export const AdminRoute: any = [
       {
         id: "311",
         name: "用户管理",
-        icon: <SettingOutlined />,
+        icon: <UserOutlined />,
         url: '/operator/system/account',
         hash: '#/operator/system/account',
       }, {
         id: "312",
         name: "字典管理",
-        icon: <SettingOutlined />,
+        icon: <ReadOutlined />,
         url: '/operator/system/dict',
         hash: '#/operator/system/dict',
       }, {
         id: "313",
         name: "任务管理",
-        icon: <SettingOutlined />,
+        icon: <ClockCircleOutlined />,
         url: '/operator/system/task',
         hash: '#/operator/system/task',
       }, {
@@ -361,7 +368,8 @@ const Routes = () => {
               { index: true, element: <Navigate to="account" /> }, // 使用 index 路由来表示默认路径
               // { path: 'overview', element: <Account /> },
               { path: 'account', element: <AppUserInfo /> },
-              { path: 'role', element: <AppUserInfo /> },
+              { path: 'role', element: <AppRole /> },
+              { path: 'dict', element: <AppGlobalDict /> }
             ],
           },
         ]

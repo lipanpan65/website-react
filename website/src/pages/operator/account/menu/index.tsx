@@ -166,105 +166,6 @@ const AppMenuSearch = (props: any) => {
   )
 }
 
-// const columns: TableColumnsType<DataType> = [
-//   {
-//     title: '菜单名称',
-//     dataIndex: 'menu_name',
-//     key: 'menu_name',
-//   },
-//   {
-//     title: 'URL',
-//     dataIndex: 'url',
-//     key: 'url',
-//     // width: '12%',
-//   },
-//   {
-//     title: '组件名称',
-//     dataIndex: 'element',
-//     // width: '30%',
-//     key: 'address',
-//   },
-//   {
-//     title: '操作',
-//     key: 'action',
-//     render: (_, record) => (
-//       <Space size="middle">
-//         {/* <a onClick={(event: any) => showModel(event, record)}>编辑</a> */}
-//         <a onClick={(event: any) => alert(1)}>编辑</a>
-//         <a onClick={(event: any) => alert(1)}>添加</a>
-//         <a onClick={(event: any) => alert(1)}>删除</a>
-//         {/* <a onClick={(event: any) => onDelete(event, record)}>删除</a> */}
-//       </Space>
-//     ),
-//   },
-// ];
-
-// 测试案例数据
-// const data: DataType[] = [
-//   {
-//     key: 1,
-//     name: 'John Brown sr.',
-//     age: 60,
-//     address: 'New York No. 1 Lake Park',
-//     children: [
-//       {
-//         key: 11,
-//         name: 'John Brown',
-//         age: 42,
-//         address: 'New York No. 2 Lake Park',
-//       },
-//       {
-//         key: 12,
-//         name: 'John Brown jr.',
-//         age: 30,
-//         address: 'New York No. 3 Lake Park',
-//         children: [
-//           {
-//             key: 121,
-//             name: 'Jimmy Brown',
-//             age: 16,
-//             address: 'New York No. 3 Lake Park',
-//           },
-//         ],
-//       },
-//       {
-//         key: 13,
-//         name: 'Jim Green sr.',
-//         age: 72,
-//         address: 'London No. 1 Lake Park',
-//         children: [
-//           {
-//             key: 131,
-//             name: 'Jim Green',
-//             age: 42,
-//             address: 'London No. 2 Lake Park',
-//             children: [
-//               {
-//                 key: 1311,
-//                 name: 'Jim Green jr.',
-//                 age: 25,
-//                 address: 'London No. 3 Lake Park',
-//               },
-//               {
-//                 key: 1312,
-//                 name: 'Jimmy Green sr.',
-//                 age: 18,
-//                 address: 'London No. 4 Lake Park',
-//               },
-//             ],
-//           },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     key: 2,
-//     name: 'Joe Black',
-//     age: 32,
-//     address: 'Sydney No. 1 Lake Park',
-//   },
-// ];
-
 const AppMenuTable = (props: any) => {
   const { columns } = props
   const context = React.useContext(MenuContext)
@@ -275,14 +176,11 @@ const AppMenuTable = (props: any) => {
     total: page?.total || 0, // 数据总数
     current: page?.current || 1, // 当前页码
     pageSize: page?.pageSize || 5, // 每页显示条数
-    // showSizeChanger: true, // 是否显示 pageSize 改变器
-    // showQuickJumper: true, // 是否显示快速跳转
     showTotal: (total: number) => `总共 ${total} 条数据`, // 自定义显示总数的格式
   };
 
   const onChange = (pagination: any) => {
     const preQueryParams = context.state.params
-    console.log('onChange===>', pagination)
     const params = {
       ...preQueryParams,
       page: pagination.current,
@@ -335,16 +233,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
 }) => {
   const context = React.useContext(MenuContext)
   const [form] = Form.useForm();
-
-  // React.useEffect(() => {
-  //   console.log('context.state.open', context.state.open)
-  //   console.log('context.state.entry', context.state.entry)
-  //   const { open, entry } = context.state
-  //   if (open && entry.id) {
-  //     form?.setFieldsValue({ ...entry })
-  //   }
-  // }, [context.state.open])
-
 
   React.useEffect(() => onFormInstanceReady(form), [])
 
@@ -436,13 +324,9 @@ const AppMenuDialog = React.forwardRef((props: any, ref) => {
   const { onSubmit } = props
   const context = React.useContext(MenuContext)
   const [title, setTitle] = React.useState<string>('添加菜单')
-  console.log("context", context)
-  // const [open, setOpen] = React.useState<boolean>(false);
   const [formInstance, setFormInstance] = React.useState<FormInstance>();
 
   React.useEffect(() => {
-    console.log('context.state.open', context.state.open)
-    console.log('context.state.entry', context.state.entry)
     const { open, entry } = context.state
     if (open) {
       if (entry.pid) {
@@ -472,32 +356,8 @@ const AppMenuDialog = React.forwardRef((props: any, ref) => {
         })
       })
   }
-  // context.dispatch({ type: 'PUBLISH', payload: {} })
-  // console.log(formRef)
-  // try {
-  //   const values = await formInstance?.validateFields()
-  //   onSubmit(values)
-  // } catch (error) {
-  //   console.log('Failed:', error);
-  // }
-
-  //   formInstance?.validateFields()
-  //     .then((values: any) => {
-  //       // context.dispatch({ type: 'PUBLISH', payload: values })
-  //       if (formValues.id) {
-  //         values["id"] = formValues.id
-  //       }
-  //       // props.onSubmit(values)
-  //       onSubmit(values)
-  //     }).catch((e) => {
-  //       console.log('e', e)
-  //       return;
-  //     })
-  // }
 
   const onCancel = () => {
-    // formInstance?.resetFields();
-    // setOpen(false)
     context.dispatch({
       type: 'SHOW_MODEL', payload: {
         open: false
@@ -511,22 +371,10 @@ const AppMenuDialog = React.forwardRef((props: any, ref) => {
         width={'65%'}
         open={context.state.open}
         title={title}
-        okText="确定"
-        cancelText="取消"
         okButtonProps={{ autoFocus: true }}
         onCancel={onCancel}
         destroyOnClose
         onOk={onOk}
-      // afterOpenChange={afterOpenChange}
-      // onOk={async () => {
-      //   try {
-      //     const values = await formInstance?.validateFields();
-      //     formInstance?.resetFields();
-      //     onOK(values);
-      //   } catch (error) {
-      //     console.log('Failed:', error);
-      //   }
-      // }}
       >
         <ModelForm
           initialValues={{}}
@@ -598,18 +446,6 @@ const AppMenu = () => {
       dataIndex: 'menu_name',
       key: 'menu_name',
     },
-    // {
-    //   title: 'URL',
-    //   dataIndex: 'url',
-    //   key: 'url',
-    //   // width: '12%',
-    // },
-    // {
-    //   title: '组件名称',
-    //   dataIndex: 'element',
-    //   // width: '30%',
-    //   key: 'element',
-    // },
     {
       title: '#',
       dataIndex: 'id',
@@ -666,14 +502,12 @@ const AppMenu = () => {
 
   // submit 方法
   const onSubmit = (dispatch: React.Dispatch<any>, data: any) => {
-    console.log('dispatch', dispatch)
-    console.log('data===>', data)
     dispatch({ type: 'CREATE', payload: { data } })
     api.create(data).then((r: any) => {
       console.log('onSubmit.r===>', r)
     }).finally(() => {
       // dispatch({ type: 'READ_DONE', payload: {} })
-      getMenus()
+      queryMenus()
     })
   }
 
@@ -690,30 +524,9 @@ const AppMenu = () => {
         message.error('操作失败')
         reject()
       }).finally(() => {
-        getMenus()
+        queryMenus()
       })
     })
-
-    // const completeLoading = ()
-    // const onOk = () => new Promise<void>((resolve, reject) => {
-    //   request({
-    //     url: `/api/user/v1/article_category/${data.id}/`,
-    //     method: 'DELETE',
-    //   }).then((r: any) => {
-    //     const { status, statusText
-    //     } = r
-    //     if (status === 200 && statusText === 'OK') {
-    //       message.success('操作成功')
-    //       resolve(r.data)
-    //     }
-    //   }).catch((e: any) => {
-    //     message.error('操作失败')
-    //     reject()
-    //   })
-    // }).then((r: any) => {
-    // }).finally(() => {
-    //   getMenus()
-    // })
 
     confirm({
       title: '删除分类',
@@ -729,7 +542,7 @@ const AppMenu = () => {
     });
   }
 
-  const getMenus = () => {
+  const queryMenus = () => {
     const { params } = state
     api.fetch(params).then((r: any) => {
       console.log('r===>', r)
@@ -749,7 +562,7 @@ const AppMenu = () => {
     })
   }
 
-  React.useEffect(() => getMenus(), [state.params])
+  React.useEffect(() => queryMenus(), [state.params])
 
   return (
     <React.Fragment>
