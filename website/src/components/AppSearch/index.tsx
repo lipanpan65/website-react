@@ -15,22 +15,34 @@ interface FormItemConfig {
   [key: string]: any;  // 允许有其他任意属性
 }
 
+// interface ButtonConfig {
+//   label: string;
+//   type?: 'primary' | 'default' | 'dashed' | 'text' | 'link';
+//   onClick: (event: React.MouseEvent<HTMLElement>) => void;
+//   [key: string]: any;  // 允许其他任意属性
+// }
+
+interface ButtonConfig {
+  label: string;
+  type?: 'primary' | 'default' | 'dashed' | 'text' | 'link';  // 限制为 Button 允许的类型
+  // onClick: (event: React.MouseEvent<HTMLElement>) => void;
+  // onClick: (event: React.MouseEvent<HTMLElement>) => void;
+  [key: string]: any;  // 允许其他任意属性
+}
 interface AppSearchProps {
   onFormInstanceReady: (form: FormInstance) => void;
-  showModel: (event: React.MouseEvent<HTMLElement>, data: any) => void;
   setQueryParams: (params: any) => void;
   formItems: FormItemConfig[];
-  buttonLabel?: string;
+  buttonConfig: ButtonConfig;  // 动态按钮配置
   itemSpacing?: number;
   innerSpacing?: number;
 }
 
 const AppSearch: React.FC<AppSearchProps> = ({
   onFormInstanceReady,
-  showModel,
   setQueryParams,
   formItems,
-  buttonLabel = '添加',
+  buttonConfig,
   itemSpacing = 16,
   innerSpacing = 16,
 }) => {
@@ -47,14 +59,12 @@ const AppSearch: React.FC<AppSearchProps> = ({
     }));
   };
 
-  // 设置 searchStyle 实现垂直居中
   const searchStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
     flexWrap: 'wrap',  // 允许子元素换行
   };
 
-  // 设置每个 Col 的样式，确保子元素垂直居中
   const colStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -66,14 +76,12 @@ const AppSearch: React.FC<AppSearchProps> = ({
       <Form form={form}>
         <Row gutter={[innerSpacing, 16]} className="app-search" style={searchStyle}>
           <Col style={colStyle}>
-            <Button type="primary" onClick={(event) => showModel(event, {})}>
-              {buttonLabel}
+            <Button type={buttonConfig.type || 'primary'} {...buttonConfig}>
+              {buttonConfig.label}
             </Button>
           </Col>
           {formItems.map((item) => {
             const { name, type, options, onPressEnter, rules, width, placeholder, span, ...rest } = item;
-            {/* 传递 span 或者不传 */ }
-            {/* 将剩余属性传递给 Form.Item */ }
             return (
               <Col key={name} style={colStyle} {...(span ? { span } : {})}>
                 <Form.Item
