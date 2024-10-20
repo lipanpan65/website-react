@@ -37,6 +37,17 @@ const AdminLayout: React.FC = () => {
 
   const onCollapsed = (collapsed: boolean) => setCollapsed(collapsed);
 
+  // 使用 useEffect 监听路由变化，并更新页面标题
+  React.useEffect(() => {
+    // 获取当前激活的菜单项
+    const { leftActive, topActive } = appMenu;
+    // 更新 document.title
+    const pageTitle = leftActive?.name || topActive?.name || '默认标题';
+    document.title = pageTitle;
+    console.log("Document title updated to: ", pageTitle);
+  }, [appMenu]);  // 依赖 appMenu 的变化
+
+
   return (
     <Layout>
       <AdminHeader
@@ -79,8 +90,6 @@ const initializeAppMenu = (currentPath: string): AppMenu => {
     }
     return false;
   });
-  console.log("initializeAppMenu.currentPath===>", currentPath)
-  console.log("initializeAppMenu.leftActive===>", leftActive)
   return { topMenu, topActive, leftMenu, leftActive };
 };
 
