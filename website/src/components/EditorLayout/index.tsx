@@ -16,7 +16,7 @@ const contentStyle: React.CSSProperties = {
 };
 
 const EditorLayout: any = () => {
-
+  
   const {
     token: {
       // colorBgContainer,

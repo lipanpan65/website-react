@@ -21,21 +21,24 @@ import {
   UserOutlined,
   SettingOutlined,
   ReadOutlined,
-  ClockCircleOutlined
-
+  ClockCircleOutlined,
+  SafetyOutlined,
+  VerifiedOutlined,
+  IdcardOutlined,
 } from '@ant-design/icons'
 
-
 import AppLayout from '@/components/AppLayout'
-import BaseLayout from '@/components/BaseLayout'
 import Article from '@/pages/user/article'
 import ArticleDetail from '@/pages/user/article/detail'
 import EditArticle from '@/pages/operator/article/editor'
 import CreatorOverView from '@/pages/user/creator'
 import CreatorLayout from '@/components/CreatorLayout'
 import CratorArticle from '@/pages/user/creator/article'
-import EditorLayout from '@/components/EditorLayout'
+// TODO 后期删除该文件
+// import EditorLayout from '@/components/EditorLayout'
+// TODO 后期集成 AppLayout
 import NotFound from '@/components/NotFound'
+
 import ArticleCategory from '@/pages/operator/article/category'
 import Subject from '@/pages/user/subjects/overview'
 import SubjectDetail from '@/pages/user/subjects/detail'
@@ -53,7 +56,6 @@ import AppGlobalDict from '@/pages/operator/system/global-dictionary'
 import RequireAuth from '@/components/RequireAuth';
 import AppUserInfo from '@/pages/operator/system/account'
 import AppRole from '@/pages/operator/system/role'
-
 
 
 export const AppRoute: any = [
@@ -161,7 +163,7 @@ export const AppRoute: any = [
       },
       {
         id: "12",
-        name: "研发",
+        name: "开发者中心",
         url: "/user/article/develop",
         hash: "#/user/article/develop",
         icon: <BugOutlined />,
@@ -184,31 +186,38 @@ export const AdminRoute: any = [
         url: "/operator/workbench/overview",
         hash: "#/operator/workbench/overview",
         icon: <AppstoreOutlined />,
-      },
-      {
-        id: "12",
-        name: "研发",
-        url: "/operator/workbench",
-        hash: "#/operator/workbench",
-        icon: <BugOutlined />,
-        // childs: [
-        //   {
-        //     id: "121",
-        //     name: "研发1",
-        //     url: "/operator/workbench/develops",
-        //     hash: "#/operator/workbench/develops",
-        //     icon: <BugOutlined />,
-        //   }
-        // ],
-      },
+      }
     ]
   },
   {
     id: "2",
     name: "创作者中心",
-    icon: <HomeOutlined />,
+    icon: <ReadOutlined />,
     url: '/operator/creator',
     hash: '#/operator/creator',
+    childs: [
+      {
+        id: "21",
+        name: "文章管理",
+        icon: <OrderedListOutlined />,
+        url: "/operator/creator/article",
+        hash: "#/operator/creator/article",
+      },
+      {
+        id: "22",
+        name: "分类管理",
+        icon: <GroupOutlined />,
+        url: "/operator/creator/category",
+        hash: "#/operator/creator/category",
+      },
+      {
+        id: "23",
+        name: "专题管理",
+        url: "/operator/creator/subjects",
+        hash: "#/operator/creator/subjects",
+        icon: <GatewayOutlined />,
+      },
+    ]
   },
   {
     id: "3",
@@ -220,34 +229,44 @@ export const AdminRoute: any = [
       {
         id: "311",
         name: "用户管理",
-        icon: <UserOutlined />,
+        icon: <IdcardOutlined />,
         url: '/operator/system/account',
         hash: '#/operator/system/account',
-      }, {
+      },
+      {
         id: "312",
-        name: "字典管理",
-        icon: <ReadOutlined />,
-        url: '/operator/system/dict',
-        hash: '#/operator/system/dict',
-      }, {
-        id: "313",
-        name: "任务管理",
-        icon: <ClockCircleOutlined />,
-        url: '/operator/system/task',
-        hash: '#/operator/system/task',
-      }, {
-        id: "314",
         name: "角色管理",
-        icon: <SettingOutlined />,
+        icon: <SafetyOutlined />,
         url: '/operator/system/role',
         hash: '#/operator/system/role',
       },
       {
-        id: "315",
+        id: "313",
         name: "权限管理",
-        icon: <SettingOutlined />,
+        icon: <VerifiedOutlined />,
         url: '/operator/system/role',
         hash: '#/operator/system/role',
+      },
+      {
+        id: "314",
+        name: "字典管理",
+        icon: <ReadOutlined />,
+        url: '/operator/system/dict',
+        hash: '#/operator/system/dict',
+      },
+      {
+        id: "315",
+        name: "任务管理",
+        icon: <ClockCircleOutlined />,
+        url: '/operator/system/task',
+        hash: '#/operator/system/task',
+      },
+      {
+        id: "316",
+        name: "开发者中心",
+        url: "/operator/system/developer",
+        hash: "#/operator/system/developer",
+        icon: <BugOutlined />,
       },
     ]
   }
@@ -271,7 +290,7 @@ const Routes = () => {
       },
       {
         path: '/user/article/editor',
-        element: <EditorLayout />,
+        element: <AppLayout />,
         children: [
           {
             path: '/user/article/editor/:id',
@@ -359,6 +378,21 @@ const Routes = () => {
         ]
       },
       {
+        path: '/operator/creator',
+        element: <RequireAuth isAuthenticated={isAuthenticated} />,
+        children: [
+          {
+            element: <AdminLayout />,
+            children: [
+              { index: true, element: <Navigate to="article" /> }, // 使用 index 路由来表示默认路径
+              { path: 'article', element: <ArticleCategory /> },
+              { path: 'category', element: <ArticleCategory /> },
+              { path: 'subject', element: <ArticleCategory /> },
+            ],
+          },
+        ]
+      },
+      {
         path: '/operator/system',
         element: <RequireAuth isAuthenticated={isAuthenticated} />,
         children: [
@@ -366,7 +400,6 @@ const Routes = () => {
             element: <AdminLayout />,
             children: [
               { index: true, element: <Navigate to="account" /> }, // 使用 index 路由来表示默认路径
-              // { path: 'overview', element: <Account /> },
               { path: 'account', element: <AppUserInfo /> },
               { path: 'role', element: <AppRole /> },
               { path: 'dict', element: <AppGlobalDict /> }

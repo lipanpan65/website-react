@@ -26,9 +26,9 @@ interface AdminHeaderProps {
   };
 }
 
+
 const AdminHeader: React.FC<AdminHeaderProps> = ({ collapsed, onCollapsed, appMenu }) => {
   const navigate = useNavigate();
-  // const { colorBgContainer } = theme.useToken();
   const {
     token: { colorBgContainer },
   } = theme.useToken();

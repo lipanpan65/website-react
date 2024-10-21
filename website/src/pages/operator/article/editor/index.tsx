@@ -91,8 +91,6 @@ const reducer = (preState: any, action: any) => {
         // article: { ...preState.article }
       }
     case 'UPDATE':
-      // const { article } = action.payload
-      // console.log('UPDATE===>', article)
       return {
         loading: false,
         article: action.payload.article,

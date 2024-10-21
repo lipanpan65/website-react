@@ -93,8 +93,8 @@ const style: React.CSSProperties = {
 
 
 /**
- * 
- * 
+ *
+ *
  * import * as Icon from '@ant-design/icons';
 //iconName是icon名字字符串
   const createAntdIcon = (iconName) => {
@@ -107,7 +107,7 @@ const style: React.CSSProperties = {
     {text}
   </Space>
 );
- * 
+ *
  */
 
 

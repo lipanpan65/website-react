@@ -1,111 +1,109 @@
-import originAxios from 'axios'
-// import {
-//   getCookie,
-//   // clearCookie
-// } from '@/utils'
-import { message } from 'antd'
+import { message } from 'antd';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
-console.log('REACT_APP_BASE_API===>', process.env.APP_BASE_API)
+// 获取 baseURL
+const getBaseUrl = (): string => {
+  return process.env.APP_BASE_API || '/';
+};
 
-console.log('REACT 运行环境--->', process.env.NODE_ENV)
+// 错误状态处理
+const httpStatusHandler = (error: any) => {
+  const { response } = error;
+  let responseMessage = '异常问题，请联系管理员！';
 
-console.log('REACT 运行环境--->', process.env)
+  if (response) {
+    const statusMessages: Record<number, string> = {
+      302: '接口重定向了！',
+      400: '参数不正确！',
+      401: '您未登录，或者登录已经超时，请先登录！',
+      403: '您没有权限操作！',
+      404: `请求地址出错: ${response.config.url}`,
+      408: '请求超时！',
+      409: '系统已存在相同数据！',
+      500: '服务器内部错误！',
+      501: '服务未实现！',
+      502: '网关错误！',
+      503: '服务不可用！',
+      504: '服务暂时无法访问，请稍后再试！',
+      505: 'HTTP版本不受支持！',
+    };
+    responseMessage = statusMessages[response.status] || responseMessage;
 
-
-export const getBaseurl = () => {
-
-}
-
-export const httpStatesHandler = ((error: any) => {
-  let response_message = '';
-  if (error && error.response) {
-    switch (error.response.status) {
-      case 302: response_message = '接口重定向了！'; break;
-      case 400: response_message = '参数不正确！'; break;
-      case 401:
-        response_message = '您未登录，或者登录已经超时，请先登录！';
-        window.location.href = '/'
-        break;
-      case 403: response_message = '您没有权限操作！';
-        window.location.href = '/'
-        break
-      case 404: response_message = `请求地址出错: ${error.response.config.url}`; break; // 在正确域名下
-      case 408: response_message = '请求超时！'; break;
-      case 409: response_message = '系统已存在相同数据！'; break;
-      case 500: response_message = '服务器内部错误！'; break;
-      case 501: response_message = '服务未实现！'; break;
-      case 502: response_message = '网关错误！'; break;
-      case 503: response_message = '服务不可用！'; break;
-      case 504: response_message = '服务暂时无法访问，请稍后再试！'; break;
-      case 505: response_message = 'HTTP版本不受支持！'; break;
-      default: response_message = '异常问题，请联系管理员！'; break
+    if (response.status === 401 || response.status === 403) {
+      window.location.href = '/';
     }
+  } else if (error.message.includes('timeout')) {
+    responseMessage = '网络请求超时！';
+  } else if (error.message.includes('Network')) {
+    responseMessage = window.navigator.onLine ? '服务端异常！' : '您断网了！';
   }
-  if (error.message.includes('timeout')) response_message = '网络请求超时！';
-  if (error.message.includes('Network')) response_message = window.navigator.onLine ? '服务端异常！' : '您断网了！';
-  message.error(response_message)
-})
 
-export const request = (cfg: any, options?: any) => {
+  message.error(responseMessage);
+  return Promise.reject(error);
+};
 
-  // let cfg: any = {
-  //   url,
-  //   method,
-  //   data: data ?? {}
-  // }
+// 请求方法
+export const request = async <T = any>(cfg: AxiosRequestConfig, options?: AxiosRequestConfig): Promise<T> => {
+  const instance = axios.create({
+    baseURL: getBaseUrl(),
+    timeout: 50000,
+    withCredentials: true,
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
+  });
 
-  // console.log('cfg--->',cfg)
+  // 请求拦截器
+  instance.interceptors.request.use(
+    (config) => config,
+    (error) => {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('请求拦截异常信息', error);
+      }
+      return Promise.reject(error);
+    }
+  );
 
-  // if (method.toUpperCase() === 'GET') {
-  //   cfg.params = data ?? {}
-  //   console.log('cfg get--->',cfg)
-  // }
-  return new Promise<void>((resolve, reject) => {
-    // 创建实例
-    const instance = originAxios.create({
-      baseURL: '/', // 设置统一的请求前缀
-      timeout: 50000,
-      withCredentials: true,
-      headers: { 'Content-Type': 'application/json' },
-    })
+  // 响应拦截器
+  instance.interceptors.response.use(
+    (response: AxiosResponse<any>): AxiosResponse<any> | Promise<AxiosResponse<any>> => {
+      console.log("interceptors", response)
+      console.log("interceptors.data", response.data)
+      const { status, statusText } = response;
+      const contentType = response.headers['content-type'];
 
-    // 请求拦截
-    instance.interceptors.request.use((config: any) => {
-      //   const username = getCookie("username")
-      //   const token = getCookie("token")
-      //   if (username && token && typeof window != "undefined") {
-      //     const token = getCookie("token")
-      //     // 基于drf的原生认证
-      //     config.headers.Authorization = `Token ${token}`
-      //     // django csrf token
-      //     config.headers["X-CSRFToken"] = getCookie("csrftoken")
-      //   } else {
-      //     // TODO 该位置进行路由跳转
-      //   }
-      return config
-    }, (error: any) => {
-      if (process.env.NODE_ENV === "development") console.log("请求拦截异常信息", error)
-      return error
-    })
+      // 处理 JSON 响应
+      if (contentType && contentType.includes('application/json')) {
+        // 如果状态码为 200 且 statusText 为 'OK'，直接返回 response.data
+        if (status === 200 && statusText.toUpperCase() === 'OK') {
+          return response.data; // 返回原始响应
+        }
+        
+        const { code, message: responseMessage, data } = response.data;
 
-    // 响应拦截
-    instance.interceptors.response.use((response: any) => {
-      return response
-    }, (error: any) => {
-      httpStatesHandler(error)
-      // if (process.env.NODE_ENV === "development") console.log("响应拦截异常信息", error)
-      return error
-    })
+        if (code === 4000 || code === 5000) {
+          message.error(responseMessage || '请求处理失败！');
+          return Promise.reject(response.data); // 拒绝并返回完整的响应
+        }
+      }
 
-    // 传入网络配置进行网络请求
-    instance(cfg).then((response: any) => {
-      if (process.env.NODE_ENV === "development") console.log("response", response)
-      resolve(response)
-    }).catch((error: any) => {
-      if (process.env.NODE_ENV === 'development') console.log('网络请求异常', error)
-      reject(error)
-    })
-  })
+      return response; // 返回完整的响应对象
+    },
+    (error) => httpStatusHandler(error)
+  );
 
-}
+  // 发起请求
+  try {
+    const response: AxiosResponse<T> = await instance(cfg);
 
+    if (process.env.NODE_ENV === 'development') {
+      console.log('response.node-env', response);
+    }
+
+    return response as T; // 返回已解析的数据
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('网络请求异常', error);
+    }
+    throw error;
+  }
+};

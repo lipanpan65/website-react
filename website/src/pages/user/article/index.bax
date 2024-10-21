@@ -1,0 +1,87 @@
+/* 容器样式 */
+.article-wrapper {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100vh;
+  padding: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.2em;
+}
+
+/* 使用 3:4:3 比例布局 */
+.left {
+  flex: 3;
+  /* background-color: #6c757d; */
+  /* 灰色 */
+}
+
+.center {
+  flex: 4;
+  /* background-color: #007bff; */
+  /* 蓝色 */
+}
+
+.right {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  /* 垂直布局 */
+  gap: 16px;
+  /* 设置间距 */
+  padding: 16px;
+  /* 添加内边距 */
+  background-color: #28a745;
+  /* 绿色 */
+}
+
+.right-pane {
+  background-color: #ffc107;
+  /* 黄色 */
+  padding: 16px;
+  flex: 1;
+  /* 让每个盒子等高 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.title-row {
+  display: flex;
+  margin-bottom: 2px;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: #252933;
+  width: 100%;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.article-desc {
+  width: 200px;
+  /* 定义容器的宽度 */
+  height: auto;
+  /* 自动调整高度 */
+  overflow: hidden;
+  /* 当内容超出容器时进行隐藏 */
+  white-space: nowrap;
+  /* 不换行 */
+  text-overflow: ellipsis;
+  /* 使用省略号表示被隐藏的部分 */
+}

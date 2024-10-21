@@ -151,7 +151,7 @@ const CratorArticle: any = (props: any) => {
       }
     })
   }
-
+  
   const dropDownHandleClick = ({ key }: any, article: any) => {
     console.log('key', key)
     console.log('item', article)
@@ -219,15 +219,6 @@ const CratorArticle: any = (props: any) => {
                 </div>
               </div>
             </React.Fragment>
-
-            // <List.Item style={{ padding: '12px 12px 0' }}>
-            //   <List.Item.Meta
-            //     // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
-            //     title={ArticleTitle(item)}
-            //     // title={<div onClick={() => handleLinkTo(item)}>{item.title}</div>}
-            //     description={<div style={{ width: '85%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.content}</div>}
-            //   />
-            // </List.Item>
           )}
         />
       </article>
