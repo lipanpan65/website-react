@@ -164,7 +164,7 @@ const CreatorLayout: React.FC = () => {
     token: { colorBgContainer,
       borderRadiusLG },
   } = theme.useToken();
-
+  
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
   };

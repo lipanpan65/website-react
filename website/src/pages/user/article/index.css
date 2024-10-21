@@ -1,44 +1,89 @@
-/* 容器样式 */
-.container {
-  /* width: 100%; */
-  /* max-width: 800px; */
-  /* 设置最大宽度 */
-  /* padding: 24px; */
-  /* 添加内边距 */
-  /* background-color: #fff; */
-  padding: 16px;
-  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
-  box-sizing: border-box;
-  /* 包含内边距和边框 */
+/* 全局 CSS 变量定义 */
+:root {
+    --primary-bg-color: #f0f2f5;
+    --card-bg-color: #fff;
+    --border-radius-lg: 8px;
+    --padding-lg: 24px;
+    --padding-md: 16px;
+    --padding-sm: 12px;
+    --gap-lg: 16px;
+    --gap-md: 12px;
+    --gap-sm: 8px;
+    --max-content-width: 1200px;
+    /* 常见的桌面宽度 */
+    --side-padding: calc((100vw - var(--max-content-width)) / 2);
+    /* 动态计算左右外边距 */
 }
 
-.title-row {
-  display: flex;
-  margin-bottom: 2px;
+.article-wrapper {
+    display: flex;
+    flex-direction: row;
+    padding: var(--padding-lg);
+    margin-inline: var(--side-padding);
+    /* 动态设置左右外边距 */
+    gap: var(--gap-lg);
+    background-color: var(--primary-bg-color);
+    /* height: 100vh;  确保父级容器占满视口高度 */
+}
+
+.section {
+    display: flex;
+    /* justify-content: center; */
+    /* align-items: center; */
+    padding: var(--padding-md);
+}
+
+.left {
+    flex: 1;
+    background-color: var(--card-bg-color);
+    border-radius: var(--border-radius-lg);
+    max-height: calc(100vh - 40px);
+}
+
+.right {
+    border: 1px solid saddlebrown;
+    flex: 2;
+    flex-direction: column;
+    gap: var(--gap-md);
+    padding: 0%;
+    /* background-color: var(--card-bg-color); */
+    border-radius: var(--border-radius-lg);
+    height: 100%;
+    /* 自适应父级高度 */
+}
+
+.center {
+    flex: 4;
+    max-width: var(--max-content-width);
+    width: 100%;
+    background-color: var(--card-bg-color);
+    border-radius: var(--border-radius-lg);
+    display: flex;
+    /* 使用 Flex 布局 */
+    flex-direction: column;
+    /* 垂直排列内容 */
+}
+
+.article-list {
+    flex: 1;
+    width: 100%;
+    /* 占满父级宽度 */
+}
+
+.right-pane {
+    /* padding: var(--padding-md); */
+    background-color: var(--primary-bg-color);
+    border-radius: var(--border-radius-lg);
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */
 }
 
 .title {
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
-  color: #252933;
-  width: 100%;
-  display: -webkit-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
+    color: #1890ff;
+    text-decoration: none;
 }
 
-.article-desc {
-  width: 200px;
-  /* 定义容器的宽度 */
-  height: auto;
-  /* 自动调整高度 */
-  overflow: hidden;
-  /* 当内容超出容器时进行隐藏 */
-  white-space: nowrap;
-  /* 不换行 */
-  text-overflow: ellipsis;
-  /* 使用省略号表示被隐藏的部分 */
+.title:hover {
+    text-decoration: underline;
 }
