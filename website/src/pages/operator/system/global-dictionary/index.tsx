@@ -11,66 +11,26 @@ import AppTable from '@/components/AppTable';
 import { Form, FormInstance, Input, message, Modal, Select, Space, TableProps } from 'antd';
 import { request } from '@/utils';
 
+import { useGlobalDict, GlobalProvider } from '@/hooks/state/useGlobalDict';
+
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import AppDialog from '@/components/AppDialog';
+import { api } from '@/api';
 
 const { confirm } = Modal;
 
-// 初始化参数
-const initialState = {
-  loading: false,
-  open: false,
-  entry: {
-    id: null,
-    menu_name: null,
-    enable: null,
-    url: null,
-    element: null,
-    pid: null
-  },
-  page: {
-    total: 0,
-    current: 0,
-    pageSize: 5
-  },
-  data: [],
-  params: {}
-};
-
-// 定义context
-export const GlobalContext = React.createContext<{
-  state: typeof initialState,
-  dispatch: React.Dispatch<any>
-}>({
-  state: initialState,
-  dispatch: () => { }
-})
-
-// TODO 优化
-const api: any = {
-  fetch: (params: any) => request({
-    url: `/api/operator/v1/global/`,
-    method: 'GET',
-    params
-  }),
-  create: (data: any) => request({
-    url: `/api/operator/v1/global/`,
-    method: 'POST',
-    data
-  }),
-  update: (data: any) => request({
-    url: `/api/operator/v1/global/${data.id}`,
-    method: 'PUT',
-    data
-  }),
-  entry: (id: any) => request({
-    url: `/api/operator/v1/global/${id}`,
-    method: 'GET',
-  }),
-  delete: (id: any) => request({
-    url: `/api/operator/v1/global/${id}`,
-    method: 'DELETE',
-  }),
+// 假设有一个接口类型定义
+interface GlobalDictResponse {
+  code: number;
+  message: string;
+  data: {
+    data: any[];
+    page: {
+      total: number;
+      current: number;
+      pageSize: number;
+    };
+  };
 }
 
 interface AppGlobalDictSearchProps {
@@ -138,18 +98,17 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
   )
 }
 
-
 const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
   const [open, setOpen] = React.useState<boolean>(false);
   const { onSubmit } = props
-  const context = React.useContext(GlobalContext)
+  const { state, dispatchF } = useGlobalDict();
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
   const [formValues, setFormValues] = React.useState<any>({});
 
   const fields = [
     {
       label: '字典名称',
-      name: 'category_name',
+      name: 'cname',
       rules: [{ required: true, message: '请输入字典名称' }],
       component: <Input placeholder="请输入字典名称" />,
       span: 12,  // 使字段占据一半宽度
@@ -162,22 +121,22 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
       span: 12,  // 使字段占据一半宽度
     },
     {
-      label: 'cvalue',
-      name: 'cvalue',
-      rules: [{ required: true, message: '请输入cvalue' }],
-      component: <Input placeholder="请输入cvalue" />,
-      span: 12,  // 使字段占据一半宽度
-    },
-    {
       label: '状态',
       name: 'enable',
       component: (
         <Select placeholder="请选择状态">
-          <Select.Option value="active">激活</Select.Option>
-          <Select.Option value="inactive">未激活</Select.Option>
+          <Select.Option value="1">启用</Select.Option>
+          <Select.Option value="0">禁用</Select.Option>
         </Select>
       ),
       span: 12,  // 使字段占据一半宽度
+    },
+    {
+      label: 'cvalue',
+      name: 'cvalue',
+      rules: [{ required: true, message: '请输入cvalue' }],
+      component: <Input placeholder="请输入cvalue" />,
+      span: 24,  // 使字段占据一半宽度
     },
     {
       name: 'remark',
@@ -203,36 +162,22 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
       formInstance.setFieldsValue({ ...formValues });
     }
   }, [formInstance, formValues]);
-  
+
   const onOk = () => {
     formInstance?.validateFields()
-      .then((entry: any) => {
-        const { pid } = context.state.entry
-        context.dispatch((f: any) => onSubmit(f, {
-          ...entry,
-          pid
+      .then((record: any) => {
+        dispatchF((f: any) => onSubmit(f, {
+          ...record,
+          // pid
         }))
       }).finally(() => {
-        context.dispatch({
+        dispatchF({
           type: 'SHOW_MODEL', payload: {
             open: false
           }
         })
       })
   }
-
-  // const onOk = () => {
-  //   formInstance?.validateFields()
-  //     .then((values: any) => {
-  //       if (formValues.id) {
-  //         values["id"] = formValues.id
-  //       }
-  //       onSubmit(values)
-  //     }).catch((e: any) => {
-  //       console.log('e', e)
-  //       return;
-  //     })
-  // }
 
   const onCancel = () => {
     formInstance?.resetFields();
@@ -260,7 +205,6 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
   );
 });
 
-
 // 定义分页和表格数据的类型
 interface PaginationProps {
   total: number;
@@ -284,27 +228,33 @@ interface AppGlobalDictProps {
 }
 
 const AppGlobalDictTable: React.FC<AppGlobalDictProps> = ({
-  data = {
-    page: {
-      total: 0,
-      current: 1,
-      pageSize: 5
-    },
-    data: []
-  },
+  // data = {
+  //   page: {
+  //     total: 0,
+  //     current: 1,
+  //     pageSize: 5
+  //   },
+  //   data: []
+  // },
   columns = [], // 设置默认值为空数组
   onChange
 }) => {
+  // const context = React.useContext(GlobalContext)
+  const { state, dispatchF } = useGlobalDict();
+
+  const { page, data, } = state
+
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
     if (onChange) {
       onChange(pagination, filters, sorter);  // 确保 onChange 已定义
     }
   };
+
   return (
     <React.Fragment>
       <AppContent>
         <AppTable
-          data={data}
+          data={{ page, data }}
           columns={columns}
           onChange={handleTableChange}
           loading={false}
@@ -315,64 +265,9 @@ const AppGlobalDictTable: React.FC<AppGlobalDictProps> = ({
   )
 }
 
-const reducer = (preState: any, action: any) => {
-
-  let { type } = action;
-  if (typeof action == 'function') {
-    type = action()
-  }
-  switch (action.type) {
-    case 'READ':
-      console.log("READ.action===>", action)
-      const { params } = action.payload
-      preState.loading = true
-      preState.params = params
-      console.log("READ===>", preState)
-      return {
-        ...preState
-      }
-    case 'READ_DONE':
-      const { data, page } = action.payload
-      preState.loading = false
-      preState.data = data
-      preState.page = page
-      console.log("READ_DONE===>", preState)
-      return {
-        ...preState
-      }
-    case 'CREATE':
-      preState.loading = true
-      return {
-        ...preState
-      }
-    case 'UPDATE':
-      return preState
-    case 'SHOW_MODEL':
-      const { open, entry } = action.payload
-      preState.open = open
-      preState.entry = entry
-      return {
-        ...preState
-      }
-    default:
-      return preState
-  }
-}
 
 const AppGlobalDict = () => {
-
-  const [state, dispatch] = React.useReducer(reducer, initialState)
-
-  // 定义action 
-  const dispatchF: React.Dispatch<any> = (action: any) => {
-    // 判断action是不是函数，如果是函数，就执行,并且把dispatch传进去
-    if (typeof action === 'function') {
-      action(dispatch)
-    } else {
-      dispatch(action)
-    }
-  }
-
+  const { state, dispatchF } = useGlobalDict();
   const dialogRef: any = React.useRef()
   const dataTableRef: any = React.useRef()
   const navigate = useNavigate()
@@ -382,20 +277,13 @@ const AppGlobalDict = () => {
 
   const columns: TableProps<any>['columns'] = [
     {
-      title: '#',
-      dataIndex: 'id',
-      key: 'id',
-      sorter: true
+      title: '#', dataIndex: 'id', key: 'id', sorter: true,
     },
     {
-      title: '字典名称',
-      dataIndex: 'cname',
-      key: 'cname',
+      title: '字典名称', dataIndex: 'cname', key: 'cname',
     },
     {
-      title: 'ckey',
-      dataIndex: 'ckey',
-      key: 'ckey',
+      title: 'ckey', dataIndex: 'ckey', key: 'ckey',
     },
     {
       title: 'cvalue',
@@ -470,102 +358,63 @@ const AppGlobalDict = () => {
     })
   }
 
-  const queryGlobalDict = () => {
-    const { params } = state
-    api.fetch(params).then((r: any) => {
-      const { status, statusText } = r
-      if (status === 200 && statusText == 'OK') {
-        const { code, success, data: { data, page } } = r.data
-        dispatch({
-          type: 'READ_DONE',
-          payload: {
-            data, page
-          }
-        })
+  const queryGlobalDict = async () => {
+    try {
+      const { params } = state;
+      const response = await api.globalDict.fetch(params);
+      if (response && response.success) {
+        const { data, page } = response.data;
+        dispatchF({ type: 'READ_DONE', payload: { data, page } });
+      } else {
+        message.error(response?.message || '获取数据失败');
       }
-    }).finally(() => {
+    } catch (error) {
+      message.error('请求失败，请稍后重试');
+    }
+  };
 
-    })
-  }
+  React.useEffect(() => {
+    (async () => {
+      await queryGlobalDict(); // 直接调用异步函数
+    })();
+  }, [state.params]);
 
-  React.useEffect(() => queryGlobalDict(), [state.params])
 
   // submit 方法
   const onSubmit = (dispatch: React.Dispatch<any>, data: any) => {
     dispatch({ type: 'CREATE', payload: { data } })
-    api.create(data).then((r: any) => {
+    api.globalDict.create(data).then((r: any) => {
       console.log('onSubmit.r===>', r)
     }).finally(() => {
       queryGlobalDict()
     })
   }
 
-  // const onSubmit = (data: any) => {
-  //   if (!!data.id) {
-  //     console.log("更新")
-  //     request({
-  //       url: `/api/user/v1/article_category/${data.id}/`,
-  //       method: 'PUT',
-  //       data
-  //     }).then((r: any) => {
-  //       const { status, statusText } = r
-  //       if (status === 200 && statusText === 'OK') {
-  //         const { code, success } = r.data
-  //         if (code === "0000") {
-  //           message.success('操作成功')
-  //         } else if (success === false) {
-  //           message.error(r.data.message)
-  //         }
-  //       }
-  //     }).finally(() => {
-  //       dialogRef.current.setOpen(false)
-  //       // getArticleCategory()
-  //     })
-  //   } else {
-  //     request({
-  //       url: `/api/user/v1/article_category/`,
-  //       method: 'POST',
-  //       data
-  //     }).then((r: any) => {
-  //       const { status, statusText
-  //       } = r
-  //       if (status === 200 && statusText === 'OK') {
-  //         const { code, success } = r.data
-  //         if (code === "0000") {
-  //           message.success('操作成功')
-  //         } else if (success === false) {
-  //           message.error(r.data.message)
-  //         }
-  //       }
-  //     }).finally(() => {
-  //       // modelRef.current.setOpen(false)
-  //       // 重新拉
-  //       // getArticleCategory()
-  //     })
-  //   }
-  // }
-
   return (
-    <GlobalContext.Provider value={{ state, dispatch: dispatchF }}>
-      <AppContainer>
-        <AppGlobalDictSearch
-          showModel={showModel}
-          onFormInstanceReady={(instance: any) => {
-            setFormInstance(instance);
-          }}
-          setQqueryParams={setQqueryParams}
-        />
-        <AppGlobalDictTable
-          onChange={onChange}
-          columns={columns}
-        />
-        <AppGlobalDictDialog
-          ref={dialogRef}
-          onSubmit={onSubmit}
-        />
-      </AppContainer>
-    </GlobalContext.Provider>
+    <AppContainer>
+      <AppGlobalDictSearch
+        showModel={showModel}
+        onFormInstanceReady={(instance: any) => {
+          setFormInstance(instance);
+        }}
+        setQqueryParams={setQqueryParams}
+      />
+      <AppGlobalDictTable
+        onChange={onChange}
+        columns={columns}
+      />
+      <AppGlobalDictDialog
+        ref={dialogRef}
+        onSubmit={onSubmit}
+      />
+    </AppContainer>
   )
 }
 
-export default AppGlobalDict
+// export default AppGlobalDict
+// 使用 GlobalProvider 包裹主组件
+export default () => (
+  <GlobalProvider>
+    <AppGlobalDict />
+  </GlobalProvider>
+);

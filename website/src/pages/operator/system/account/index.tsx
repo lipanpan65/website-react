@@ -226,6 +226,7 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
   );
 });
 
+
 const AppUserInfo = () => {
   const dialogRef: any = React.useRef()
   const dataTableRef: any = React.useRef()
@@ -233,7 +234,6 @@ const AppUserInfo = () => {
   const [formInstance, setFormInstance] = React.useState<FormInstance>();
   const [queryParams, setQqueryParams] = React.useState<any>({})
   const [loading, setLoading] = React.useState<boolean>()
-
 
   const columns: TableProps<any>['columns'] = [
     {
@@ -392,7 +392,7 @@ const AppUserInfo = () => {
       })
     }
   }
-  
+
   return (
     <AppContainer>
       <AppUserInfoSearch

@@ -171,7 +171,7 @@ const AppMenuTable = (props: any) => {
   const context = React.useContext(MenuContext)
   const { page, data, } = context.state
   const [checkStrictly, setCheckStrictly] = React.useState(false);
-
+  
   const pagination = {
     total: page?.total || 0, // 数据总数
     current: page?.current || 1, // 当前页码

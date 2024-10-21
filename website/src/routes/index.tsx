@@ -165,7 +165,7 @@ export const AppRoute: any = [
       },
       {
         id: "12",
-        name: "研发",
+        name: "开发者中心",
         url: "/user/article/develop",
         hash: "#/user/article/develop",
         icon: <BugOutlined />,
@@ -188,23 +188,7 @@ export const AdminRoute: any = [
         url: "/operator/workbench/overview",
         hash: "#/operator/workbench/overview",
         icon: <AppstoreOutlined />,
-      },
-      {
-        id: "12",
-        name: "研发",
-        url: "/operator/workbench",
-        hash: "#/operator/workbench",
-        icon: <BugOutlined />,
-        // childs: [
-        //   {
-        //     id: "121",
-        //     name: "研发1",
-        //     url: "/operator/workbench/develops",
-        //     hash: "#/operator/workbench/develops",
-        //     icon: <BugOutlined />,
-        //   }
-        // ],
-      },
+      }
     ]
   },
   {
@@ -297,6 +281,13 @@ export const AdminRoute: any = [
         icon: <VerifiedOutlined />,
         url: '/operator/system/role',
         hash: '#/operator/system/role',
+      },
+      {
+        id: "12",
+        name: "开发者中心",
+        url: "/operator/system/developer",
+        hash: "#/operator/system/developer",
+        icon: <BugOutlined />,
       },
     ]
   }
