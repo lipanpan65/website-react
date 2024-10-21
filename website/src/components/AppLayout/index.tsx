@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { theme } from 'antd';
+import { FloatButton, theme } from 'antd';
 import { Outlet, useLocation } from 'react-router-dom';
 import AppHeader from './AppHeader';
 import { AppRoute } from '@/routes';
@@ -22,7 +22,8 @@ interface AppMenu {
   leftActive: MenuItem | null;
 }
 
-const App: React.FC = () => {
+
+const AppLayout: React.FC = () => {
   const { token: { borderRadiusLG } } = theme.useToken();
   const location = useLocation();
 
@@ -35,12 +36,19 @@ const App: React.FC = () => {
     const hiddenPaths = ['/user/article/editor/new', '/login', '/forgot-password'];
     return hiddenPaths.includes(location.pathname);
   }, [location.pathname]);
-  
+
+  const appLayoutStyle: React.CSSProperties = {
+    // padding: '16px', // 外层容器的默认样式
+    // height: '100vh',
+    backgroundColor: 'pink'
+  };
+
   return (
     <React.Fragment>
       {!shouldHideHeader && <AppHeader appMenu={appMenu} />}
-      <div>
+      <div style={appLayoutStyle}>
         <Outlet />
+        <FloatButton.BackTop />
       </div>
     </React.Fragment>
   );
@@ -66,4 +74,4 @@ const initializeAppMenu = (currentPath: string): AppMenu => {
   return { topMenu, topActive, leftMenu, leftActive };
 };
 
-export default App;
+export default AppLayout;

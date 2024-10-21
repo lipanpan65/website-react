@@ -5,6 +5,7 @@ import {
 } from "react-router-dom"
 
 import {
+  Card,
   List,
   theme
 } from 'antd'
@@ -12,9 +13,6 @@ import {
 import { request, rowKeyF, showTotal } from '@/utils'
 
 import './index.css';
-
-// 导入本地的开发环境
-import { postsMock } from '@/mock';
 
 const ArticleTitle = (article: any) => <Link className='title'
   to={{
@@ -80,50 +78,66 @@ const Article: React.FC = () => {
       }
     })
   }
-  
+
   React.useEffect(() => getArticleList(), [])
 
   return (
     <React.Fragment>
-      <div className='container'>
-        <article style={{
-          background: colorBgContainer,
-          borderRadius: borderRadiusLG,
-          minHeight: '100vh',
-          width: '850px'
-        }}>
-          <List
-            itemLayout="vertical"
-            loading={state.loading}
-            dataSource={state.data}
-            pagination={{
-              ...state.page,
-              showTotal,
-              align: 'center',
-              showSizeChanger: false,
-              onChange // function(page, pageSize)
-            }}
-            rowKey={rowKeyF}
-            renderItem={(item: any, index: number) => (
-              <List.Item
-                style={{
-                  padding: '12px 12px 12px 12px'
-                }}
-                actions={[
-                  // <span>{item.creator}</span>,
-                  <span>{item.create_time}</span>,
-                  <span>{item.category_name}</span>,
-                ]}
-              >
-                <List.Item.Meta
-                  // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
-                  title={ArticleTitle(item)}
-                  description={<div style={{ width: '85%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.summary}</div>}
-                />
-              </List.Item>
-            )}
-          />
-        </article>
+      <div className='article-wrapper'>
+        <div className="section left">
+        </div>
+        <div className="section center">
+          <div className="article-list">
+            <List
+              itemLayout="vertical"
+              loading={state.loading}
+              dataSource={state.data}
+              split={false}
+              pagination={{
+                ...state.page,
+                showTotal,
+                align: 'center',
+                showSizeChanger: false,
+                onChange // function(page, pageSize)
+              }}
+              rowKey={rowKeyF}
+              renderItem={(item: any, index: number) => (
+                <List.Item
+                  style={{
+                    padding: '12px 12px 12px 12px'
+                  }}
+                  actions={[
+                    // <span>{item.creator}</span>,
+                    <span>{item.create_time}</span>,
+                    <span>{item.category_name}</span>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
+                    title={ArticleTitle(item)}
+                    description={<div style={{ width: '100%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.summary}</div>}
+                  />
+                </List.Item>
+              )}
+            />
+          </div>
+        </div>
+        <div className="section right">
+          <div className="right-pane">
+            <Card>
+              <p>晚上好</p>
+            </Card>
+          </div>
+          <div className="right-pane">
+            <Card title={"文章榜"}>Card content</Card>
+          </div>
+          <div className="right-pane">
+            <Card title={"作者榜"}>Card content</Card>
+          </div>
+          <div className="right-pane">
+            你好
+          </div>
+        </div>
       </div>
     </React.Fragment>
   )
