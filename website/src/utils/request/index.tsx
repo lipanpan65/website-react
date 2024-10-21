@@ -66,21 +66,23 @@ export const request = async <T = any>(cfg: AxiosRequestConfig, options?: AxiosR
   // 响应拦截器
   instance.interceptors.response.use(
     (response: AxiosResponse<any>): AxiosResponse<any> | Promise<AxiosResponse<any>> => {
+      console.log("interceptors", response)
+      console.log("interceptors.data", response.data)
       const { status, statusText } = response;
       const contentType = response.headers['content-type'];
 
-      // 如果状态码为 200 且 statusText 为 'OK'，直接返回 response.data
-      if (status === 200 && statusText.toUpperCase() === 'OK') {
-        return response; // 返回原始响应
-      }
-
       // 处理 JSON 响应
       if (contentType && contentType.includes('application/json')) {
+        // 如果状态码为 200 且 statusText 为 'OK'，直接返回 response.data
+        if (status === 200 && statusText.toUpperCase() === 'OK') {
+          return response.data; // 返回原始响应
+        }
+        
         const { code, message: responseMessage, data } = response.data;
 
         if (code === 4000 || code === 5000) {
           message.error(responseMessage || '请求处理失败！');
-          return Promise.reject(response); // 拒绝并返回完整的响应
+          return Promise.reject(response.data); // 拒绝并返回完整的响应
         }
       }
 
@@ -94,10 +96,10 @@ export const request = async <T = any>(cfg: AxiosRequestConfig, options?: AxiosR
     const response: AxiosResponse<T> = await instance(cfg);
 
     if (process.env.NODE_ENV === 'development') {
-      console.log('response', response);
+      console.log('response.node-env', response);
     }
 
-    return response.data as T; // 返回已解析的数据
+    return response as T; // 返回已解析的数据
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('网络请求异常', error);

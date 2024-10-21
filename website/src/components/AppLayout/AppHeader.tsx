@@ -126,7 +126,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
       icon: <InteractionOutlined />,
     },
   ];
-
+  
   return (
     <React.Fragment>
       <div className="navbar">

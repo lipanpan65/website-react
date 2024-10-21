@@ -61,7 +61,7 @@ const Article: React.FC = () => {
       borderRadiusLG
     },
   } = theme.useToken();
-  
+
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   const onChange = (page: any, pageSize: any) => {
@@ -74,30 +74,13 @@ const Article: React.FC = () => {
       method: 'GET',
       params: params || {}
     }).then((response: any) => {
-      const { status, statusText } = response
-      if (status === 200 && statusText === 'OK') {
-        const { success, message, data: { page, data } } = response.data
+      if (response && response.success) {
+        const { page, data } = response.data
         dispatch({ type: 'READ_DONE', payload: { data, page } })
       }
     })
   }
-
-  // const handleScroll = () => {
-  //   const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-  //   if (scrollTop + clientHeight >= scrollHeight - 50) {
-  //     console.log("state", state)
-  //     const { page, pageSize, data } = state
-  //     console.log("page", page, pageSize, data)
-  //     getArticleList(); // 滚动到底部时加载更多数据
-  //   }
-  // };
-
-  // React.useEffect(() => {
-  //   getArticleList(); // 初始加载
-  //   window.addEventListener('scroll', handleScroll);
-  //   return () => window.removeEventListener('scroll', handleScroll);
-  // }, []);
-
+  
   React.useEffect(() => getArticleList(), [])
 
   return (
