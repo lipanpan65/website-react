@@ -14,6 +14,7 @@ const { Meta } = Card;
 const style: React.CSSProperties = {
   // background: '#0092ff', 
   // padding: '16px 0'
+  // border: '1px solid red'
 };
 
 const Subject: React.FC = () => {
@@ -25,7 +26,8 @@ const Subject: React.FC = () => {
 
   return (
     <React.Fragment>
-      <div className='container'>
+      <div className='app-layout justify-center'>
+        {/* <div style={style}> */}
         <Row gutter={[16, 16]} style={style}>
           <Col className="gutter-row" span={8} >
             {/* <div style={style}>col-6</div> */}
@@ -126,6 +128,7 @@ const Subject: React.FC = () => {
           </Col>
         </Row>
       </div>
+      {/* </div> */}
     </React.Fragment>
   )
 

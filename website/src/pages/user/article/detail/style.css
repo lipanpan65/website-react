@@ -27,10 +27,8 @@
   min-width: 200px;
 }
 
-
 .main-container {
   background-color: #fff;
-  /* padding: 20px; */
 }
 
 /* 文章标题 */
@@ -39,14 +37,12 @@
   font-size: 2.667rem;
   font-weight: 600;
   line-height: 1.31;
-  /* color: var(--juejin-font-1); */
   color: #252933;
 }
 
 .blog-pre {
   position: relative;
 }
-
 
 .markdown-navigation .title-anchor.active {
   /* background-color: #f8f8f8; */

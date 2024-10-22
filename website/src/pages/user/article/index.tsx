@@ -84,7 +84,7 @@ const Article: React.FC = () => {
   return (
     <React.Fragment>
       <div className='article-wrapper'>
-        <div className="section left">
+        <div className="section section-left">
         </div>
         <div className="section center">
           <div className="article-list">
@@ -104,7 +104,7 @@ const Article: React.FC = () => {
               renderItem={(item: any, index: number) => (
                 <List.Item
                   style={{
-                    padding: '12px 12px 12px 12px'
+                    // padding: '12px 12px 12px 12px'
                   }}
                   actions={[
                     // <span>{item.creator}</span>,
@@ -122,7 +122,7 @@ const Article: React.FC = () => {
             />
           </div>
         </div>
-        <div className="section right">
+        <div className="section section-right">
           <div className="right-pane">
             <Card>
               <p>晚上好</p>

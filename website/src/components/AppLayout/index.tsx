@@ -36,7 +36,7 @@ const AppLayout: React.FC = () => {
     const hiddenPaths = ['/user/article/editor/new', '/login', '/forgot-password'];
     return hiddenPaths.includes(location.pathname);
   }, [location.pathname]);
-
+  
   const appLayoutStyle: React.CSSProperties = {
     // padding: '16px', // 外层容器的默认样式
     // height: '100vh',
