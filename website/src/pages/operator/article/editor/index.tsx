@@ -249,7 +249,6 @@ const EditorArticle: any = (props: any) => {
         ...article
       }
     }).then((r: any) => {
-      console.log('更新完成')
       // timerId.current = null
     }).catch((e) => {
     }).finally(() => {
@@ -292,51 +291,56 @@ const EditorArticle: any = (props: any) => {
   }
 
   console.log("timerId====>", timerId)
-
+  
   return (
     <React.Fragment>
-      <EditArticleContext.Provider value={{ state, dispatch: dispatchF }}>
-        <Spin spinning={state.loading}>
-          <div className='edit-container'>
-            <div className='header'>
-              <div className="header-left">
-                <Input
-                  style={{ fontSize: 24, height: '100%' }}
-                  className='input-title'
-                  value={state.article.title || ""}
-                  onChange={onChange}
-                  placeholder="请输入文章标题"
-                  bordered={false} />
+      <div >
+        <EditArticleContext.Provider value={{ state, dispatch: dispatchF }}>
+          <Spin spinning={state.loading}>
+            <div className='edit-container'>
+              <div className='header'>
+                <div className="header-left">
+                  <Input
+                    style={{ fontSize: 24, height: '100%' }}
+                    className='input-title'
+                    value={state.article.title || ""}
+                    onChange={onChange}
+                    placeholder="请输入文章标题"
+                    // bordered={false}
+                    variant="borderless"
+                  />
+                </div>
+                <div>
+                  {state.tip}
+                  {timerId.current}
+                </div>
+                {
+                  timerId.current === undefined ? <div>文章自动保存到草稿中...</div> : (timerId.current === null ? <div>保存成功...</div> : <div>保存中...</div>)
+                  // timerId === undefined ? <div>文章自动保存到草稿中...</div> : (timerId === null ? <div>保存成功...</div> : <div>保存中...</div>)
+                }
+                <div className="header-right">
+                  <Button type="primary" onClick={showModel} >发布</Button>
+                  <Button type="primary" onClick={handLinkToDrafts}>草稿箱</Button>
+                </div>
+              </div>
+              <div className="bootom">
+                <MdEditor
+                  onImageUpload={() => alert('image')}
+                  // ref={mdEditor}
+                  value={state.article.content || ""}
+                  style={{ height: "100vh" }}
+                  onChange={handleEditorChange}
+                  renderHTML={text => mdParser.render(text)}
+                />
               </div>
               <div>
-                {state.tip}
-                {timerId.current}
-              </div>
-              {
-                timerId.current === undefined ? <div>文章自动保存到草稿中...</div> : (timerId.current === null ? <div>保存成功...</div> : <div>保存中...</div>)
-                // timerId === undefined ? <div>文章自动保存到草稿中...</div> : (timerId === null ? <div>保存成功...</div> : <div>保存中...</div>)
-              }
-              <div className="header-right">
-                <Button type="primary" onClick={showModel} >发布</Button>
-                <Button type="primary" onClick={handLinkToDrafts}>草稿箱</Button>
+                <Publish ref={publishRef} />
               </div>
             </div>
-            <div className="bootom">
-              <MdEditor
-                onImageUpload={() => alert('image')}
-                // ref={mdEditor}
-                value={state.article.content || ""}
-                style={{ height: "100vh" }}
-                onChange={handleEditorChange}
-                renderHTML={text => mdParser.render(text)}
-              />
-            </div>
-            <div>
-              <Publish ref={publishRef} />
-            </div>
-          </div>
-        </Spin>
-      </EditArticleContext.Provider>
+          </Spin>
+        </EditArticleContext.Provider>
+
+      </div>
 
     </React.Fragment >
   )

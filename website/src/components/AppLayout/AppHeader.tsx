@@ -1,40 +1,15 @@
-import * as React from 'react'
+import * as React from 'react';
 import logo from '@/logo.svg'
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, Layout, MenuProps, Space, Button, Avatar, Dropdown } from 'antd';
 import {
-  Button,
-  Menu,
-  Layout,
-  MenuProps,
-  Avatar,
-  Space,
-  Dropdown
-} from 'antd'
-
-import {
-  Link,
-  useNavigate,
-} from "react-router-dom"
-
-import {
+  IdcardOutlined,
   FileTextOutlined,
   HomeOutlined,
-  UserOutlined,
-  InteractionOutlined,
-  IdcardOutlined
+  InteractionOutlined
 } from '@ant-design/icons';
 
-{/* <InteractionOutlined /> */ }
-
-const UserList = ['U', 'Lucy', 'Tom', 'Edward'];
-const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
-const GapList = [4, 3, 2, 1];
-
-const { Header } = Layout
-
-// const MenuLable = (v: any) => <Link to={`${v.url}`}>{v.name}</Link>
-
-const MenuLink = ({ url, name }: MenuItem) => <Link to={url}>{name}</Link>;
-
+const { Header } = Layout;
 
 interface MenuItem {
   id: string;
@@ -44,64 +19,32 @@ interface MenuItem {
 }
 
 interface AppHeaderProps {
-  // collapsed: boolean;
-  // onCollapsed: (collapsed: boolean) => void;
   appMenu: {
     topMenu: MenuItem[];
     topActive: MenuItem | null;
   };
 }
 
-
-
 const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
-
-  const { topMenu = [], topActive } = appMenu
+  const { topMenu = [], topActive } = appMenu;
+  const navigate = useNavigate();
 
   // 动态生成菜单项
   const items = React.useMemo(() => (
-    topMenu.map((v) => ({
-      key: v.id,
-      icon: v.icon,
-      label: <MenuLink {...v} />,
+    topMenu.map((item) => ({
+      key: item.id,
+      icon: item.icon,
+      label: <Link to={item.url}>{item.name}</Link>,
     }))
   ), [topMenu]);
 
-  // const [items, setItems] = React.useState<any>(() => {
-  //   return topMenu.map((v: any) => {
-  //     return {
-  //       key: v.id,
-  //       icon: v.icon,
-  //       label: MenuLable(v)
-  //     }
-  //   })
-  // })
+  console.log("AppHeader.items", items)
 
-  const [selectedKeys, setSelectedKeys] = React.useState<string | null>(topActive?.id || null);
-  // const [selectedKeys, setSelectedKeys] = React.useState(() => {
-  //   return topActive?.id
-  // })
-
-  const navigate = useNavigate()
-
-  const handleLinkTo = () => {
-    navigate('/')
-  }
-
-  // const onClick: MenuProps['onClick'] = (e) => {
-  //   const { key } = e
-  //   topMenu.filter((v: any) => v.id === key)
-  //   setSelectedKeys((preSelectedKeys: any) => {
-  //     const active = topMenu.find((v: any) => v.id === key)
-  //     console.log("active", active)
-  //     return active?.id
-  //   })
-  // };
+  const [selectedKeys, setSelectedKeys] = React.useState<string[]>(topActive ? [topActive.id] : []);
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
-    const { key } = e;
-    const activeItem = topMenu.find((v) => v.id === key);
-    setSelectedKeys(activeItem?.id || null);
+    const activeItem = topMenu.find((item) => item.id === e.key);
+    setSelectedKeys(activeItem ? [activeItem.id] : []);
   };
 
   const userMenuItems: MenuProps['items'] = [
@@ -126,54 +69,33 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
       icon: <InteractionOutlined />,
     },
   ];
-  
+
   return (
-    <React.Fragment>
-      <div className="navbar">
-        <Header className='container'>
-          <img src={logo} className='logo' onClick={handleLinkTo} style={{
-            margin: '0px'
-          }} />
-          <span
-            onClick={handleLinkTo}
-            style={{
-              fontSize: '1.5em',
-              fontWeight: 'bold',
-              color: 'white',
-              marginInlineEnd: '16px'
-            }}>皮皮虾教程</span>
-          <Menu
-            // selectedKeys={selectedKeys}
-            selectedKeys={[selectedKeys || '']}
-            theme="dark"
-            mode="horizontal"
-            items={items}
-            // onClick={onClick}
-            onClick={handleMenuClick}
-            style={{
-              flex: 1,
-              minWidth: 0,
-            }}
-          />
-          <Space>
-            <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button>
-            {/* <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }} size={'default'}>U</Avatar> */}
-            <React.Fragment>
-              <Dropdown menu={{ items: userMenuItems }}>
-                {/* <Avatar style={{ backgroundColor: ColorList[0], verticalAlign: 'middle' }} size="default" gap={GapList[0]}>
-                  李
-                </Avatar> */}
-                <Avatar style={{ backgroundColor: '#f56a00', verticalAlign: 'middle' }} size="default" gap={4}>
-                  李
-                </Avatar>
-              </Dropdown>
-            </React.Fragment>
-          </Space>
-        </Header>
+    <Header className='header-container'>
+      <div className="header-content" style={{
+        display: 'flex'
+      }}>
+        <div className="logo" onClick={() => navigate('/')}>
+          <img src={logo} alt="Logo" className="logo-img" />
+          <span className="logo-text">皮皮虾教程</span>
+        </div>
+        <Menu
+          selectedKeys={selectedKeys}
+          theme="dark"
+          mode="horizontal"
+          items={items}
+          onClick={handleMenuClick}
+          className="menu"
+        />
+        <Space className="header-actions">
+          <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button>
+          <Dropdown menu={{ items: userMenuItems }}>
+            <Avatar className="avatar">李</Avatar>
+          </Dropdown>
+        </Space>
       </div>
-    </React.Fragment>
-  )
-}
+    </Header>
+  );
+};
 
-
-export default AppHeader
+export default AppHeader;

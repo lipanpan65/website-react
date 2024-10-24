@@ -1,47 +1,27 @@
-/* 全局 CSS 变量定义 */
-:root {
-    --primary-bg-color: #f0f2f5;
-    --card-bg-color: #fff;
-    --border-radius-lg: 8px;
-    --padding-lg: 24px;
-    --padding-md: 16px;
-    --padding-sm: 12px;
-    --gap-lg: 16px;
-    --gap-md: 12px;
-    --gap-sm: 8px;
-    --max-content-width: 1200px;
-    /* 常见的桌面宽度 */
-    --side-padding: calc((100vw - var(--max-content-width)) / 2);
-    /* 动态计算左右外边距 */
-}
-
 .article-wrapper {
     display: flex;
     flex-direction: row;
-    padding: var(--padding-lg);
+    padding: var(--padding-md);
     margin-inline: var(--side-padding);
     /* 动态设置左右外边距 */
     gap: var(--gap-lg);
     background-color: var(--primary-bg-color);
-    /* height: 100vh;  确保父级容器占满视口高度 */
 }
 
 .section {
     display: flex;
-    /* justify-content: center; */
-    /* align-items: center; */
     padding: var(--padding-md);
 }
 
-.left {
+.section-left {
     flex: 1;
     background-color: var(--card-bg-color);
     border-radius: var(--border-radius-lg);
-    max-height: calc(100vh - 40px);
+    max-height: calc(100vh - 140px);
 }
 
-.right {
-    border: 1px solid saddlebrown;
+.section-right {
+    /* border: 1px solid saddlebrown; */
     flex: 2;
     flex-direction: column;
     gap: var(--gap-md);

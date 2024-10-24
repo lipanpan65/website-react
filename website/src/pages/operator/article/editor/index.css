@@ -8,7 +8,7 @@
 
 .edit-container .header {
     padding: 0 27px;
-    width: 100%;
+    /* width: 100%; */
     height: 64px;
     display: flex;
     flex-direction: row;
@@ -16,17 +16,10 @@
     align-items: center;
 }
 
-
-
 .edit-container .header .header-left {
     width: 70%;
     line-height: 64px;
 }
-
-/* .header-left {
-    width: 70%;
-
-} */
 
 .header-left .input-title {
     /* width: 70%; */
