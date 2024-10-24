@@ -11,43 +11,20 @@ import {
   ProfileOutlined
 } from '@ant-design/icons'
 
-
-
 import type { TabsProps } from 'antd';
 
 import CreatorAriticle from './article'
 import { IconText } from '@/utils'
-
-// const IconText = (icon: React.FC, text: string) => (
-//   <Space>
-//     {React.createElement(icon)}
-//     {text}
-//   </Space>
-// );
-
-// const IconText = (icon: string, text: string) => {
-//   const Icons: any = Icon
-//   return (
-//     <React.Fragment>
-//       <Space>
-//         {React.createElement(Icons[icon])}
-//         {text}
-//       </Space>
-//     </React.Fragment>
-//   )
-// }
 
 const CreatorOverView: React.FC = () => {
 
   const {
     token: {
       colorBgContainer,
-      // borderRadiusLG
     },
   } = theme.useToken();
 
   const onChange = (key: string) => {
-    console.log('key===>', key)
     console.log(key);
   };
 
@@ -67,10 +44,13 @@ const CreatorOverView: React.FC = () => {
   return (
     <React.Fragment>
       <div style={{
+        // display: 'flex',
+        // gap: 16,
+        width: '100%',
         height: '100vh',
         padding: '0 20px',
-        // border: '1px solid green',
-        background: colorBgContainer
+        border:'1px solid red'
+        // background: colorBgContainer
       }}>
         <Tabs defaultActiveKey="article" items={items} onChange={onChange} />
       </div>

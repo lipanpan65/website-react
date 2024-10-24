@@ -113,11 +113,6 @@ const CratorArticle: any = (props: any) => {
     })
   }
 
-  // React.useEffect(() => {
-  //   // console.log('分页发生变化')
-  //   // getArticleList()
-  // }, [state.page])
-
   const handleLinkTo = (v: any) => {
     navigator(`/user/article/editor/${v.id}`,
       {

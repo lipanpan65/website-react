@@ -1,0 +1,203 @@
+:root {
+    --primary-bg-color: #f0f2f5;
+    --card-bg-color: #fff;
+    --border-radius-lg: 8px;
+    --padding-lg: 24px;
+    --padding-md: 16px;
+    --padding-sm: 12px;
+    --gap-lg: 16px;
+    --gap-md: 12px;
+    --gap-sm: 8px;
+    --max-content-width: 1200px;
+    --side-padding: calc((100vw - var(--max-content-width)) / 2);
+}
+
+
+/* .debug-border {
+    border: 1px solid sandybrown;
+} */
+
+/* 全局布局类 */
+.app-layout {
+    display: flex;
+    /* 默认值 */
+    flex-direction: row;
+    padding: var(--padding-md);
+    margin-inline: var(--side-padding);
+    gap: var(--gap-lg);
+    background-color: var(--primary-bg-color);
+    box-sizing: border-box;
+    justify-content: center;
+}
+
+.app-layout-card {
+    border-radius: var(--border-radius-lg);
+    background-color: var(--primary-bg-color);
+}
+
+/* 水平居中可选类 */
+.justify-center {
+    justify-content: center;
+}
+
+/* 垂直布局类 */
+.flex-column {
+    flex-direction: column;
+}
+
+/* 左右两栏布局 */
+
+/* 1:1 布局 */
+.layout-1-1 {
+    display: flex;
+}
+
+.layout-1-1 .left-column,
+.layout-1-1 .right-column {
+    flex: 1;
+}
+
+/* 2:3 布局 */
+.layout-2-3 {
+    display: flex;
+}
+
+.layout-2-3 .left-column {
+    flex: 2;
+}
+
+.layout-2-3 .right-column {
+    flex: 3;
+}
+
+/* 1:4 布局 */
+.layout-1-4 {
+    display: flex;
+}
+
+.layout-1-4 .left-column {
+    flex: 1;
+}
+
+.layout-1-4 .right-column {
+    flex: 4;
+}
+
+/* 3:1 布局 */
+.layout-3-1 {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: var(--max-content-width);
+    margin: 0 auto;
+}
+
+.layout-3-1 .left-column {
+    flex: 3;
+    max-width: calc(70% - var(--gap-lg));
+    overflow: hidden;
+    /* 防止内容溢出 */
+}
+
+.layout-3-1 .right-column {
+    flex: 1;
+    max-width: calc(30% - var(--gap-lg));
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    gap: var(--gap-md);
+    /* 添加上下间距 */
+}
+
+/* 暂时没有使用到 */
+.box {
+    padding: 16px;
+    margin: 8px 0;
+    /* 设置上下外边距 */
+    background-color: var(--card-bg-color);
+    border-radius: var(--border-radius-lg);
+}
+
+/* 三栏布局 */
+
+/* 1:2:1 布局 */
+.layout-1-2-1 {
+    display: flex;
+}
+
+.layout-1-2-1 .left-column,
+.layout-1-2-1 .right-column {
+    flex: 1;
+}
+
+.layout-1-2-1 .center-column {
+    flex: 2;
+}
+
+/* 网格布局 */
+
+/* 均分的网格布局 (1:1:1) */
+.grid-1-1-1 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--gap-lg);
+}
+
+/* 响应式网格布局 */
+.grid-responsive {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--gap-lg);
+}
+
+@media (min-width: 768px) {
+    .grid-responsive {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid-responsive {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+
+/* import React from 'react';
+import './common/global.css';
+
+const ExampleComponent: React.FC<{ center?: boolean }> = ({ center }) => {
+  return (
+    <div className={`app-layout ${center ? 'justify-center' : ''}`}>
+      <div>内容 1</div>
+      <div>内容 2</div>
+      <div>内容 3</div>
+    </div>
+  );
+};
+
+export default ExampleComponent; */
+
+
+/* import React, { useState } from 'react';
+import './common/global.css';
+
+const ExampleComponent: React.FC = () => {
+  const [isCentered, setIsCentered] = useState(false);
+
+  return (
+    <div
+      className="app-layout"
+      style={{ justifyContent: isCentered ? 'center' : 'flex-start' }}
+    >
+      <div>内容 1</div>
+      <div>内容 2</div>
+      <div>内容 3</div>
+      <button onClick={() => setIsCentered(!isCentered)}>切换居中</button>
+    </div>
+  );
+};
+
+export default ExampleComponent; */

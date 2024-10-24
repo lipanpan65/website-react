@@ -18,8 +18,7 @@ import MarkDownTOC from '@/components/MarkDownTOC';
 import './style.css'
 import { Col, Row, message, theme, Card } from 'antd'
 import CodeCopy from '@/components/CodeCopy';
-// import Article from '..';
-// import Article from '..';
+
 
 const { Meta } = Card;
 // const headerStyle: React.CSSProperties = {
@@ -46,8 +45,6 @@ const initialState = {
 };
 
 const reducer = (preState: any, action: any) => {
-  // console.log('READ.preState', preState)
-
   switch (action.type) {
     case 'READ':
       console.log('READ.preState', preState)
@@ -88,19 +85,18 @@ const ArticleDetail: React.FC = () => {
       url: `/api/user/v1/article/${id}/`,
       method: 'GET',
     }).then((res: any) => {
-      const { status, statusText, data: { code, success, data } } = res
-      if (status === 200 && statusText === 'OK') {
-        if (code === "0000") {
-          const article: Article = data
-          console.log('article', article)
-          dispatch({ type: 'READ_DONE', payload: { article } })
-        } else if (code === "9999") {
-          message.error("操作失败")
-        }
+      console.log("getArticle.res===>", res)
+      const { code, success, data } = res
+      if (code === "0000") {
+        const article: Article = data
+        console.log('article', article)
+        dispatch({ type: 'READ_DONE', payload: { article } })
+      } else if (code === "9999") {
+        message.error("操作失败")
       }
-    })
+    }
+    )
   }
-
   React.useEffect(() => getArticle(), [])
 
   let ref: any = ''
@@ -123,14 +119,11 @@ const ArticleDetail: React.FC = () => {
 
   return (
     <React.Fragment>
-      <div style={{
-        display: 'flex',
-        // height: '100vh' // 不能设置该高度 
-      }}>
-        <div className="left-box">
-          <div className='container main-container' style={{
+      <div className="layout-3-1 app-layout debug-border">
+        <div className="left-column main-container">
+          <div style={{
             padding: '2.667rem',
-            boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)"
+            // boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)"
           }}>
             <h1 className='article-title'>{state.article.title}</h1>
             <div className='article-body' style={{
@@ -165,11 +158,21 @@ const ArticleDetail: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="right-container">
+        <div className="right-column">
+          <Card title="目录" style={{
+            // padding: '8px',
+            // width: "300px"
+          }}>
+            {state.article.content &&
+              <div className="navigation">
+                <MarkDownTOC source={state.article.content || ""} />
+              </div>
+            }
+          </Card>
           <div>
             <Card title="目录" style={{
-              padding: '8px',
-              width: "300px"
+              // padding: '8px',
+              // width: "300px"
             }}>
               {state.article.content &&
                 <div className="navigation">
@@ -179,15 +182,17 @@ const ArticleDetail: React.FC = () => {
             </Card>
           </div>
           <div>
-            {/* <Card title="目录">
+            <Card title="目录" style={{
+              // padding: '8px',
+              // width: "300px"
+            }}>
               {state.article.content &&
                 <div className="navigation">
                   <MarkDownTOC source={state.article.content || ""} />
                 </div>
               }
-            </Card> */}
+            </Card>
           </div>
-
         </div>
       </div>
     </React.Fragment>
