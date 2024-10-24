@@ -25,14 +25,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({
     {nested ? (
       <Layout>
         {header && <Header>{header}</Header>}
-        <Content style={{
-          padding: 16
-        }} >
-          <Layout style={{
-            display: 'flex',
-            gap: 16,
-            // padding: 50
-          }}>
+        <Content >
+          <Layout className='app-layout'>
             {sider && <Sider>{sider}</Sider>}
             <Outlet />
           </Layout>

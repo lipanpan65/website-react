@@ -12,15 +12,9 @@
     --side-padding: calc((100vw - var(--max-content-width)) / 2);
 }
 
-
-/* .debug-border {
-    border: 1px solid sandybrown;
-} */
-
 /* 全局布局类 */
 .app-layout {
     display: flex;
-    /* 默认值 */
     flex-direction: row;
     padding: var(--padding-md);
     margin-inline: var(--side-padding);
@@ -201,3 +195,7 @@ const ExampleComponent: React.FC = () => {
 };
 
 export default ExampleComponent; */
+
+/* .debug-border {
+    border: 1px solid sandybrown;
+} */

@@ -29,6 +29,8 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
   const { topMenu = [], topActive } = appMenu;
   const navigate = useNavigate();
 
+  console.log("AppHeader.AppHeader", topActive)
+
   // 动态生成菜单项
   const items = React.useMemo(() => (
     topMenu.map((item) => ({
@@ -38,7 +40,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
     }))
   ), [topMenu]);
 
-  console.log("AppHeader.items", items)
+
 
   const [selectedKeys, setSelectedKeys] = React.useState<string[]>(topActive ? [topActive.id] : []);
 

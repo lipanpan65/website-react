@@ -6,8 +6,8 @@ import AppHeader from './AppHeader';
 import './index.css'
 
 const AppLayout: React.FC = () => {
-  const { appMenu, shouldHideHeader } = useAppMenu();
-
+  const { appMenu, shouldHideHeader } = useAppMenu({ hiddenMenuIds: ['2'] });
+  
   return (
     <BaseLayout
       header={!shouldHideHeader && <AppHeader appMenu={appMenu} />}

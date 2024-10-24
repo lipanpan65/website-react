@@ -105,8 +105,6 @@ const dataToFlatten = (data: any) => {
 // }
 
 const VerticalMenu: React.FC<VerticalMenuProps> = ({ appMenu }) => {
-
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -120,7 +118,7 @@ const VerticalMenu: React.FC<VerticalMenuProps> = ({ appMenu }) => {
   ), [appMenu]);
 
   console.log("VerticalMenu", items)
-  
+
   // 设置当前选中的菜单项
   const [selectedKeys, setSelectedKeys] = React.useState<string[]>([]);
 

@@ -5,8 +5,9 @@ import SliderMenu from './SliderMenu';
 import { useAppMenu } from '@/hooks/state/useAppMenu';
 
 const CreatorLayout: React.FC = () => {
-  const { appMenu, shouldHideHeader } = useAppMenu();
+  const { appMenu, shouldHideHeader } = useAppMenu({ hiddenMenuIds: ['2'] });
   console.log("CreatorLayout", appMenu)
+  
   return (
     <BaseLayout
       header={!shouldHideHeader && <AppHeader appMenu={appMenu} />}
