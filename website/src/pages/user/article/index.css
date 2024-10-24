@@ -17,11 +17,11 @@
     flex: 1;
     background-color: var(--card-bg-color);
     border-radius: var(--border-radius-lg);
-    max-height: calc(100vh - 40px);
+    max-height: calc(100vh - 140px);
 }
 
 .section-right {
-    border: 1px solid saddlebrown;
+    /* border: 1px solid saddlebrown; */
     flex: 2;
     flex-direction: column;
     gap: var(--gap-md);

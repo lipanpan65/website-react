@@ -249,7 +249,6 @@ const EditorArticle: any = (props: any) => {
         ...article
       }
     }).then((r: any) => {
-      console.log('更新完成')
       // timerId.current = null
     }).catch((e) => {
     }).finally(() => {
@@ -292,7 +291,7 @@ const EditorArticle: any = (props: any) => {
   }
 
   console.log("timerId====>", timerId)
-
+  
   return (
     <React.Fragment>
       <div >

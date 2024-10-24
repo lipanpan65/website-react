@@ -5,14 +5,26 @@ import {
 } from "react-router-dom"
 
 import {
+  Button,
   Card,
   List,
+  Menu,
+  MenuProps,
   theme
 } from 'antd'
 
 import { request, rowKeyF, showTotal } from '@/utils'
 
 import './index.css';
+import {
+  // AppstoreOutlined,
+  MailOutlined,
+  SettingOutlined,
+  CompassOutlined,
+  ConsoleSqlOutlined,
+  LaptopOutlined,
+  ToolOutlined
+} from '@ant-design/icons';
 
 const ArticleTitle = (article: any) => <Link className='title'
   to={{
@@ -51,14 +63,34 @@ const reducer = (state: any, action: any) => {
   }
 }
 
-const Article: React.FC = () => {
+type MenuItem = Required<MenuProps>['items'][number];
 
-  const {
-    token: {
-      colorBgContainer,
-      borderRadiusLG
-    },
-  } = theme.useToken();
+const items: MenuItem[] = [
+  {
+    key: '综合',
+    label: '综合',
+    icon: < CompassOutlined />,
+  },
+  {
+    key: '后端',
+    label: '后端',
+    icon: <ConsoleSqlOutlined />,
+  },
+  {
+    key: '前端',
+    label: '前端',
+    icon: <LaptopOutlined />,
+  },
+  // {
+  //   key: '开发工具',
+  //   label: '开发工具',
+  //   icon: <ToolOutlined />,
+  // },
+];
+
+
+
+const Article: React.FC = () => {
 
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
@@ -81,10 +113,30 @@ const Article: React.FC = () => {
 
   React.useEffect(() => getArticleList(), [])
 
+  const onClick: MenuProps['onClick'] = (e) => {
+    console.log('click ', e);
+  };
+
   return (
     <React.Fragment>
       <div className='article-wrapper'>
-        <div className="section section-left">
+        <div className="section section-left" style={{
+          padding: '0',
+          minHeight: ''
+          // flexDirection: 'column',
+          // backgroundColor: "#fff",
+          // height: 'fix-content',
+          // gap: '8px'
+        }}>
+          {/* <Button>你好</Button> */}
+          <Menu
+            onClick={onClick}
+            // style={{ width: 256 }}
+            defaultSelectedKeys={['1']}
+            defaultOpenKeys={['sub1']}
+            mode="inline"
+            items={items}
+          />
         </div>
         <div className="section center">
           <div className="article-list">
@@ -107,7 +159,7 @@ const Article: React.FC = () => {
                     // padding: '12px 12px 12px 12px'
                   }}
                   actions={[
-                    // <span>{item.creator}</span>,
+                    <span>{item.creator || '皮皮虾'}</span>,
                     <span>{item.create_time}</span>,
                     <span>{item.category_name}</span>,
                   ]}

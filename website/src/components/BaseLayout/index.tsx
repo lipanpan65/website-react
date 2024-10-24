@@ -42,11 +42,9 @@ const BaseLayout: any = (props: any) => {
   return (
     <React.Fragment>
       <AppHeader
-        // funcs={appMenu.topMenu} active={appMenu.topActive} top={'创作者中心'}
         appMenu={appMenu}
       />
       {props.children}
-      {/* <Outlet /> */}
     </React.Fragment>
   )
 }

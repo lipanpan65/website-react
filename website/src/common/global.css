@@ -40,7 +40,6 @@
     justify-content: center;
 }
 
-
 /* 垂直布局类 */
 .flex-column {
     flex-direction: column;
