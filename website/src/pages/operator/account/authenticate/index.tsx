@@ -68,7 +68,6 @@ const Authenticate = () => {
                 <a href="">忘记密码</a>
               </Flex>
             </Form.Item>
-
             <Form.Item>
               <Button block type="primary" htmlType="submit">
                 登陆

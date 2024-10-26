@@ -46,7 +46,7 @@ const AdminLayout: React.FC = () => {
     document.title = pageTitle;
     console.log("Document title updated to: ", pageTitle);
   }, [appMenu]);  // 依赖 appMenu 的变化
-
+  
   return (
     <Layout>
       <AdminHeader
