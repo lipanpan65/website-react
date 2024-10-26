@@ -70,7 +70,7 @@ const AppSearch: React.FC<AppSearchProps> = ({
     alignItems: 'center',
     justifyContent: 'center', // 确保内容水平居中
   };
-
+  
   return (
     <React.Fragment>
       <Form form={form}>

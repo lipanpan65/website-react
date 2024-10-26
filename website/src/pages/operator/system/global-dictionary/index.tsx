@@ -13,7 +13,9 @@ import { request } from '@/utils';
 
 import { useGlobalDict, GlobalProvider } from '@/hooks/state/useGlobalDict';
 
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import StatusTag from '@/components/StatusTag';
+
+import { ExclamationCircleFilled, PlusCircleOutlined } from '@ant-design/icons';
 import AppDialog from '@/components/AppDialog';
 import { api } from '@/api';
 
@@ -61,7 +63,7 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
     onClick: (event: React.MouseEvent<HTMLElement>) => showModel(event, {}),
     // 你可以添加更多的 Button 属性，如 disabled, icon 等
     disabled: false,
-    // icon: <SomeIcon />,  // 例如使用 Ant Design 的图标
+    icon: <PlusCircleOutlined />,  // 例如使用 Ant Design 的图标
   };
 
   return (
@@ -289,15 +291,12 @@ const AppGlobalDict = () => {
       title: 'cvalue',
       dataIndex: 'cvalue',
       key: 'cvalue',
-      // render: (text: any, _: any, __: any) => USER_ROLE_MAP[text]
     },
     {
       title: '状态',
       dataIndex: 'enable',
       key: 'enable',
-      // render: (text: any, _: any, __: boolean) => {
-      //   return <Tag color={USER_STATUS_COLOR[text]}>{USER_STATUS[text]}</Tag>
-      // }
+      render: (text: number) => <StatusTag status={text} />
     },
     {
       title: '操作',
@@ -312,7 +311,7 @@ const AppGlobalDict = () => {
       ),
     },
   ];
-  
+
   const handleDelete = (event: any, data?: any) => {
     const onOk = () => new Promise<void>((resolve, reject) => {
       request({
