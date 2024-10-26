@@ -1,7 +1,7 @@
 .header-container {
   padding: 0 clamp(10px, 5vw, 50px);
   /* 最小 10px，最大 50px，居中用 5vw 动态调整 */
-  background: #001529;
+  /* background: #001529; */
 }
 
 /* .header-container {
