@@ -1,3 +1,6 @@
+
+/* TODO 将所有的css样式进行归纳 */
+
 .App {
   text-align: center;
 }
@@ -24,9 +27,9 @@
   color: white;
 }
 
-.App-link {
+/* .App-link {
   color: #61dafb;
-}
+} */
 
 @keyframes App-logo-spin {
   from {

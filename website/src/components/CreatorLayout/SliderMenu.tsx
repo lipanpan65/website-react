@@ -13,57 +13,30 @@ import {
 
 import { Layout, Flex, Menu, Row, Col, theme } from 'antd'
 
-// type MenuItem = Required<MenuProps>['items'][number];
-
-
 interface MenuItem {
   id: string;
   name: string;
   url: string;
   icon: React.ReactNode;
+  childs?: MenuItem[];
 }
+
+// interface MenuItem {
+//   id: string;
+//   name: string;
+//   url: string;
+//   icon: React.ReactNode;
+// }
 
 interface VerticalMenuProps {
-  appMenu: MenuItem[];
+  // appMenu: MenuItem[];
+  appMenu: {
+    topMenu: MenuItem[];
+    topActive: MenuItem | null;
+    leftMenu: MenuItem[];
+    leftActive: MenuItem | null;
+  };
 }
-
-
-// const MenuLable = (v: any) => v.url ? <Link to={`${v.url}`}>{v.name}</Link> : v.name
-
-// const matchPath = (menuUrl: any, curPath: any) => curPath.indexOf(menuUrl) === 0
-
-// const getLeftActive = (func: any, curPath: any, parent = []) => {
-//   console.log("getLeftActive func curPath parent", func, curPath, parent)
-//   let active: any;
-//   func.every((item: any) => {
-//     if (item.childs) {
-//       // 递归调用获取 activate,如果菜单存在子级菜单则 parent 即为 item 本身
-//       active = getLeftActive(item.childs, curPath, item)
-//       if (active) {
-//         // 如果层级嵌套可能存在多个 item
-//         if (!Array.isArray(active.parent)) {
-//           active.parent = [active.parent]
-//         }
-//         active.parent = parent
-//         return false;
-//       }
-//       return true
-//     } else {
-//       if (matchPath(item.hash, curPath)) {
-//         item.parent = parent;
-//         active = item;
-//         return false;
-//       }
-//       return true;
-//     }
-//   })
-//   return active;
-// }
-
-// const getMenuTree = (funcs: any, curPath: any, parent = []) => {
-
-// }
-
 
 // https://blog.csdn.net/qq_35770417/article/details/109803851
 
@@ -105,49 +78,72 @@ const dataToFlatten = (data: any) => {
 // }
 
 const VerticalMenu: React.FC<VerticalMenuProps> = ({ appMenu }) => {
-
-
   const navigate = useNavigate();
   const location = useLocation();
 
+  const {
+    token: { colorBgContainer,
+      borderRadiusLG },
+  } = theme.useToken();
+
   // 缓存生成的菜单项
-  const items = React.useMemo(() => (
-    appMenu.map((item: any) => ({
-      key: item.url,  // 使用 URL 作为唯一标识
-      icon: item.icon,
-      label: item.name,
-    }))
-  ), [appMenu]);
+  // const items = React.useMemo(() => (
+  //   appMenu.leftMenu.map((item: MenuItem) => ({
+  //     key: item.id,  // 使用 URL 作为唯一标识
+  //     icon: item.icon,
+  //     label: item.name,
+  //   }))
+  // ), [appMenu.leftMenu]);
+
+  const items: MenuProps['items'] = React.useMemo(() => generateMenuItems(appMenu.leftMenu), [appMenu.leftMenu]);
+
 
   console.log("VerticalMenu", items)
-  
+
   // 设置当前选中的菜单项
-  const [selectedKeys, setSelectedKeys] = React.useState<string[]>([]);
+  // const [selectedKeys, setSelectedKeys] = React.useState<string[]>([]);
 
-  React.useEffect(() => {
-    const currentPath = location.pathname;
-    const activeItem: any = appMenu.find((item: any) => item.url === currentPath);
-    if (activeItem) {
-      setSelectedKeys([activeItem.url]);
-    }
-  }, [location.pathname, appMenu]);
+  const defaultSelectedKeys = appMenu.leftActive ? [appMenu.leftActive.id] : [];
 
-  const handleMenuClick = (e: { key: string }) => {
-    setSelectedKeys([e.key]);
-    navigate(e.key);
-  };
+
+
+  // React.useEffect(() => {
+  //   const currentPath = location.pathname;
+  //   const activeItem: any = appMenu.find((item: any) => item.url === currentPath);
+  //   if (activeItem) {
+  //     setSelectedKeys([activeItem.url]);
+  //   }
+  // }, [location.pathname, appMenu]);
+
+  // const handleMenuClick = (e: { key: string }) => {
+  //   setSelectedKeys([e.key]);
+  //   navigate(e.key);
+  // };
 
   return (
     <React.Fragment>
       <Menu
-        mode="vertical"
+        style={{ background: colorBgContainer, borderRadius: borderRadiusLG }}
+        mode="inline"
         items={items}
-        selectedKeys={selectedKeys}
-        onClick={handleMenuClick}
+        selectedKeys={defaultSelectedKeys}
+      // onClick={handleMenuClick}
       />
     </React.Fragment>
   )
-
 }
+
+// 动态生成菜单项
+const generateMenuItems = (menuData: MenuItem[]): MenuProps['items'] =>
+  menuData.map((item) => ({
+    key: item.id,
+    icon: item.icon,
+    label: <Link to={item.url}>{item.name}</Link>,
+    children: item.childs?.map((subItem) => ({
+      key: subItem.id,
+      icon: subItem.icon,
+      label: <Link to={subItem.url}>{subItem.name}</Link>,
+    })),
+  }));
 
 export default VerticalMenu

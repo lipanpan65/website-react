@@ -207,7 +207,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   React.useEffect(() => {
     onFormInstanceReady(form);
   }, []);
-  
+
   const onResetFields = () => {
     form.resetFields();
   };
@@ -512,6 +512,7 @@ const ArticleCategory = (props: any) => {
       <div
         style={{
           height: '100vh',
+          width: '100%',
           padding: '20px 20px',
           background: colorBgContainer
         }}>

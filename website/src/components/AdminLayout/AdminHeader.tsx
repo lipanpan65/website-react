@@ -50,7 +50,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ collapsed, onCollapsed, appMe
   const handleLinkTo = () => {
     navigate('/');
   };
-
+  
   return (
     <div className="admin-navbar">
       <Header style={{ display: 'flex', alignItems: 'center', }}>

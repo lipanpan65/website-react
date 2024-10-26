@@ -10,6 +10,7 @@ import { ConfigProvider } from 'antd'
 
 import {
   HashRouter as Router
+  // BrowserRouter as Router
 } from 'react-router-dom'
 
 import zhCN from 'antd/es/locale/zh_CN'

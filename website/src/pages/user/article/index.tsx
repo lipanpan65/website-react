@@ -181,13 +181,14 @@ const Article: React.FC = () => {
             </Card>
           </div>
           <div className="right-pane">
-            <Card title={"文章榜"}>Card content</Card>
+            <Card title={"文章榜"}>
+
+            </Card>
           </div>
           <div className="right-pane">
-            <Card title={"作者榜"}>Card content</Card>
+            <Card title={"作者榜"}></Card>
           </div>
           <div className="right-pane">
-            你好
           </div>
         </div>
       </div>
