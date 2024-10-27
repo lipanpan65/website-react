@@ -56,6 +56,7 @@ import AppGlobalDict from '@/pages/operator/system/global-dictionary'
 import RequireAuth from '@/components/RequireAuth';
 import AppUserInfo from '@/pages/operator/system/account'
 import AppRole from '@/pages/operator/system/role'
+import AppDeveloper from '@/pages/operator/system/developer'
 
 
 export const AppRoute: any = [
@@ -409,7 +410,8 @@ const Routes = () => {
               { index: true, element: <Navigate to="account" /> }, // 使用 index 路由来表示默认路径
               { path: 'account', element: <AppUserInfo /> },
               { path: 'role', element: <AppRole /> },
-              { path: 'dict', element: <AppGlobalDict /> }
+              { path: 'dict', element: <AppGlobalDict /> },
+              { path: 'developer', element: <AppDeveloper /> }
             ],
           },
         ]

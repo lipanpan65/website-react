@@ -8,6 +8,7 @@ import {
   HomeOutlined,
   InteractionOutlined
 } from '@ant-design/icons';
+import AuthButton from '../AuthButton';
 
 const { Header } = Layout;
 
@@ -28,6 +29,11 @@ interface AppHeaderProps {
 const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
   const { topMenu = [], topActive } = appMenu;
   const navigate = useNavigate();
+
+  const isAuthenticated = false;  // 模拟用户未登录
+  const userRole = 'user';        // 模拟用户角色
+  const requiredRole = 'admin';   // 需要的角色
+
 
   console.log("AppHeader.AppHeader", topActive)
 
@@ -90,7 +96,18 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
           className="menu"
         />
         <Space className="header-actions">
-          <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button>
+
+          <AuthButton
+            isAuthenticated={isAuthenticated}
+            requiredRole={requiredRole}
+            userRole={userRole}
+            button={
+              <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button>
+            }
+          >
+          </AuthButton>
+
+          {/* <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button> */}
           <Dropdown menu={{ items: userMenuItems }}>
             <Avatar className="avatar">李</Avatar>
           </Dropdown>
