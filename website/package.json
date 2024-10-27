@@ -17,6 +17,7 @@
     "copy-to-clipboard": "^3.3.3",
     "dotenv": "^16.4.5",
     "github-markdown-css": "^5.5.0",
+    "highlight.js": "^11.10.0",
     "lodash": "^4.17.21",
     "markdown-it": "^14.0.0",
     "markdown-navbar": "^1.4.3",

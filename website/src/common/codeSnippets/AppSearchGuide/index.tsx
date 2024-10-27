@@ -1,4 +1,8 @@
-import React from 'react';
+// AppSearchGuide 代码映射
+const appSearchGuideMapping: Record<string, { code: string, title: string }> = {
+  appSearchForm: {
+    title: 'AppSearch 组件代码',
+    code: `import React from 'react';
 import { Form, Input, Row, Col, Button, FormInstance, Select, ButtonProps, SelectProps } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
@@ -127,5 +131,8 @@ const AppSearch: React.FC<AppSearchProps> = ({
     </React.Fragment>
   );
 };
+export default AppSearch;`
+  },
+};
 
-export default AppSearch;
+export default appSearchGuideMapping;

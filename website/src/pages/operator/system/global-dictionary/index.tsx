@@ -46,11 +46,15 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
   onFormInstanceReady,
   setQqueryParams,
 }) => {
+  // 创建一个 form 实例
   const [form] = Form.useForm();
 
+  // 在组件加载时，将 form 实例传递给父组件
   React.useEffect(() => {
     onFormInstanceReady(form);
-  }, []);
+  }, [form, onFormInstanceReady]);
+
+
 
   const handleSearchClick = (event: React.MouseEvent<HTMLElement>) => {
     console.log('搜索按钮点击');
@@ -61,21 +65,33 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
     label: '添加',
     type: 'primary' as const,  // 明确指定类型以符合 ButtonConfig
     onClick: (event: React.MouseEvent<HTMLElement>) => showModel(event, {}),
-    // 你可以添加更多的 Button 属性，如 disabled, icon 等
     disabled: false,
     icon: <PlusCircleOutlined />,  // 例如使用 Ant Design 的图标
+  };
+
+  // 使用 form 实例的地方
+  const handleFormSubmit = async () => {
+    try {
+      // 获取表单值
+      const values = await form.validateFields();
+      console.log
+      setQqueryParams(values); // 更新查询参数
+      console.log('表单提交成功，值为:', values);
+    } catch (errorInfo) {
+      console.error('表单验证失败:', errorInfo);
+    }
   };
 
   return (
     <React.Fragment>
       <AppContent>
+      {/* <button onClick={handleFormSubmit}>提交查询</button> */}
         <AppSearch
           buttonConfig={buttonConfig}  // 动态按钮配置
-          onFormInstanceReady={(form) => console.log('Form instance ready:', form)}
-          setQueryParams={(params) => console.log('Query params:', params)}
+          onFormInstanceReady={onFormInstanceReady}
+          setQueryParams={setQqueryParams}
           formItems={[
             {
-              // label: '搜索',
               name: 'search',
               placeholder: '请输入...',
               type: 'input',
@@ -311,7 +327,7 @@ const AppGlobalDict = () => {
       ),
     },
   ];
-
+  
   const handleDelete = (event: any, data?: any) => {
     const onOk = () => new Promise<void>((resolve, reject) => {
       request({
@@ -376,6 +392,7 @@ const AppGlobalDict = () => {
     (async () => {
       await queryGlobalDict(); // 直接调用异步函数
     })();
+    console.log("state", state)
   }, [state.params]);
 
 
