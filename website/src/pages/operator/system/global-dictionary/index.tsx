@@ -327,7 +327,7 @@ const AppGlobalDict = () => {
       ),
     },
   ];
-  
+
   const handleDelete = (event: any, data?: any) => {
     const onOk = () => new Promise<void>((resolve, reject) => {
       request({

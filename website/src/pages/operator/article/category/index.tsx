@@ -46,20 +46,7 @@ const CategorySearch = (props: any) => {
     onFormInstanceReady(form);
   }, []);
 
-  const onGenderChange = (value: string) => {
-    switch (value) {
-      case 'male':
-        form.setFieldsValue({ note: 'Hi, man!' });
-        break;
-      case 'female':
-        form.setFieldsValue({ note: 'Hi, lady!' });
-        break;
-      case 'other':
-        form.setFieldsValue({ note: 'Hi there!' });
-        break;
-      default:
-    }
-  };
+
 
   const onFinish = (values: any) => {
     console.log(values);
@@ -74,7 +61,6 @@ const CategorySearch = (props: any) => {
   };
 
   const onPressEnter = (k: string, e: any) => {
-    console.log('onPressEnter') // 优先执行
     setQqueryParams((preQuerys: any) => {
       return {
         ...preQuerys,
@@ -96,7 +82,6 @@ const CategorySearch = (props: any) => {
           <Button type="primary" onClick={(event: any) => showModel(event, {})}>添加</Button>
           <Form.Item
             name="search"
-            // label="搜索" 
             rules={[{ required: false }]}>
             <Input
               placeholder='请搜索...'

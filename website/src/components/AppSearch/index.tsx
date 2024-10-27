@@ -47,7 +47,7 @@ const AppSearch: React.FC<AppSearchProps> = ({
   innerSpacing = 16,
 }) => {
   const [form] = Form.useForm();
-  
+
   React.useEffect(() => {
     onFormInstanceReady(form);
   }, [form, onFormInstanceReady]);
