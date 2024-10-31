@@ -5,6 +5,8 @@ import { Typography } from 'antd'
 
 import AppCode from '@/components/AppCode'
 import AppCodeViewer from '@/components/AppCodeViewer'
+import CodeMirrorEditor from '@/components/CodeMirrorEditor'
+import AppCodeMirrorEditorGuide from './components/AppCodeMirrorEditorGuide'
 
 const { Title, Paragraph, Text, Link } = Typography;
 
@@ -22,6 +24,13 @@ const AppDeveloper: React.FC<AppDeveloperProps> = ({ }) => {
             <Title>搜索组件</Title>
             <AppCodeViewer codeKey="appSearchForm" />
           </Typography>
+          <AppCodeMirrorEditorGuide />
+
+          <CodeMirrorEditor value={''} onChange={function (value: string): void {
+            // throw new Error('Function not implemented.')
+            console.log(value)
+          }} />
+
         </AppContent>
       </AppContainer>
     </React.Fragment>)

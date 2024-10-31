@@ -15,6 +15,8 @@ import { useGlobalDict, GlobalProvider } from '@/hooks/state/useGlobalDict';
 
 import StatusTag from '@/components/StatusTag';
 
+import CodeMirrorEditor from '@/components/CodeMirrorEditor';
+
 import { ExclamationCircleFilled, PlusCircleOutlined } from '@ant-design/icons';
 import AppDialog from '@/components/AppDialog';
 import { api } from '@/api';
@@ -85,7 +87,7 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
   return (
     <React.Fragment>
       <AppContent>
-      {/* <button onClick={handleFormSubmit}>提交查询</button> */}
+        {/* <button onClick={handleFormSubmit}>提交查询</button> */}
         <AppSearch
           buttonConfig={buttonConfig}  // 动态按钮配置
           onFormInstanceReady={onFormInstanceReady}
@@ -152,8 +154,25 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
     {
       label: 'cvalue',
       name: 'cvalue',
-      rules: [{ required: true, message: '请输入cvalue' }],
-      component: <Input placeholder="请输入cvalue" />,
+      rules: [{
+        required: true, message: '请输入cvalue'
+      }],
+      component: (
+        // <Form.Item
+        //   name="cvalue"
+        //   label="代码"
+        //   rules={[
+        //     { required: true, message: '请输入代码' },
+        //     { validator: (_, value) => value.trim() ? Promise.resolve() : Promise.reject('代码不能为空') },
+        //   ]}
+        // >
+        <CodeMirrorEditor
+          value={formInstance?.getFieldValue('cvalue') || ''}
+          onChange={(newValue) => {
+            formInstance?.setFieldsValue({ cvalue: newValue });
+          }}
+        />
+      ),
       span: 24,  // 使字段占据一半宽度
     },
     {
@@ -171,8 +190,16 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
     }
   };
 
-  const handleSubmit = (values: any) => {
-    console.log('提交的数据:', values);
+  const handleSubmit = () => {
+    // console.log('提交的数据:', values);
+    formInstance?.validateFields()
+      .then((record: any) => {
+        console.log("record", record)
+        // dispatchF((f: any) => onSubmit(f, {
+        //   ...record,
+        //   // pid
+        // }))
+      })
   };
 
   React.useEffect(() => {
@@ -213,7 +240,7 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
       <AppDialog
         title='添加字典'
         fields={fields}
-        onOk={onOk}
+        onOk={handleSubmit}
         onCancel={onCancel}
         open={open}
         onSubmit={handleSubmit}
