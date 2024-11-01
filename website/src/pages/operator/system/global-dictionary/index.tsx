@@ -99,15 +99,15 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
               type: 'input',
             },
             {
-              name: 'category',
+              name: 'enable',
               placeholder: '请选择分类',
               type: 'select',
               width: 150,
               selectConfig: {
                 allowClear: true,
                 options: [
-                  { label: '科技', value: 'tech' },
-                  { label: '健康', value: 'health' },
+                  { label: '启用', value: '1' },
+                  { label: '禁用', value: '0' },
                 ],
               },
             },
@@ -121,7 +121,7 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
 const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
   const [open, setOpen] = React.useState<boolean>(false);
   const { onSubmit } = props
-  const { state, dispatchF } = useGlobalDict();
+  const { state, enhancedDispatch } = useGlobalDict();
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
   const [formValues, setFormValues] = React.useState<any>({});
 
@@ -154,18 +154,10 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
     {
       label: 'cvalue',
       name: 'cvalue',
-      rules: [{
-        required: true, message: '请输入cvalue'
-      }],
+      rules: [
+        { validator: (_: any, value: string) => value.trim() ? Promise.resolve() : Promise.reject('请输入cvalue') }
+      ],
       component: (
-        // <Form.Item
-        //   name="cvalue"
-        //   label="代码"
-        //   rules={[
-        //     { required: true, message: '请输入代码' },
-        //     { validator: (_, value) => value.trim() ? Promise.resolve() : Promise.reject('代码不能为空') },
-        //   ]}
-        // >
         <CodeMirrorEditor
           value={formInstance?.getFieldValue('cvalue') || ''}
           onChange={(newValue) => {
@@ -179,7 +171,7 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
       name: 'remark',
       label: '备注',
       component: <Input.TextArea placeholder="请输入备注" showCount maxLength={100} />,
-      span: 24,  // 使字段占据一半宽度
+      span: 24,
     },
   ];
 
@@ -190,17 +182,24 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
     }
   };
 
-  const handleSubmit = () => {
-    // console.log('提交的数据:', values);
-    formInstance?.validateFields()
-      .then((record: any) => {
-        console.log("record", record)
-        // dispatchF((f: any) => onSubmit(f, {
-        //   ...record,
-        //   // pid
-        // }))
-      })
+  const handleSubmit = async () => {
+    try {
+      const record = await formInstance?.validateFields();
+      console.log("提交的记录:", record);
+
+      // // 手动抛出业务逻辑错误示例
+      // if (record && !record.requiredField) {
+      //   throw new Error('某个必填字段未满足业务逻辑');
+      // }
+
+      enhancedDispatch((dispatch: any) => onSubmit(dispatch, record));
+      setOpen(false);
+    } catch (error: any) {
+      console.error("捕获的异常:", error);
+      message.error(error.message || '表单验证失败，请检查输入内容。');
+    }
   };
+
 
   React.useEffect(() => {
     if (formInstance) {
@@ -208,21 +207,7 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
     }
   }, [formInstance, formValues]);
 
-  const onOk = () => {
-    formInstance?.validateFields()
-      .then((record: any) => {
-        dispatchF((f: any) => onSubmit(f, {
-          ...record,
-          // pid
-        }))
-      }).finally(() => {
-        dispatchF({
-          type: 'SHOW_MODEL', payload: {
-            open: false
-          }
-        })
-      })
-  }
+
 
   const onCancel = () => {
     formInstance?.resetFields();
@@ -231,7 +216,7 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
 
   React.useImperativeHandle(ref, () => ({
     showModel,
-    onOk,
+    // onOk,
     onCancel
   }));
 
@@ -240,7 +225,6 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
       <AppDialog
         title='添加字典'
         fields={fields}
-        onOk={handleSubmit}
         onCancel={onCancel}
         open={open}
         onSubmit={handleSubmit}
@@ -285,7 +269,7 @@ const AppGlobalDictTable: React.FC<AppGlobalDictProps> = ({
   onChange
 }) => {
   // const context = React.useContext(GlobalContext)
-  const { state, dispatchF } = useGlobalDict();
+  const { state, enhancedDispatch } = useGlobalDict();
 
   const { page, data, } = state
 
@@ -303,16 +287,15 @@ const AppGlobalDictTable: React.FC<AppGlobalDictProps> = ({
           columns={columns}
           onChange={handleTableChange}
           loading={false}
-          rowKey={(record) => record.id}  // 自定义 rowKey 为 record.name
+        // rowKey={(record) => record.id}  // 自定义 rowKey 为 record.name
         />
       </AppContent>
     </React.Fragment>
   )
 }
 
-
 const AppGlobalDict = () => {
-  const { state, dispatchF } = useGlobalDict();
+  const { state, enhancedDispatch } = useGlobalDict();
   const dialogRef: any = React.useRef()
   const dataTableRef: any = React.useRef()
   const navigate = useNavigate()
@@ -406,7 +389,7 @@ const AppGlobalDict = () => {
       const response = await api.globalDict.fetch(params);
       if (response && response.success) {
         const { data, page } = response.data;
-        dispatchF({ type: 'READ_DONE', payload: { data, page } });
+        enhancedDispatch({ type: 'READ_DONE', payload: { data, page } });
       } else {
         message.error(response?.message || '获取数据失败');
       }
@@ -423,15 +406,33 @@ const AppGlobalDict = () => {
   }, [state.params]);
 
 
-  // submit 方法
-  const onSubmit = (dispatch: React.Dispatch<any>, data: any) => {
-    dispatch({ type: 'CREATE', payload: { data } })
-    api.globalDict.create(data).then((r: any) => {
-      console.log('onSubmit.r===>', r)
-    }).finally(() => {
-      queryGlobalDict()
-    })
-  }
+  const onSubmit = async (dispatch: React.Dispatch<any>, data: Record<string, any>) => {
+    try {
+      // 触发 CREATE 动作
+      dispatch({ type: 'CREATE', payload: { data } });
+
+      // 异步调用 API 并等待结果
+      const response = await api.globalDict.create(data);
+
+      // 打印返回结果
+      console.log('onSubmit.response ===>', response);
+
+      // 成功提示
+      if (response && response.success) {
+        message.success('创建成功');
+      } else {
+        // 显示自定义或默认的错误信息
+        message.error(response?.message || '创建失败，请重试');
+      }
+    } catch (error) {
+      // 捕获并处理错误
+      console.error('提交出错:', error);
+      // message.error('提交出错，请检查网络或稍后重试');
+    } finally {
+      // 在请求完成后刷新数据
+      await queryGlobalDict();
+    }
+  };
 
   return (
     <AppContainer>

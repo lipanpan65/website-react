@@ -64,25 +64,40 @@ export const request = async <T = any>(cfg: AxiosRequestConfig, options?: AxiosR
   );
 
   // 响应拦截器
+  // 响应拦截器
   instance.interceptors.response.use(
     (response: AxiosResponse<any>): AxiosResponse<any> | Promise<AxiosResponse<any>> => {
-      console.log("interceptors", response)
-      console.log("interceptors.data", response.data)
+      console.log("interceptors", response);
+      console.log("interceptors.data", response.data);
       const { status, statusText } = response;
       const contentType = response.headers['content-type'];
 
       // 处理 JSON 响应
       if (contentType && contentType.includes('application/json')) {
-        // 如果状态码为 200 且 statusText 为 'OK'，直接返回 response.data
-        if (status === 200 && statusText.toUpperCase() === 'OK') {
-          return response.data; // 返回原始响应
-        }
-        
         const { code, message: responseMessage, data } = response.data;
 
-        if (code === 4000 || code === 5000) {
-          message.error(responseMessage || '请求处理失败！');
-          return Promise.reject(response.data); // 拒绝并返回完整的响应
+        // 如果状态码为 200 且 statusText 为 'OK'，处理 code 字段
+        if (status === 200 && statusText.toUpperCase() === 'OK') {
+          switch (code) {
+            case '0000': // SUCCESS
+              return response.data; // 操作成功，返回 data
+
+            case '4000': // VALIDATE
+              message.error(responseMessage || '参数异常，请检查输入！');
+              return Promise.reject(response.data); // 拒绝并返回完整的响应
+
+            case '5000': // EXCEPTION
+              message.error(responseMessage || '业务逻辑异常，请稍后再试！');
+              return Promise.reject(response.data); // 拒绝并返回完整的响应
+
+            case '9999': // FAILURE
+              message.error(responseMessage || '操作失败，请联系管理员！');
+              return Promise.reject(response.data); // 拒绝并返回完整的响应
+
+            default:
+              message.error('未知错误，请联系管理员！');
+              return Promise.reject(response.data); // 拒绝并返回完整的响应
+          }
         }
       }
 
@@ -90,6 +105,7 @@ export const request = async <T = any>(cfg: AxiosRequestConfig, options?: AxiosR
     },
     (error) => httpStatusHandler(error)
   );
+
 
   // 发起请求
   try {
