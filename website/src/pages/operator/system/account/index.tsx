@@ -43,7 +43,7 @@ const AppUserInfoSearch: React.FC<AppUserInfoSearchProps> = ({
   React.useEffect(() => {
     onFormInstanceReady(form);
   }, []);
-  
+
   const handleSearchClick = (event: React.MouseEvent<HTMLElement>) => {
     console.log('搜索按钮点击');
     // 你可以在这里添加显示模态框的逻辑，例如调用 showModel
@@ -142,7 +142,7 @@ const AppUserInfoTable: React.FC<UserInfoTableProps> = ({
           columns={columns}
           onChange={handleTableChange}
           loading={false}
-          rowKey={(record) => record.id}  // 自定义 rowKey 为 record.name
+          // rowKey={(record) => record.id}  // 自定义 rowKey 为 record.name
         />
       </AppContent>
     </React.Fragment>
