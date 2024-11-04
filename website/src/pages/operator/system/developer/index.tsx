@@ -23,6 +23,8 @@ const AppDeveloper: React.FC<AppDeveloperProps> = ({ }) => {
           <Typography>
             <Title>搜索组件</Title>
             <AppCodeViewer codeKey="appSearchForm" />
+            <div className="">搜索组件两种实现的方式</div>
+            
           </Typography>
           <AppCodeMirrorEditorGuide />
 
