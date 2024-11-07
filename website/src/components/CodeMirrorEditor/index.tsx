@@ -1,16 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { EditorState } from '@codemirror/state';
 import { EditorView, basicSetup } from 'codemirror';
-// import { indentWithTab } from '@codemirror/commands';
 import { javascript } from '@codemirror/lang-javascript';
-// import { keymap } from '@codemirror/view';
 
 interface CodeMirrorEditorProps {
   value: string;
   onChange: (value: string) => void;
+  lines?: number; // 新增一个属性以指定行数
 }
 
-const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ value, onChange }) => {
+const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ value, onChange, lines = 5 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const editorViewRef = useRef<EditorView | null>(null);
 
@@ -22,7 +21,6 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ value, onChange }) 
         extensions: [
           basicSetup,
           javascript(),
-          // keymap.of([indentWithTab]),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
               const newValue = update.state.doc.toString();
@@ -55,9 +53,12 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ value, onChange }) 
     <div
       ref={editorRef}
       style={{
-        minHeight: 20,
-        // border: '1px solid #ccc',
-        // borderRadius: '4px'
+        minHeight: `${lines * 20}px`, // 根据行数计算高度，假设每行 20px
+        maxHeight: '300px', // 可选的最大高度
+        overflow: 'auto', // 允许内容超出时滚动
+        border: '1px solid #d9d9d9',
+        borderRadius: '4px',
+        padding: '8px',
       }}
     />
   );

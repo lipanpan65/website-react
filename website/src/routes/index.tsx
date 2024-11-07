@@ -222,15 +222,6 @@ export const AdminRoute: any = [
         icon: <IdcardOutlined />,
         url: '/operator/system/account',
         hash: '#/operator/system/account',
-        childs: [
-          {
-            id: "3111",
-            name: "角色管理",
-            icon: <SafetyOutlined />,
-            url: '/operator/system/role',
-            hash: '#/operator/system/role',
-          },
-        ]
       },
       {
         id: "312",

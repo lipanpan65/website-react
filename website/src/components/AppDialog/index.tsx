@@ -93,6 +93,7 @@ const AppDialog = forwardRef((props: AppDialogProps, ref) => {
       onCancel={handleCancel}
       onOk={handleOk}
       destroyOnClose
+      // styles={{ body: { padding: '20px' } }} // 使用 styles.body 设置内容内边距
       {...modalProps}
     >
       <DialogForm

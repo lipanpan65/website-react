@@ -4,39 +4,23 @@ import {
   useNavigate
 } from 'react-router-dom'
 
+import {
+  FormInstance, Input, message, Modal, Select, Space, TableProps
+} from 'antd';
+
+import { ExclamationCircleFilled, PlusCircleOutlined } from '@ant-design/icons';
+
+import { request } from '@/utils';
+import { api } from '@/api';
 import AppContainer from '@/components/AppContainer'
 import AppContent from '@/components/AppContent';
 import AppSearch from '@/components/AppSearch';
 import AppTable from '@/components/AppTable';
-import { Form, FormInstance, Input, message, Modal, Select, Space, TableProps } from 'antd';
-import { request } from '@/utils';
-
-import { useGlobalDict, GlobalProvider } from '@/hooks/state/useGlobalDict';
-
-import StatusTag from '@/components/StatusTag';
-
-import CodeMirrorEditor from '@/components/CodeMirrorEditor';
-
-import { ExclamationCircleFilled, PlusCircleOutlined } from '@ant-design/icons';
 import AppDialog from '@/components/AppDialog';
-import { api } from '@/api';
 import ConfirmableButton from '@/components/ConfirmableButton';
-
-const { confirm } = Modal;
-
-// 假设有一个接口类型定义
-interface GlobalDictResponse {
-  code: number;
-  message: string;
-  data: {
-    data: any[];
-    page: {
-      total: number;
-      current: number;
-      pageSize: number;
-    };
-  };
-}
+import CodeMirrorEditor from '@/components/CodeMirrorEditor';
+import { useGlobalDict, GlobalProvider } from '@/hooks/state/useGlobalDict';
+import StatusTag from '@/components/StatusTag';
 
 interface AppGlobalDictSearchProps {
   showModel: (event: React.MouseEvent<HTMLElement>, data: any) => void;
@@ -123,9 +107,7 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
 const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
   const [open, setOpen] = React.useState<boolean>(false);
   const { onSubmit, initialValues } = props
-  const { state, enhancedDispatch } = useGlobalDict();
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
-  // const formInstanceRef = React.useRef<FormInstance | null>(null);
   const [record, setRecord] = React.useState<any>({}) // 添加状态管理表示当前数据
 
   const fields = [
@@ -162,6 +144,7 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
       ],
       component: (
         <CodeMirrorEditor
+          lines={5}
           value={formInstance?.getFieldValue('cvalue') || ''}
           onChange={(newValue) => {
             formInstance?.setFieldsValue({ cvalue: newValue });
@@ -216,7 +199,6 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
     onCancel,
     setOpen,
   }));
-  console.log("isEditing", !!record.id)
   return (
     <React.Fragment>
       <AppDialog
@@ -262,18 +244,8 @@ const AppGlobalDictTable: React.FC<AppGlobalDictProps> = ({
   onChange
 }) => {
   const { state, enhancedDispatch } = useGlobalDict();
-  // const { page, data, loading } = state
 
   const { page = { total: 0, current: 1, pageSize: 10 }, data = [], loading } = state;
-
-
-  // // 确保 pagination 信息与 dataSource 的长度匹配
-  // const pagination = {
-  //   total: page?.total || data.length, // 使用 data.length 初始化 total 避免首次加载数据量不匹配
-  //   current: page?.current || 1,
-  //   pageSize: page?.pageSize || 5,
-  //   showTotal: (total: number) => `总共 ${total} 条数据`,
-  // };
 
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
     if (onChange) {
@@ -303,7 +275,6 @@ const AppGlobalDict = () => {
   // const [formInstance, setFormInstance] = React.useState<FormInstance>();
   const searchFormRef = React.useRef<FormInstance | null>(null);
   const [queryParams, setQueryParams] = React.useState<any>({})
-  const [loading, setLoading] = React.useState<boolean>()
 
   console.log("Initial state at render:", state);
 
@@ -369,7 +340,6 @@ const AppGlobalDict = () => {
       render: (_: any, record: any) => (
         <Space size="middle">
           <a onClick={(event: any) => showModel(event, record)}>编辑</a>
-          {/* <a onClick={(event: any) => handleDelete(event, record)}>删除</a> */}
           <ConfirmableButton
             type='link'
             onSubmit={() => onSubmit('DELETE', record)}
@@ -379,29 +349,28 @@ const AppGlobalDict = () => {
     },
   ];
 
-
   const onSubmit = async (
     actionType: 'CREATE' | 'UPDATE' | 'DELETE',
     data: Record<string, any>
   ) => {
-  
+
     // 确定请求方法
     const requestAction =
       actionType === 'DELETE'
         ? () => api.globalDict.delete(data.id)
         : actionType === 'UPDATE'
-        ? api.globalDict.update
-        : api.globalDict.create;
-  
+          ? api.globalDict.update
+          : api.globalDict.create;
+
     // 设定响应消息
     const responseMessages = {
       success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
       error: actionType === 'UPDATE' ? '更新失败，请重试' : actionType === 'DELETE' ? '删除失败，请重试' : '创建失败，请重试',
     };
-  
+
     // 执行状态更新
     enhancedDispatch({ type: actionType, payload: { data } });
-    
+
     try {
       const response = await requestAction(data);
       const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
@@ -413,79 +382,12 @@ const AppGlobalDict = () => {
       await queryGlobalDict();
     }
   };
-  
-
-
-  // const onSubmit = async (
-  //   dispatch: React.Dispatch<any>,
-  //   actionType: 'CREATE' | 'UPDATE' | 'DELETE',
-  //   data: Record<string, any>
-  // ) => {
-  //   const requestAction = actionType === 'DELETE'
-  //     ? () => api.globalDict.delete(data.id)
-  //     : actionType === 'UPDATE'
-  //     ? api.globalDict.update
-  //     : api.globalDict.create;
-
-  //   const responseMessages = {
-  //     success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
-  //     error: actionType === 'UPDATE' ? '更新失败，请重试' : actionType === 'DELETE' ? '删除失败，请重试' : '创建失败，请重试',
-  //   };
-
-  //   // 触发状态更新（仅限创建或更新）
-  //   if (actionType !== 'DELETE') {
-  //     dispatch({ type: actionType, payload: { data } });
-  //   }
-
-  //   try {
-  //     const response = await requestAction(data);
-  //     const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
-  //     message[response?.success ? 'success' : 'error'](messageText);
-  //   } catch (error) {
-  //     console.error('提交出错:', error);
-  //     message.error('提交出错，请检查网络或稍后重试');
-  //   } finally {
-  //     await queryGlobalDict();
-  //   }
-  // };
-
-
-
-  const handleDelete = (event: any, data?: any) => {
-    const onOk = () => new Promise<void>((resolve, reject) => {
-      request({
-        url: `/api/user/v1/article_category/${data.id}/`,
-        method: 'DELETE',
-      }).then((r: any) => {
-        const { status, statusText
-        } = r
-        if (status === 200 && statusText === 'OK') {
-          message.success('操作成功')
-          resolve(r.data)
-        }
-      }).catch((e: any) => {
-        message.error('操作失败')
-        reject()
-      })
-    }).then((r: any) => {
-    }).finally(() => {
-      dialogRef.current.setOpen(false)
-    })
-
-    confirm({
-      title: '删除分类',
-      icon: <ExclamationCircleFilled />,
-      content: `确认删除该分类${data.category_name}吗？`,
-      onOk,
-    });
-  }
 
   const showModel = (_: any, data?: any) => {
     dialogRef.current.showModel(true, data)
   }
 
   const onChange = (pagination: any) => {
-    setLoading(true)
     setQueryParams((preQueryParams: any) => {
       return {
         ...preQueryParams,
@@ -523,39 +425,6 @@ const AppGlobalDict = () => {
       await queryGlobalDict();
     })();
   }, [state.params]);
-
-
-  // const onSubmit = async (dispatch: React.Dispatch<any>, data: Record<string, any>) => {
-  //   const isUpdate = !!data.id;
-  //   const actionType = isUpdate ? 'UPDATE' : 'CREATE';
-  //   const requestAction = isUpdate ? api.globalDict.update : api.globalDict.create;
-
-  //   const responseMessages = {
-  //     success: isUpdate ? '更新成功' : '创建成功',
-  //     error: isUpdate ? '更新失败，请重试' : '创建失败，请重试',
-  //   };
-
-  //   try {
-  //     // 触发相应的动作（前端状态更新）
-  //     dispatch({ type: actionType, payload: { data } });
-
-  //     // 执行API请求
-  //     const response = await requestAction(data);
-
-  //     // 成功或失败提示
-  //     const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
-  //     message[response?.success ? 'success' : 'error'](messageText);
-
-  //   } catch (error) {
-  //     // 捕获并处理错误
-  //     console.error('提交出错:', error);
-  //     message.error('提交出错，请检查网络或稍后重试');
-  //   } finally {
-  //     // 在请求完成后刷新数据
-  //     await queryGlobalDict();
-  //   }
-  // };
-
 
   // 用于处理 AppGlobalDictSearch 中传递的 form 实例
   const onFormInstanceReady = (form: FormInstance) => {
