@@ -223,7 +223,6 @@ const AppRoleDialog = React.forwardRef((props: any, ref) => {
   return (
     <React.Fragment>
       <AppDialog
-        // dialogFormLayout='horizontal'
         title='添加角色'
         fields={fields}
         record={record}
