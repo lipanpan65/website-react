@@ -15,25 +15,25 @@ type ActionType =
   | { type: 'READ_DONE'; payload: { data: any[]; page: { total: number; current: number; pageSize: number } } }
   | { type: 'OPEN_DIALOG'; payload: { open: boolean; record: Record<string, any> } }
   | {
-      type: 'CREATE';
-      payload: {
-        params?: Record<string, any>; // 在创建时，params 是可选的
-        data: Record<string, any>; // `data` 是 `CREATE` 操作时的必填字段
-      };
-    }
+    type: 'CREATE';
+    payload: {
+      params?: Record<string, any>; // 在创建时，params 是可选的
+      data: Record<string, any>; // `data` 是 `CREATE` 操作时的必填字段
+    };
+  }
   | {
-      type: 'UPDATE';
-      payload: {
-        params?: Record<string, any>;
-        data: Record<string, any>; // `data` 是 `UPDATE` 操作时的必填字段
-      };
-    }
+    type: 'UPDATE';
+    payload: {
+      params?: Record<string, any>;
+      data: Record<string, any>; // `data` 是 `UPDATE` 操作时的必填字段
+    };
+  }
   | {
-      type: 'DELETE';
-      payload: {
-        data: Record<string, any>; // `data` 是 `DELETE` 操作时的必填字段
-      };
-    }
+    type: 'DELETE';
+    payload: {
+      data: Record<string, any>; // `data` 是 `DELETE` 操作时的必填字段
+    };
+  }
   | { type: 'UPDATE_PARAMS'; payload: { params: Record<string, any> } };
 
 // 初始化 state
@@ -85,24 +85,20 @@ const reducer = (state: StateType, action: ActionType): StateType => {
   }
 };
 
-
 // 创建上下文
-export const GlobalContext = createContext<{
+export const RoleContext = createContext<{
   state: StateType;
   enhancedDispatch: EnhancedDispatch;
 }>({
   state: initialState,
-  enhancedDispatch: () => {},
+  enhancedDispatch: () => { },
 });
 
-// 自定义 Hook
-export const useGlobalDict = () => useContext(GlobalContext);
+export const useRole = () => useContext(RoleContext);
 
-// Provider 组件
-export const GlobalProvider = ({ children }: { children: ReactNode }) => {
+export const RoleProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // 定义 enhancedDispatch 逻辑
   const enhancedDispatch: EnhancedDispatch = (action) => {
     if (typeof action === 'function') {
       action(dispatch);
@@ -112,8 +108,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <GlobalContext.Provider value={{ state, enhancedDispatch }}>
+    <RoleContext.Provider value={{ state, enhancedDispatch }}>
       {children}
-    </GlobalContext.Provider>
+    </RoleContext.Provider>
   );
 };

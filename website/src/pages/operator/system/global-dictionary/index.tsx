@@ -4,51 +4,43 @@ import {
   useNavigate
 } from 'react-router-dom'
 
+import {
+  Button,
+  FormInstance, Input, message, Modal, Select, Space, TableProps
+} from 'antd';
+
+import { ExclamationCircleFilled, PlusCircleOutlined } from '@ant-design/icons';
+
+import { request } from '@/utils';
+import { api } from '@/api';
 import AppContainer from '@/components/AppContainer'
 import AppContent from '@/components/AppContent';
 import AppSearch from '@/components/AppSearch';
 import AppTable from '@/components/AppTable';
-import { Form, FormInstance, Input, message, Modal, Select, Space, TableProps } from 'antd';
-import { request } from '@/utils';
-
-import { useGlobalDict, GlobalProvider } from '@/hooks/state/useGlobalDict';
-
-import { ExclamationCircleFilled } from '@ant-design/icons';
 import AppDialog from '@/components/AppDialog';
-import { api } from '@/api';
-
-const { confirm } = Modal;
-
-// 假设有一个接口类型定义
-interface GlobalDictResponse {
-  code: number;
-  message: string;
-  data: {
-    data: any[];
-    page: {
-      total: number;
-      current: number;
-      pageSize: number;
-    };
-  };
-}
+import ConfirmableButton from '@/components/ConfirmableButton';
+import CodeMirrorEditor from '@/components/CodeMirrorEditor';
+import { useGlobalDict, GlobalProvider } from '@/hooks/state/useGlobalDict';
+import StatusTag from '@/components/StatusTag';
 
 interface AppGlobalDictSearchProps {
   showModel: (event: React.MouseEvent<HTMLElement>, data: any) => void;
   onFormInstanceReady: (instance: FormInstance<any>) => void;
-  setQqueryParams: (params: any) => void;
+  setQueryParams: (params: any) => void;
 }
 
 const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
   showModel,
   onFormInstanceReady,
-  setQqueryParams,
+  setQueryParams,
 }) => {
-  const [form] = Form.useForm();
+  const { state, enhancedDispatch } = useGlobalDict();
+  const formRef = React.useRef<FormInstance | null>(null);
 
-  React.useEffect(() => {
-    onFormInstanceReady(form);
-  }, []);
+  const handleFormInstanceReady = (form: FormInstance) => { // 该 form 为 AppSearchForm 中的实例
+    formRef.current = form; // 将 AppSearchForm 中的 form 传递给当前组件
+    onFormInstanceReady(form); // 将 form 实例传递给父组件
+  };
 
   const handleSearchClick = (event: React.MouseEvent<HTMLElement>) => {
     console.log('搜索按钮点击');
@@ -59,9 +51,20 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
     label: '添加',
     type: 'primary' as const,  // 明确指定类型以符合 ButtonConfig
     onClick: (event: React.MouseEvent<HTMLElement>) => showModel(event, {}),
-    // 你可以添加更多的 Button 属性，如 disabled, icon 等
     disabled: false,
-    // icon: <SomeIcon />,  // 例如使用 Ant Design 的图标
+    icon: <PlusCircleOutlined />,  // 例如使用 Ant Design 的图标
+  };
+
+  // 使用 form 实例的地方
+  const handleFormSubmit = async () => {
+    try {
+      // 获取表单值
+      const values = await formRef.current?.validateFields();
+      setQueryParams(values); // 更新查询参数
+      console.log('表单提交成功，值为:', values);
+    } catch (errorInfo) {
+      console.error('表单验证失败:', errorInfo);
+    }
   };
 
   return (
@@ -69,25 +72,25 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
       <AppContent>
         <AppSearch
           buttonConfig={buttonConfig}  // 动态按钮配置
-          onFormInstanceReady={(form) => console.log('Form instance ready:', form)}
-          setQueryParams={(params) => console.log('Query params:', params)}
+          onFormInstanceReady={handleFormInstanceReady}
+          setQueryParams={setQueryParams}
+          initialParams={state.params}
           formItems={[
             {
-              // label: '搜索',
               name: 'search',
               placeholder: '请输入...',
               type: 'input',
             },
             {
-              name: 'category',
+              name: 'enable',
               placeholder: '请选择分类',
               type: 'select',
               width: 150,
               selectConfig: {
                 allowClear: true,
                 options: [
-                  { label: '科技', value: 'tech' },
-                  { label: '健康', value: 'health' },
+                  { label: '启用', value: 1 },
+                  { label: '禁用', value: 0 },
                 ],
               },
             },
@@ -100,10 +103,9 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
 
 const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const { onSubmit } = props
-  const { state, dispatchF } = useGlobalDict();
+  const { onSubmit, initialValues } = props
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
-  const [formValues, setFormValues] = React.useState<any>({});
+  const [record, setRecord] = React.useState<any>({}) // 添加状态管理表示当前数据
 
   const fields = [
     {
@@ -125,8 +127,8 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
       name: 'enable',
       component: (
         <Select placeholder="请选择状态">
-          <Select.Option value="1">启用</Select.Option>
-          <Select.Option value="0">禁用</Select.Option>
+          <Select.Option value={1}>启用</Select.Option>
+          <Select.Option value={0}>禁用</Select.Option>
         </Select>
       ),
       span: 12,  // 使字段占据一半宽度
@@ -134,72 +136,83 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
     {
       label: 'cvalue',
       name: 'cvalue',
-      rules: [{ required: true, message: '请输入cvalue' }],
-      component: <Input placeholder="请输入cvalue" />,
+      rules: [
+        { validator: (_: any, value: string) => value.trim() ? Promise.resolve() : Promise.reject('请输入cvalue') }
+      ],
+      component: (
+        <CodeMirrorEditor
+          lines={5}
+          value={formInstance?.getFieldValue('cvalue') || ''}
+          onChange={(newValue) => {
+            formInstance?.setFieldsValue({ cvalue: newValue });
+          }}
+        />
+      ),
       span: 24,  // 使字段占据一半宽度
     },
     {
       name: 'remark',
       label: '备注',
       component: <Input.TextArea placeholder="请输入备注" showCount maxLength={100} />,
-      span: 24,  // 使字段占据一半宽度
+      span: 24,
     },
   ];
 
-  const showModel = (open: boolean, data?: any) => {
-    setOpen(open);
-    if (data) {
-      // setFormValues(() => data)
-    }
-  };
-
-  const handleSubmit = (values: any) => {
-    console.log('提交的数据:', values);
-  };
-
+  // 监听 record 变化并更新表单
   React.useEffect(() => {
-    if (formInstance) {
-      formInstance.setFieldsValue({ ...formValues });
+    if (formInstance && record) {
+      console.log("Updating form with record:", record);
+      formInstance.setFieldsValue(record);
     }
-  }, [formInstance, formValues]);
+  }, [record, formInstance]);
 
-  const onOk = () => {
-    formInstance?.validateFields()
-      .then((record: any) => {
-        dispatchF((f: any) => onSubmit(f, {
-          ...record,
-          // pid
-        }))
-      }).finally(() => {
-        dispatchF({
-          type: 'SHOW_MODEL', payload: {
-            open: false
-          }
-        })
-      })
-  }
+  const showModel = (isOpen: boolean, data?: any) => {
+    setOpen(isOpen);
+    if (isOpen && data) {
+      setRecord(data); // 更新 record 状态
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const data = await formInstance?.validateFields();
+      if (!!record.id) {
+        const newRecord = { id: record.id, ...data };
+        await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
+      } else {
+        await onSubmit('CREATE', data); // 不再需要传递 `dispatch`
+      }
+      // enhancedDispatch((dispatch) => onSubmit(dispatch, 'UPDATE', newRecord));
+      setOpen(false);
+    } catch (error: any) {
+      console.error('捕获的异常:', error);
+      message.error(error.message || '表单验证失败，请检查输入内容。');
+    }
+  };
 
   const onCancel = () => {
     formInstance?.resetFields();
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   React.useImperativeHandle(ref, () => ({
     showModel,
-    onOk,
-    onCancel
+    onCancel,
+    setOpen,
   }));
-
   return (
     <React.Fragment>
       <AppDialog
         title='添加字典'
         fields={fields}
-        onOk={onOk}
+        record={record}
         onCancel={onCancel}
         open={open}
         onSubmit={handleSubmit}
-        setFormInstance={setFormInstance}  // 管理表单实例
+        isEditing={!!record.id}
+        setFormInstance={(instance) => {
+          setFormInstance(instance);
+        }}
       />
     </React.Fragment>
   );
@@ -228,21 +241,12 @@ interface AppGlobalDictProps {
 }
 
 const AppGlobalDictTable: React.FC<AppGlobalDictProps> = ({
-  // data = {
-  //   page: {
-  //     total: 0,
-  //     current: 1,
-  //     pageSize: 5
-  //   },
-  //   data: []
-  // },
   columns = [], // 设置默认值为空数组
   onChange
 }) => {
-  // const context = React.useContext(GlobalContext)
-  const { state, dispatchF } = useGlobalDict();
+  const { state, enhancedDispatch } = useGlobalDict();
 
-  const { page, data, } = state
+  const { page = { total: 0, current: 1, pageSize: 10 }, data = [], loading } = state;
 
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
     if (onChange) {
@@ -257,23 +261,56 @@ const AppGlobalDictTable: React.FC<AppGlobalDictProps> = ({
           data={{ page, data }}
           columns={columns}
           onChange={handleTableChange}
-          loading={false}
-          rowKey={(record) => record.id}  // 自定义 rowKey 为 record.name
+          loading={loading}
         />
       </AppContent>
     </React.Fragment>
   )
 }
 
-
 const AppGlobalDict = () => {
-  const { state, dispatchF } = useGlobalDict();
+  const { state, enhancedDispatch } = useGlobalDict();
   const dialogRef: any = React.useRef()
   const dataTableRef: any = React.useRef()
   const navigate = useNavigate()
-  const [formInstance, setFormInstance] = React.useState<FormInstance>();
-  const [queryParams, setQqueryParams] = React.useState<any>({})
-  const [loading, setLoading] = React.useState<boolean>()
+  // const [formInstance, setFormInstance] = React.useState<FormInstance>();
+  const searchFormRef = React.useRef<FormInstance | null>(null);
+  const [queryParams, setQueryParams] = React.useState<any>({})
+
+  console.log("Initial state at render:", state);
+
+  // const handleSetQueryParams = (newParams: any) => {
+  //   console.log("Received newParams:", newParams);
+  //   console.log("Type of newParams:", typeof newParams);
+
+  //   setQueryParams((prevQueryParams: any) => {
+  //     // 检查 newParams 是否是函数，如果是，调用它并传入当前状态
+  //     const resolvedParams = typeof newParams === 'function' ? newParams(prevQueryParams) : newParams;
+
+  //     // 合并参数
+  //     const queryParams = { ...prevQueryParams, ...resolvedParams };
+  //     console.log("Updated Params in handleSetQueryParams:", queryParams);
+
+  //     // 调用 enhancedDispatch 更新全局 state
+  //     enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
+  //     return queryParams;
+  //   });
+  // };
+
+  const handleSetQueryParams = (newParams: any) => {
+    setQueryParams((prevQueryParams: any) => {
+      const resolvedParams = typeof newParams === 'function' ? newParams(prevQueryParams) : newParams;
+      return { ...prevQueryParams, ...resolvedParams };
+    });
+  };
+
+  // 使用 useEffect 监听 queryParams 变化并触发 enhancedDispatch
+  React.useEffect(() => {
+    if (Object.keys(queryParams).length > 0) {
+      enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
+    }
+  }, [queryParams]);
+
 
   const columns: TableProps<any>['columns'] = [
     {
@@ -289,15 +326,12 @@ const AppGlobalDict = () => {
       title: 'cvalue',
       dataIndex: 'cvalue',
       key: 'cvalue',
-      // render: (text: any, _: any, __: any) => USER_ROLE_MAP[text]
     },
     {
       title: '状态',
       dataIndex: 'enable',
       key: 'enable',
-      // render: (text: any, _: any, __: boolean) => {
-      //   return <Tag color={USER_STATUS_COLOR[text]}>{USER_STATUS[text]}</Tag>
-      // }
+      render: (text: number) => <StatusTag status={text} />
     },
     {
       title: '操作',
@@ -306,56 +340,65 @@ const AppGlobalDict = () => {
       // sortOrder: 'descend',
       render: (_: any, record: any) => (
         <Space size="middle">
-          <a onClick={(event: any) => showModel(event, record)}>编辑</a>
-          <a onClick={(event: any) => handleDelete(event, record)}>删除</a>
+            <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
+              编辑
+            </Button>
+            <ConfirmableButton
+              type='link'
+              onSubmit={() => onSubmit('DELETE', record)}
+            >删除</ConfirmableButton>
         </Space>
-      ),
+      )
     },
   ];
-  
-  const handleDelete = (event: any, data?: any) => {
-    const onOk = () => new Promise<void>((resolve, reject) => {
-      request({
-        url: `/api/user/v1/article_category/${data.id}/`,
-        method: 'DELETE',
-      }).then((r: any) => {
-        const { status, statusText
-        } = r
-        if (status === 200 && statusText === 'OK') {
-          message.success('操作成功')
-          resolve(r.data)
-        }
-      }).catch((e: any) => {
-        message.error('操作失败')
-        reject()
-      })
-    }).then((r: any) => {
-    }).finally(() => {
-      dialogRef.current.setOpen(false)
-    })
 
-    confirm({
-      title: '删除分类',
-      icon: <ExclamationCircleFilled />,
-      content: `确认删除该分类${data.category_name}吗？`,
-      onOk,
-    });
-  }
+  const onSubmit = async (
+    actionType: 'CREATE' | 'UPDATE' | 'DELETE',
+    data: Record<string, any>
+  ) => {
+    // 确定请求方法
+    const requestAction =
+      actionType === 'DELETE'
+        ? () => api.globalDict.delete(data.id)
+        : actionType === 'UPDATE'
+          ? api.globalDict.update
+          : api.globalDict.create;
+
+    // 设定响应消息
+    const responseMessages = {
+      success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
+      error: actionType === 'UPDATE' ? '更新失败，请重试' : actionType === 'DELETE' ? '删除失败，请重试' : '创建失败，请重试',
+    };
+
+    // 执行状态更新
+    enhancedDispatch({ type: actionType, payload: { data } });
+
+    try {
+      const response = await requestAction(data);
+      const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
+      message[response?.success ? 'success' : 'error'](messageText);
+    } catch (error) {
+      console.error('提交出错:', error);
+      message.error('提交出错，请检查网络或稍后重试');
+    } finally {
+      await queryGlobalDict();
+    }
+  };
 
   const showModel = (_: any, data?: any) => {
     dialogRef.current.showModel(true, data)
   }
 
   const onChange = (pagination: any) => {
-    setLoading(true)
-    setQqueryParams((preQueryParams: any) => {
+    setQueryParams((preQueryParams: any) => {
       return {
         ...preQueryParams,
         page: pagination.current,
         pageSize: pagination.pageSize,
         total: pagination.total
       }
-    })
+    }
+    )
   }
 
   const queryGlobalDict = async () => {
@@ -364,7 +407,11 @@ const AppGlobalDict = () => {
       const response = await api.globalDict.fetch(params);
       if (response && response.success) {
         const { data, page } = response.data;
-        dispatchF({ type: 'READ_DONE', payload: { data, page } });
+        enhancedDispatch({
+          type: 'READ_DONE', payload: {
+            data, page
+          }
+        });
       } else {
         message.error(response?.message || '获取数据失败');
       }
@@ -374,30 +421,50 @@ const AppGlobalDict = () => {
   };
 
   React.useEffect(() => {
+    console.log("Updated state.params in useEffect:", state.params);
     (async () => {
-      await queryGlobalDict(); // 直接调用异步函数
+      await queryGlobalDict();
     })();
   }, [state.params]);
 
+  // 用于处理 AppGlobalDictSearch 中传递的 form 实例
+  const onFormInstanceReady = (form: FormInstance) => {
+    searchFormRef.current = form; // 将 form 实例存储到 ref
+  };
 
-  // submit 方法
-  const onSubmit = (dispatch: React.Dispatch<any>, data: any) => {
-    dispatch({ type: 'CREATE', payload: { data } })
-    api.globalDict.create(data).then((r: any) => {
-      console.log('onSubmit.r===>', r)
-    }).finally(() => {
-      queryGlobalDict()
-    })
-  }
+  // 示例：获取表单值
+  const handleGetFormValues = () => {
+    if (searchFormRef.current) {
+      const values = searchFormRef.current.getFieldsValue();
+      console.log('获取到的表单值:', values);
+    }
+  };
+
+  // 示例：设置表单值
+  const handleSetFormValues = () => {
+    if (searchFormRef.current) {
+      searchFormRef.current.setFieldsValue({
+        search: '示例搜索',
+        category: 'tech',
+      });
+      console.log('表单值已设置');
+    }
+  };
+
+  // 示例：重置表单
+  const handleResetForm = () => {
+    if (searchFormRef.current) {
+      searchFormRef.current.resetFields();
+      console.log('表单已重置');
+    }
+  };
 
   return (
     <AppContainer>
       <AppGlobalDictSearch
         showModel={showModel}
-        onFormInstanceReady={(instance: any) => {
-          setFormInstance(instance);
-        }}
-        setQqueryParams={setQqueryParams}
+        onFormInstanceReady={onFormInstanceReady}
+        setQueryParams={setQueryParams}
       />
       <AppGlobalDictTable
         onChange={onChange}
@@ -411,8 +478,6 @@ const AppGlobalDict = () => {
   )
 }
 
-// export default AppGlobalDict
-// 使用 GlobalProvider 包裹主组件
 export default () => (
   <GlobalProvider>
     <AppGlobalDict />

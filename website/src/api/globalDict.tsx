@@ -41,7 +41,7 @@ export const globalDictApi = {
 
   // 更新全局字典
   update: (data: Partial<GlobalDict>): Promise<ApiResponse<GlobalDict>> =>
-    request({ url: `/api/operator/v1/global/${data.id}`, method: 'PUT', data }),
+    request({ url: `/api/operator/v1/global/${data.id}/`, method: 'PUT', data }),
 
   // 获取单条记录
   record: (id: number): Promise<ApiResponse<GlobalDict>> =>
@@ -49,5 +49,5 @@ export const globalDictApi = {
 
   // 删除全局字典
   delete: (id: number): Promise<ApiResponse<null>> =>
-    request({ url: `/api/operator/v1/global/${id}`, method: 'DELETE' }),
+    request({ url: `/api/operator/v1/global/${id}/`, method: 'DELETE' }),
 };

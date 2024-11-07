@@ -142,7 +142,7 @@ const AppUserInfoTable: React.FC<UserInfoTableProps> = ({
           columns={columns}
           onChange={handleTableChange}
           loading={false}
-          rowKey={(record) => record.id}  // 自定义 rowKey 为 record.name
+          // rowKey={(record) => record.id}  // 自定义 rowKey 为 record.name
         />
       </AppContent>
     </React.Fragment>

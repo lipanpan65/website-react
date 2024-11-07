@@ -56,6 +56,7 @@ import AppGlobalDict from '@/pages/operator/system/global-dictionary'
 import RequireAuth from '@/components/RequireAuth';
 import AppUserInfo from '@/pages/operator/system/account'
 import AppRole from '@/pages/operator/system/role'
+import AppDeveloper from '@/pages/operator/system/developer'
 
 
 export const AppRoute: any = [
@@ -85,7 +86,7 @@ export const AppRoute: any = [
   {
     id: "2",
     name: "创作者中心",
-    icon: <HomeOutlined />,
+    // icon: <HomeOutlined />,
     url: '/user/creator',
     hash: '#/user/creator',
     childs: [
@@ -104,19 +105,21 @@ export const AppRoute: any = [
         icon: <SwitcherOutlined />,
         childs: [
           {
+            id: "222",
+            name: "分类管理",
+            url: "/user/creator/article-category",
+            hash: "#/user/creator/article-category",
+            icon: <GroupOutlined />,
+          },
+          {
             id: "221",
             name: "文章管理",
             url: "/user/creator/overview",
             hash: "#/user/creator/overview",
             icon: <OrderedListOutlined />,
           },
+
           {
-            id: "222",
-            name: "分类管理",
-            url: "/user/creator/article-category",
-            hash: "#/user/creator/article-category",
-            icon: <GroupOutlined />,
-          }, {
             id: "223",
             name: "菜单管理",
             url: "/user/creator/menu",
@@ -131,20 +134,7 @@ export const AppRoute: any = [
             icon: <GatewayOutlined />,
           },
         ]
-      }, {
-        id: "23",
-        name: "用户管理",
-        icon: <SecurityScanOutlined />,
-        childs: [
-          {
-            id: "231",
-            name: "用户管理",
-            url: "/user/creator/subjects",
-            hash: "#/user/creator/subjects",
-            icon: <UserOutlined />,
-          },
-        ]
-      }
+      },
     ]
   },
   {
@@ -260,6 +250,15 @@ export const AdminRoute: any = [
         icon: <ClockCircleOutlined />,
         url: '/operator/system/task',
         hash: '#/operator/system/task',
+        childs: [
+          {
+            id: "3151",
+            name: "角色管理",
+            icon: <SafetyOutlined />,
+            url: '/operator/system/role',
+            hash: '#/operator/system/role',
+          },
+        ]
       },
       {
         id: "316",
@@ -402,7 +401,8 @@ const Routes = () => {
               { index: true, element: <Navigate to="account" /> }, // 使用 index 路由来表示默认路径
               { path: 'account', element: <AppUserInfo /> },
               { path: 'role', element: <AppRole /> },
-              { path: 'dict', element: <AppGlobalDict /> }
+              { path: 'dict', element: <AppGlobalDict /> },
+              { path: 'developer', element: <AppDeveloper /> }
             ],
           },
         ]

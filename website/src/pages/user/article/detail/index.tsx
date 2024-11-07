@@ -116,7 +116,7 @@ const ArticleDetail: React.FC = () => {
       </pre>
     )
   }
-
+  
   return (
     <React.Fragment>
       <div className="layout-3-1 app-layout debug-border">
@@ -160,8 +160,7 @@ const ArticleDetail: React.FC = () => {
         </div>
         <div className="right-column">
           <Card title="目录" style={{
-            // padding: '8px',
-            // width: "300px"
+            width: '100%'
           }}>
             {state.article.content &&
               <div className="navigation">
@@ -169,30 +168,24 @@ const ArticleDetail: React.FC = () => {
               </div>
             }
           </Card>
-          <div>
-            <Card title="目录" style={{
-              // padding: '8px',
-              // width: "300px"
-            }}>
-              {state.article.content &&
-                <div className="navigation">
-                  <MarkDownTOC source={state.article.content || ""} />
-                </div>
-              }
-            </Card>
-          </div>
-          <div>
-            <Card title="目录" style={{
-              // padding: '8px',
-              // width: "300px"
-            }}>
-              {state.article.content &&
-                <div className="navigation">
-                  <MarkDownTOC source={state.article.content || ""} />
-                </div>
-              }
-            </Card>
-          </div>
+          {/* <Card title="目录" style={{
+            width: '100%'
+          }}>
+            {state.article.content &&
+              <div className="navigation">
+                <MarkDownTOC source={state.article.content || ""} />
+              </div>
+            }
+          </Card> */}
+          {/* <Card title="目录" style={{
+            width: '100%'
+          }}>
+            {state.article.content &&
+              <div className="navigation">
+                <MarkDownTOC source={state.article.content || ""} />
+              </div>
+            }
+          </Card> */}
         </div>
       </div>
     </React.Fragment>
