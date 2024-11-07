@@ -9,6 +9,7 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 import AppTable from '@/components/AppTable';
 import { api } from '@/api';
 import AppDialog from '@/components/AppDialog';
+import StatusTag from '@/components/StatusTag';
 
 interface AppProps {
 
@@ -144,8 +145,8 @@ const AppRoleDialog = React.forwardRef((props: any, ref) => {
       span: 24,  // 使字段占据一半宽度
     },
     {
-      label: '角色类型',
-      name: 'role_type',
+      label: '状态',
+      name: 'enable',
       rules: [{ required: true, message: '请输入角色类型' }],
       component: (
         <Select placeholder="请选择状态" allowClear>
@@ -153,20 +154,21 @@ const AppRoleDialog = React.forwardRef((props: any, ref) => {
           <Select.Option value={0}>禁用</Select.Option>
         </Select>
       ),
-      span: 24,
+      span: 12,
     },
-    // {
-    //   label: '角色类型',
-    //   name: 'role_type',
-    //   rules: [{ required: true, message: '请输入角色类型' }],
-    //   component: (
-    //     <Select placeholder="请选择状态" allowClear>
-    //       <Select.Option value={1}>启用</Select.Option>
-    //       <Select.Option value={0}>禁用</Select.Option>
-    //     </Select>
-    //   ),
-    //   span: 12,
-    // },
+    {
+      label: '角色类型',
+      name: 'role_type',
+      rules: [{ required: true, message: '请输入角色类型' }],
+      component: (
+        <Select placeholder="请选择角色类型" allowClear>
+          <Select.Option value={0}>普通用户</Select.Option>
+          <Select.Option value={1}>管理员</Select.Option>
+          <Select.Option value={2}>超级管理员</Select.Option>
+        </Select>
+      ),
+      span: 12,
+    },
     {
       name: 'remark',
       label: '备注',
@@ -193,9 +195,13 @@ const AppRoleDialog = React.forwardRef((props: any, ref) => {
   const handleSubmit = async () => {
     try {
       const data = await formInstance?.validateFields();
-      const newRecord = { id: record.id, ...data };
+      if (!!record.id) {
+        const newRecord = { id: record.id, ...data };
+        await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
+      } else {
+        await onSubmit('CREATE', data); // 不再需要传递 `dispatch`
+      }
       // enhancedDispatch((dispatch) => onSubmit(dispatch, 'UPDATE', newRecord));
-      await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
       setOpen(false);
     } catch (error: any) {
       console.error('捕获的异常:', error);
@@ -236,17 +242,30 @@ const AppRole: React.FC<AppProps> = (props) => {
   const { state, enhancedDispatch } = useRole();
   const dialogRef: any = React.useRef()
   const searchFormRef = React.useRef<FormInstance | null>(null);
-  const [queryParam, setQueryParams] = React.useState<any>({})
+  const [queryParams, setQueryParams] = React.useState<any>({})
 
   const onFormInstanceReady = (form: FormInstance) => {
     searchFormRef.current = form; // 将 form 实例存储到 ref
   };
+
+  // 使用 useEffect 监听 queryParams 变化并触发 enhancedDispatch
+  React.useEffect(() => {
+    if (Object.keys(queryParams).length > 0) {
+      enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
+    }
+  }, [queryParams]);
 
   const columns = [
     {
       title: '角色名称',
       dataIndex: 'role_name',
       key: 'role_name',
+    },
+    {
+      title: '状态',
+      dataIndex: 'enable',
+      key: 'enable',
+      render: (text: number) => <StatusTag status={text} />
     },
     {
       title: '操作',
@@ -328,6 +347,12 @@ const AppRole: React.FC<AppProps> = (props) => {
       message.error('请求失败，请稍后重试');
     }
   };
+
+  React.useEffect(() => {
+    (async () => {
+      await queryRole();
+    })();
+  }, [state.params]);
 
   return (
     <AppContainer>

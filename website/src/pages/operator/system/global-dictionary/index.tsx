@@ -179,9 +179,13 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
   const handleSubmit = async () => {
     try {
       const data = await formInstance?.validateFields();
-      const newRecord = { id: record.id, ...data };
+      if (!!record.id) {
+        const newRecord = { id: record.id, ...data };
+        await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
+      } else {
+        await onSubmit('CREATE', data); // 不再需要传递 `dispatch`
+      }
       // enhancedDispatch((dispatch) => onSubmit(dispatch, 'UPDATE', newRecord));
-      await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
       setOpen(false);
     } catch (error: any) {
       console.error('捕获的异常:', error);
