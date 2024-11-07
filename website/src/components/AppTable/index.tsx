@@ -25,6 +25,9 @@ const AppTable = <T extends { id?: string | number }>({
   loading,
   rowKey = (record) => record?.id ?? `row-${Math.random()}`, // 修改为不使用 index
 }: AppTableProps<T>) => {
+
+  console.log("AppTable", page, data)
+    
   // 分页参数
   const pagination = {
     total: page?.total || 0,
@@ -32,6 +35,13 @@ const AppTable = <T extends { id?: string | number }>({
     pageSize: page?.pageSize || 5,
     showTotal: (total: number) => `总共 ${total} 条数据`,
   };
+
+
+  React.useEffect(() => {
+    if (data.length > pagination.pageSize && data.length < pagination.total) {
+      console.warn("数据长度和分页配置可能不一致", data.length, pagination);
+    }
+  }, [data, pagination]);
 
   return (
     <Table<T>
