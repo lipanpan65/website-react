@@ -20,6 +20,7 @@ import CodeMirrorEditor from '@/components/CodeMirrorEditor';
 import { ExclamationCircleFilled, PlusCircleOutlined } from '@ant-design/icons';
 import AppDialog from '@/components/AppDialog';
 import { api } from '@/api';
+import ConfirmableButton from '@/components/ConfirmableButton';
 
 const { confirm } = Modal;
 
@@ -121,10 +122,11 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
 
 const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const { onSubmit } = props
+  const { onSubmit, initialValues } = props
   const { state, enhancedDispatch } = useGlobalDict();
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
-  const [formValues, setFormValues] = React.useState<any>({});
+  // const formInstanceRef = React.useRef<FormInstance | null>(null);
+  const [record, setRecord] = React.useState<any>({}) // 添加状态管理表示当前数据
 
   const fields = [
     {
@@ -146,8 +148,8 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
       name: 'enable',
       component: (
         <Select placeholder="请选择状态">
-          <Select.Option value="1">启用</Select.Option>
-          <Select.Option value="0">禁用</Select.Option>
+          <Select.Option value={1}>启用</Select.Option>
+          <Select.Option value={0}>禁用</Select.Option>
         </Select>
       ),
       span: 12,  // 使字段占据一半宽度
@@ -176,60 +178,58 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
     },
   ];
 
-  const showModel = (open: boolean, data?: any) => {
-    setOpen(open);
-    if (data) {
-      // setFormValues(() => data)
+  // 监听 record 变化并更新表单
+  React.useEffect(() => {
+    if (formInstance && record) {
+      console.log("Updating form with record:", record);
+      formInstance.setFieldsValue(record);
+    }
+  }, [record, formInstance]);
+
+  const showModel = (isOpen: boolean, data?: any) => {
+    setOpen(isOpen);
+    if (isOpen && data) {
+      setRecord(data); // 更新 record 状态
     }
   };
 
   const handleSubmit = async () => {
     try {
-      const record = await formInstance?.validateFields();
-      console.log("提交的记录:", record);
-
-      // // 手动抛出业务逻辑错误示例
-      // if (record && !record.requiredField) {
-      //   throw new Error('某个必填字段未满足业务逻辑');
-      // }
-
-      enhancedDispatch((dispatch: any) => onSubmit(dispatch, record));
+      const data = await formInstance?.validateFields();
+      const newRecord = { id: record.id, ...data };
+      // enhancedDispatch((dispatch) => onSubmit(dispatch, 'UPDATE', newRecord));
+      await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
       setOpen(false);
     } catch (error: any) {
-      console.error("捕获的异常:", error);
+      console.error('捕获的异常:', error);
       message.error(error.message || '表单验证失败，请检查输入内容。');
     }
   };
 
-
-  React.useEffect(() => {
-    if (formInstance) {
-      formInstance.setFieldsValue({ ...formValues });
-    }
-  }, [formInstance, formValues]);
-
-
-
   const onCancel = () => {
     formInstance?.resetFields();
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   React.useImperativeHandle(ref, () => ({
     showModel,
-    // onOk,
-    onCancel
+    onCancel,
+    setOpen,
   }));
-
+  console.log("isEditing", !!record.id)
   return (
     <React.Fragment>
       <AppDialog
         title='添加字典'
         fields={fields}
+        record={record}
         onCancel={onCancel}
         open={open}
         onSubmit={handleSubmit}
-        setFormInstance={setFormInstance}  // 管理表单实例
+        isEditing={!!record.id}
+        setFormInstance={(instance) => {
+          setFormInstance(instance);
+        }}
       />
     </React.Fragment>
   );
@@ -258,21 +258,22 @@ interface AppGlobalDictProps {
 }
 
 const AppGlobalDictTable: React.FC<AppGlobalDictProps> = ({
-  // data = {
-  //   page: {
-  //     total: 0,
-  //     current: 1,
-  //     pageSize: 5
-  //   },
-  //   data: []
-  // },
   columns = [], // 设置默认值为空数组
   onChange
 }) => {
-  // const context = React.useContext(GlobalContext)
   const { state, enhancedDispatch } = useGlobalDict();
+  // const { page, data, loading } = state
 
-  const { page, data, loading } = state
+  const { page = { total: 0, current: 1, pageSize: 10 }, data = [], loading } = state;
+
+
+  // // 确保 pagination 信息与 dataSource 的长度匹配
+  // const pagination = {
+  //   total: page?.total || data.length, // 使用 data.length 初始化 total 避免首次加载数据量不匹配
+  //   current: page?.current || 1,
+  //   pageSize: page?.pageSize || 5,
+  //   showTotal: (total: number) => `总共 ${total} 条数据`,
+  // };
 
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
     if (onChange) {
@@ -306,25 +307,37 @@ const AppGlobalDict = () => {
 
   console.log("Initial state at render:", state);
 
+  // const handleSetQueryParams = (newParams: any) => {
+  //   console.log("Received newParams:", newParams);
+  //   console.log("Type of newParams:", typeof newParams);
+
+  //   setQueryParams((prevQueryParams: any) => {
+  //     // 检查 newParams 是否是函数，如果是，调用它并传入当前状态
+  //     const resolvedParams = typeof newParams === 'function' ? newParams(prevQueryParams) : newParams;
+
+  //     // 合并参数
+  //     const queryParams = { ...prevQueryParams, ...resolvedParams };
+  //     console.log("Updated Params in handleSetQueryParams:", queryParams);
+
+  //     // 调用 enhancedDispatch 更新全局 state
+  //     enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
+  //     return queryParams;
+  //   });
+  // };
 
   const handleSetQueryParams = (newParams: any) => {
-    console.log("Received newParams:", newParams);
-    console.log("Type of newParams:", typeof newParams);
-
     setQueryParams((prevQueryParams: any) => {
-      // 检查 newParams 是否是函数，如果是，调用它并传入当前状态
       const resolvedParams = typeof newParams === 'function' ? newParams(prevQueryParams) : newParams;
-
-      // 合并参数
-      const queryParams = { ...prevQueryParams, ...resolvedParams };
-      console.log("Updated Params in handleSetQueryParams:", queryParams);
-
-      // 调用 enhancedDispatch 更新全局 state
-      enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
-
-      return queryParams;
+      return { ...prevQueryParams, ...resolvedParams };
     });
   };
+
+  // 使用 useEffect 监听 queryParams 变化并触发 enhancedDispatch
+  React.useEffect(() => {
+    if (Object.keys(queryParams).length > 0) {
+      enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
+    }
+  }, [queryParams]);
 
 
   const columns: TableProps<any>['columns'] = [
@@ -356,11 +369,87 @@ const AppGlobalDict = () => {
       render: (_: any, record: any) => (
         <Space size="middle">
           <a onClick={(event: any) => showModel(event, record)}>编辑</a>
-          <a onClick={(event: any) => handleDelete(event, record)}>删除</a>
+          {/* <a onClick={(event: any) => handleDelete(event, record)}>删除</a> */}
+          <ConfirmableButton
+            type='link'
+            onSubmit={() => onSubmit('DELETE', record)}
+          >删除</ConfirmableButton>
         </Space>
       ),
     },
   ];
+
+
+  const onSubmit = async (
+    actionType: 'CREATE' | 'UPDATE' | 'DELETE',
+    data: Record<string, any>
+  ) => {
+  
+    // 确定请求方法
+    const requestAction =
+      actionType === 'DELETE'
+        ? () => api.globalDict.delete(data.id)
+        : actionType === 'UPDATE'
+        ? api.globalDict.update
+        : api.globalDict.create;
+  
+    // 设定响应消息
+    const responseMessages = {
+      success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
+      error: actionType === 'UPDATE' ? '更新失败，请重试' : actionType === 'DELETE' ? '删除失败，请重试' : '创建失败，请重试',
+    };
+  
+    // 执行状态更新
+    enhancedDispatch({ type: actionType, payload: { data } });
+    
+    try {
+      const response = await requestAction(data);
+      const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
+      message[response?.success ? 'success' : 'error'](messageText);
+    } catch (error) {
+      console.error('提交出错:', error);
+      message.error('提交出错，请检查网络或稍后重试');
+    } finally {
+      await queryGlobalDict();
+    }
+  };
+  
+
+
+  // const onSubmit = async (
+  //   dispatch: React.Dispatch<any>,
+  //   actionType: 'CREATE' | 'UPDATE' | 'DELETE',
+  //   data: Record<string, any>
+  // ) => {
+  //   const requestAction = actionType === 'DELETE'
+  //     ? () => api.globalDict.delete(data.id)
+  //     : actionType === 'UPDATE'
+  //     ? api.globalDict.update
+  //     : api.globalDict.create;
+
+  //   const responseMessages = {
+  //     success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
+  //     error: actionType === 'UPDATE' ? '更新失败，请重试' : actionType === 'DELETE' ? '删除失败，请重试' : '创建失败，请重试',
+  //   };
+
+  //   // 触发状态更新（仅限创建或更新）
+  //   if (actionType !== 'DELETE') {
+  //     dispatch({ type: actionType, payload: { data } });
+  //   }
+
+  //   try {
+  //     const response = await requestAction(data);
+  //     const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
+  //     message[response?.success ? 'success' : 'error'](messageText);
+  //   } catch (error) {
+  //     console.error('提交出错:', error);
+  //     message.error('提交出错，请检查网络或稍后重试');
+  //   } finally {
+  //     await queryGlobalDict();
+  //   }
+  // };
+
+
 
   const handleDelete = (event: any, data?: any) => {
     const onOk = () => new Promise<void>((resolve, reject) => {
@@ -404,7 +493,8 @@ const AppGlobalDict = () => {
         pageSize: pagination.pageSize,
         total: pagination.total
       }
-    })
+    }
+    )
   }
 
   const queryGlobalDict = async () => {
@@ -413,7 +503,12 @@ const AppGlobalDict = () => {
       const response = await api.globalDict.fetch(params);
       if (response && response.success) {
         const { data, page } = response.data;
-        enhancedDispatch({ type: 'READ_DONE', payload: { data, page } });
+        console.log("queryGlobalDict", data, page)
+        enhancedDispatch({
+          type: 'READ_DONE', payload: {
+            data, page
+          }
+        });
       } else {
         message.error(response?.message || '获取数据失败');
       }
@@ -430,39 +525,37 @@ const AppGlobalDict = () => {
   }, [state.params]);
 
 
-  React.useEffect(() => {
-    (async () => {
-      await queryGlobalDict(); // 直接调用异步函数
-    })();
-    console.log("监听queryParams", queryParams)
-  }, [queryParams]);
+  // const onSubmit = async (dispatch: React.Dispatch<any>, data: Record<string, any>) => {
+  //   const isUpdate = !!data.id;
+  //   const actionType = isUpdate ? 'UPDATE' : 'CREATE';
+  //   const requestAction = isUpdate ? api.globalDict.update : api.globalDict.create;
 
-  const onSubmit = async (dispatch: React.Dispatch<any>, data: Record<string, any>) => {
-    try {
-      // 触发 CREATE 动作
-      dispatch({ type: 'CREATE', payload: { data } });
+  //   const responseMessages = {
+  //     success: isUpdate ? '更新成功' : '创建成功',
+  //     error: isUpdate ? '更新失败，请重试' : '创建失败，请重试',
+  //   };
 
-      // 异步调用 API 并等待结果
-      const response = await api.globalDict.create(data);
+  //   try {
+  //     // 触发相应的动作（前端状态更新）
+  //     dispatch({ type: actionType, payload: { data } });
 
-      // 打印返回结果
-      console.log('onSubmit.response ===>', response);
+  //     // 执行API请求
+  //     const response = await requestAction(data);
 
-      // 成功提示
-      if (response && response.success) {
-        message.success('创建成功');
-      } else {
-        message.error(response?.message || '创建失败，请重试');
-      }
-    } catch (error) {
-      // 捕获并处理错误
-      console.error('提交出错:', error);
-      // message.error('提交出错，请检查网络或稍后重试');
-    } finally {
-      // 在请求完成后刷新数据
-      await queryGlobalDict();
-    }
-  };
+  //     // 成功或失败提示
+  //     const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
+  //     message[response?.success ? 'success' : 'error'](messageText);
+
+  //   } catch (error) {
+  //     // 捕获并处理错误
+  //     console.error('提交出错:', error);
+  //     message.error('提交出错，请检查网络或稍后重试');
+  //   } finally {
+  //     // 在请求完成后刷新数据
+  //     await queryGlobalDict();
+  //   }
+  // };
+
 
   // 用于处理 AppGlobalDictSearch 中传递的 form 实例
   const onFormInstanceReady = (form: FormInstance) => {
@@ -501,7 +594,7 @@ const AppGlobalDict = () => {
       <AppGlobalDictSearch
         showModel={showModel}
         onFormInstanceReady={onFormInstanceReady}
-        setQueryParams={handleSetQueryParams}
+        setQueryParams={setQueryParams}
       />
       <AppGlobalDictTable
         onChange={onChange}
