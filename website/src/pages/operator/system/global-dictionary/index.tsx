@@ -5,6 +5,7 @@ import {
 } from 'react-router-dom'
 
 import {
+  Button,
   FormInstance, Input, message, Modal, Select, Space, TableProps
 } from 'antd';
 
@@ -33,11 +34,7 @@ const AppGlobalDictSearch: React.FC<AppGlobalDictSearchProps> = ({
   onFormInstanceReady,
   setQueryParams,
 }) => {
-
-  // 我想把 这个 state 同时也传递给 AppSearch 然后同时更新 state 中的 parasm 的参数
   const { state, enhancedDispatch } = useGlobalDict();
-
-  // 使用 useRef 创建 form 实例的引用
   const formRef = React.useRef<FormInstance | null>(null);
 
   const handleFormInstanceReady = (form: FormInstance) => { // 该 form 为 AppSearchForm 中的实例
@@ -343,13 +340,15 @@ const AppGlobalDict = () => {
       // sortOrder: 'descend',
       render: (_: any, record: any) => (
         <Space size="middle">
-          <a onClick={(event: any) => showModel(event, record)}>编辑</a>
-          <ConfirmableButton
-            type='link'
-            onSubmit={() => onSubmit('DELETE', record)}
-          >删除</ConfirmableButton>
+            <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
+              编辑
+            </Button>
+            <ConfirmableButton
+              type='link'
+              onSubmit={() => onSubmit('DELETE', record)}
+            >删除</ConfirmableButton>
         </Space>
-      ),
+      )
     },
   ];
 
@@ -357,7 +356,6 @@ const AppGlobalDict = () => {
     actionType: 'CREATE' | 'UPDATE' | 'DELETE',
     data: Record<string, any>
   ) => {
-
     // 确定请求方法
     const requestAction =
       actionType === 'DELETE'
@@ -409,7 +407,6 @@ const AppGlobalDict = () => {
       const response = await api.globalDict.fetch(params);
       if (response && response.success) {
         const { data, page } = response.data;
-        console.log("queryGlobalDict", data, page)
         enhancedDispatch({
           type: 'READ_DONE', payload: {
             data, page

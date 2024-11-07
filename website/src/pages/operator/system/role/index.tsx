@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { FormInstance, Input, message, Select, Space, Table, theme } from 'antd'
+import { Button, FormInstance, Input, message, Select, Space, Table, theme } from 'antd'
 import { rowKeyF, showTotal } from '@/utils'
 import AppContent from '@/components/AppContent';
 import AppContainer from '@/components/AppContainer';
@@ -10,6 +10,7 @@ import AppTable from '@/components/AppTable';
 import { api } from '@/api';
 import AppDialog from '@/components/AppDialog';
 import StatusTag from '@/components/StatusTag';
+import ConfirmableButton from '@/components/ConfirmableButton';
 
 interface AppProps {
 
@@ -272,9 +273,13 @@ const AppRole: React.FC<AppProps> = (props) => {
       key: 'action',
       render: (_: any, record: any) => (
         <Space size="middle">
-          <a onClick={(event: any) => alert(1)}>编辑</a>
-          <a onClick={(event: any) => alert(1)}>添加</a>
-          <a onClick={(event: any) => alert(1)}>删除</a>
+          <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
+            编辑
+          </Button>
+          <ConfirmableButton
+            type='link'
+            onSubmit={() => onSubmit('DELETE', record)}
+          >删除</ConfirmableButton>
         </Space>
       ),
     },

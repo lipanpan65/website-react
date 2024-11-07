@@ -41,7 +41,7 @@ const ConfirmableButton: React.FC<ConfirmableButtonProps> = ({
   };
 
   return (
-    <Button onClick={handleClick} {...buttonProps}>
+    <Button size='small' onClick={handleClick} {...buttonProps}>
       {children || '确认操作'}
     </Button>
   );
