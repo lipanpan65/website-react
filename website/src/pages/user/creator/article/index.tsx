@@ -26,9 +26,6 @@ import './index.css'
 
 import { rowKeyF, showTotal } from '@/utils';
 
-// const rowKeyF = (record: { id: number }): number => record.id
-// const showTotal = (total: any) => `共${total}条记录`
-
 // 文章标题
 const ArticleTitle = (article: any) => <Link
   className='title'
@@ -92,11 +89,8 @@ const CratorArticle: any = (props: any) => {
     },
   ];
   const onChange = (page: any, pageSize: any) => {
-    // console.log('onChange===>', page, pageSize)
     getArticleList({ page, pageSize })
   }
-
-  console.log('CratorArticle===>', state)
 
   const getArticleList = (params?: any): any => {
     request({
@@ -104,6 +98,7 @@ const CratorArticle: any = (props: any) => {
       method: 'GET',
       params: params || {}
     }).then((response: any) => {
+      console.log("getArticleList.response",response)
       const { status, statusText } = response
       if (status === 200 && statusText === 'OK') {
         const { success, message, data: { page, data } } = response.data
@@ -112,7 +107,7 @@ const CratorArticle: any = (props: any) => {
       }
     })
   }
-
+  
   const handleLinkTo = (v: any) => {
     navigator(`/user/article/editor/${v.id}`,
       {
@@ -146,7 +141,7 @@ const CratorArticle: any = (props: any) => {
       }
     })
   }
-  
+
   const dropDownHandleClick = ({ key }: any, article: any) => {
     console.log('key', key)
     console.log('item', article)

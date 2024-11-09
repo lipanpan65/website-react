@@ -1,20 +1,46 @@
-
 import { request } from '@/utils/request'
 
-export default {
-  getArticleList: (params: any) => {
-    return request({
-      url: `/api/user/v1/article/`,
-      method: 'GET',
-      params: params || {}
-    })
-  },
-  createArticle: (data: any) => {
-  },
-  updateArticle: (data: any) => {
-
-  },
+interface ApiResponse<T> {
+  code: number;
+  success: boolean;
+  message: string;
+  data: T;
 }
 
+interface Page {
+  total: number;
+  current: number;
+  pageSize: number;
+}
 
+interface ArticleRecord {
+  id: number;
+  cname: string;
+  ckey: string;
+  cvalue: string;
+  enable: boolean;
+  remark?: string;
+}
 
+interface ArticleRecordData {
+  data: ArticleRecord[];
+  page: Page;
+}
+
+// 定义 API
+export const articleApi = {
+  fetch: (params: any): Promise<ApiResponse<ArticleRecordData>> =>
+    request({ url: '/api/operator/v1/role/', method: 'GET', params }),
+
+  create: (data: Partial<ArticleRecord>): Promise<ApiResponse<ArticleRecord>> =>
+    request({ url: '/api/operator/v1/role/', method: 'POST', data }),
+
+  update: (data: Partial<ArticleRecord>): Promise<ApiResponse<ArticleRecord>> =>
+    request({ url: `/api/operator/v1/role/${data.id}/`, method: 'PUT', data }),
+
+  record: (id: number): Promise<ApiResponse<ArticleRecord>> =>
+    request({ url: `/api/operator/v1/role/${id}`, method: 'GET' }),
+
+  delete: (id: number): Promise<ApiResponse<null>> =>
+    request({ url: `/api/operator/v1/role/${id}/`, method: 'DELETE' }),
+};

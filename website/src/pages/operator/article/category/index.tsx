@@ -1,14 +1,14 @@
 import * as React from 'react'
 import {
-  Button, Col,
+  Button,
   Form,
   Input, Modal,
-  Radio, Row, Space, Table,
-  Flex,
-  Tag, message, theme
+  Select,
+  Space,
+  message,
 } from 'antd'
 import type { TableProps, FormInstance } from 'antd';
-import { ExclamationCircleFilled, PlusCircleOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined } from '@ant-design/icons';
 import { request } from '@/utils';
 import { dateFormate } from '@/utils';
 import './index.css'
@@ -19,30 +19,13 @@ import AppContainer from '@/components/AppContainer';
 import AppTable from '@/components/AppTable';
 import ConfirmableButton from '@/components/ConfirmableButton';
 import { api } from '@/api';
-
-
-// const api = {
-//   fetch: (params?: any) => request({
-//     url: `/api/user/v1/article_category`,
-//     method: 'GET',
-//     params
-//   }).then((r: any) => {
-//     const { status, statusText } = r
-//     if (status === 200 && statusText === 'OK') {
-//       return r.data
-//     } else {
-//       return r.data
-//     }
-//   }).catch((e: any) => e)
-// }
-
-// type FormInstance
+import StatusTag from '@/components/StatusTag';
+import AppDialog from '@/components/AppDialog';
 
 const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
 };
-
 
 interface AppArticleCategorySearchProps {
   showModel: (event: React.MouseEvent<HTMLElement>, data: any) => void;
@@ -110,7 +93,7 @@ const AppArticleCategorySearch: React.FC<AppArticleCategorySearchProps> = ({
             },
             {
               name: 'enable',
-              placeholder: '请选择角色类型',
+              placeholder: '请选择状态',
               type: 'select',
               width: 150,
               selectConfig: {
@@ -124,26 +107,6 @@ const AppArticleCategorySearch: React.FC<AppArticleCategorySearchProps> = ({
           ]}
         />
       </AppContent>
-      {/* <Form
-        form={form}
-        name="control-hooks"
-      >
-        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className='search'>
-          <Button type="primary" onClick={(event: any) => showModel(event, {})}>添加</Button>
-          <Form.Item
-            name="search"
-            rules={[{ required: false }]}>
-            <Input
-              placeholder='请搜索...'
-              allowClear
-              // onPressEnter={onPressEnter}
-              onPressEnter={(e: any) => onPressEnter('search', e)}
-              onFocus={() => { console.log('onFocus') }}
-              onBlur={() => { console.log('onBlur') }}
-            />
-          </Form.Item>
-        </Row>
-      </Form> */}
     </React.Fragment >
   )
 }
@@ -220,148 +183,161 @@ interface CategoryModelProps {
   initialValues: ArticleCategory;
 }
 
-interface ModelFormProps {
-  isUpdate: boolean;
-  initialValues: ArticleCategory;
-  onFormInstanceReady: (instance: FormInstance<ArticleCategory>) => void;
-}
+// interface ModelFormProps {
+//   isUpdate: boolean;
+//   initialValues: ArticleCategory;
+//   onFormInstanceReady: (instance: FormInstance<ArticleCategory>) => void;
+// }
 
-const ModelForm: React.FC<ModelFormProps> = ({
-  isUpdate,
-  initialValues,
-  onFormInstanceReady,
-}) => {
-  const [form] = Form.useForm();
+// const ModelForm: React.FC<ModelFormProps> = ({
+//   isUpdate,
+//   initialValues,
+//   onFormInstanceReady,
+// }) => {
+//   const [form] = Form.useForm();
 
-  // 组件渲染完成将组件回传给 ModelForm
-  React.useEffect(() => {
-    onFormInstanceReady(form);
-  }, []);
+//   React.useEffect(() => {
+//     onFormInstanceReady(form);
+//   }, []);
 
+//   const validateNameExists = (_: any, category_name: any) => new Promise(async (resolve, reject) => {
+//     const id = form.getFieldValue('id')
+//     if (id) {
+//       resolve(category_name)
+//     }
+//     const r: any = await request({
+//       url: `/api/user/v1/article_category/validate_category_name`,
+//       method: 'GET',
+//       params: { category_name }
+//     })
+//     const { data: { code, success, message: msg } } = r
+//     if (!success) {
+//       reject(msg)
+//     } else {
+//       resolve(category_name)
+//     }
+//   })
 
-  const validateNameExists = (_: any, category_name: any) => new Promise(async (resolve, reject) => {
-    const id = form.getFieldValue('id')
-    if (id) {
-      resolve(category_name)
-    }
-    const r: any = await request({
-      url: `/api/user/v1/article_category/validate_category_name`,
-      method: 'GET',
-      params: { category_name }
-    })
-    const { data: { code, success, message: msg } } = r
-    if (!success) {
-      reject(msg)
-    } else {
-      resolve(category_name)
-    }
-  })
-
-  return (
-    <React.Fragment>
-      <Form layout="vertical" form={form} name="form_in_modal" initialValues={initialValues}>
-        <Form.Item
-          name="category_name"
-          label="分类名称"
-          rules={[
-            { required: true, message: '请输入分类名称' },
-            { validator: validateNameExists }
-          ]}
-        >
-          <Input
-            placeholder='请输入分类名称'
-            disabled={isUpdate}
-          />
-        </Form.Item>
-        <Form.Item name="remark" label="备注">
-          <Input.TextArea
-            placeholder='请输入备注'
-            showCount maxLength={100} />
-        </Form.Item>
-      </Form>
-    </React.Fragment>
-  )
-}
+//   return (
+//     <React.Fragment>
+//       <Form layout="vertical" form={form} name="form_in_modal" initialValues={initialValues}>
+//         <Form.Item
+//           name="category_name"
+//           label="分类名称"
+//           rules={[
+//             { required: true, message: '请输入分类名称' },
+//             { validator: validateNameExists }
+//           ]}
+//         >
+//           <Input
+//             placeholder='请输入分类名称'
+//             disabled={isUpdate}
+//           />
+//         </Form.Item>
+//         <Form.Item name="remark" label="备注">
+//           <Input.TextArea
+//             placeholder='请输入备注'
+//             showCount maxLength={100} />
+//         </Form.Item>
+//       </Form>
+//     </React.Fragment>
+//   )
+// }
 
 const AppArticleCategoryDialog: any = React.forwardRef((props: any, ref: any) => {
-  const { initialValues, onSubmit } = props
   const [open, setOpen] = React.useState<boolean>(false);
-  // 将 formInstance 回传到组件中
-  const [formInstance, setFormInstance] = React.useState<FormInstance>();
-
-  const [formValues, setFormValues] = React.useState<any>({})
+  const { onSubmit, initialValues } = props
+  const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
+  const [record, setRecord] = React.useState<any>({})
 
   React.useEffect(() => {
-    formInstance?.setFieldsValue({ ...formValues })
-  }, [formInstance, data])
+    if (formInstance && record) {
+      formInstance.setFieldsValue(record);
+    }
+  }, [record, formInstance]);
 
-  const showModel = (open: boolean, data?: any) => {
-    Promise.resolve().then(() => {
-      setOpen(preState => open)
-    }).then(() => {
-      if (data) {
-        setFormValues(() => data)
+  const showModel = (isOpen: boolean, data?: any) => {
+    setOpen(isOpen);
+    if (isOpen && data) {
+      setRecord(data); // 更新 record 状态
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const data = await formInstance?.validateFields();
+      if (!!record.id) {
+        const newRecord = { id: record.id, ...data };
+        await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
+      } else {
+        await onSubmit('CREATE', data); // 不再需要传递 `dispatch`
       }
-    })
-  }
-
-  const onOk = () => {
-    formInstance?.validateFields()
-      .then((values: any) => {
-        if (formValues.id) {
-          values["id"] = formValues.id
-        }
-        onSubmit(values)
-      }).catch((e: any) => {
-        console.log('e', e)
-        return;
-      })
-  }
+      // enhancedDispatch((dispatch) => onSubmit(dispatch, 'UPDATE', newRecord));
+      setOpen(false);
+    } catch (error: any) {
+      console.error('捕获的异常:', error);
+      message.error(error.message || '表单验证失败，请检查输入内容。');
+    }
+  };
 
   const onCancel = () => {
     formInstance?.resetFields();
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
-  // 仅仅需要处理一些回掉即可
-  const afterOpenChange = (open: any) => {
-    formInstance?.setFieldsValue({
-      ...formValues
-    })
-  }
+  const fields = [
+    {
+      label: '分类名称',
+      name: 'category_name',
+      rules: [{ required: true, message: '请输入分类名称' }],
+      component: <Input
+        disabled={!!record.id}
+        placeholder="请输入分类名称" />,
+      span: 24,
+    },
+    {
+      label: '状态',
+      name: 'enable',
+      rules: [{ required: true, message: '请输入角色类型' }],
+      component: (
+        <Select placeholder="请选择状态" allowClear>
+          <Select.Option value={1}>启用</Select.Option>
+          <Select.Option value={0}>禁用</Select.Option>
+        </Select>
+      ),
+      span: 24,
+    },
+    {
+      name: 'remark',
+      label: '备注',
+      component: <Input.TextArea placeholder="请输入备注" showCount maxLength={100} />,
+      span: 24,
+    },
+  ];
 
   React.useImperativeHandle(ref, () => ({
-    onOk,
+    showModel,
     onCancel,
     setOpen,
-    showModel,
-    setFormValues
   }))
 
   return (
     <React.Fragment>
-      <Modal
-        open={open}
-        title="创建文章分类"
-        okText="确定"
-        cancelText="取消"
-        okButtonProps={{ autoFocus: true }}
+      <AppDialog
+        title='添加角色'
+        fields={fields}
+        record={record}
         onCancel={onCancel}
-        destroyOnClose
-        onOk={onOk}
-      >
-        <ModelForm
-          initialValues={initialValues}
-          onFormInstanceReady={(instance) => {
-            setFormInstance(instance);
-          }}
-          isUpdate={!!formValues.id}
-        />
-      </Modal>
+        open={open}
+        onSubmit={handleSubmit}
+        isEditing={!!record.id}
+        setFormInstance={(instance) => {
+          setFormInstance(instance);
+        }}
+      />
     </React.Fragment>
   )
 })
-
 
 const AppArticleCategory = (props: any) => {
   const { state, enhancedDispatch } = useArticleCategory();
@@ -374,7 +350,12 @@ const AppArticleCategory = (props: any) => {
       title: '分类名称',
       dataIndex: 'category_name',
       key: 'category_name',
-      render: (text: any) => <a>{text}</a>,
+    },
+    {
+      title: '状态',
+      dataIndex: 'enable',
+      key: 'enable',
+      render: (text: number) => <StatusTag status={text} />
     },
     {
       title: '更新人',
@@ -414,7 +395,6 @@ const AppArticleCategory = (props: any) => {
       }
     })
   }
-
 
   const onSubmit = async (
     actionType: 'CREATE' | 'UPDATE' | 'DELETE',

@@ -16,9 +16,7 @@ interface Page {
 // 全局字典数据类型
 interface CategoryRecord {
   id: number;
-  cname: string;
-  ckey: string;
-  cvalue: string;
+  category_name: string;
   enable: boolean;
   remark?: string;
 }
