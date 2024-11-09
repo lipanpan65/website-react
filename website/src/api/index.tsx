@@ -2,9 +2,10 @@
 import { globalDictApi } from './globalDict';
 import { roleApi } from './role'
 import { articleCategoryApi } from './articleCategory'
-// import { articleApi } from './article';
+import { articleApi } from './article';
 
 export const api = {
+    article: articleApi,
     globalDict: globalDictApi,
     role: roleApi,
     articleCategory: articleCategoryApi

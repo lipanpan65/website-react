@@ -17,11 +17,13 @@ const CreatorLayout: React.FC = () => {
     document.title = pageTitle;
     console.log("Document title updated to: ", pageTitle);
   }, [appMenu]);  // 依赖 appMenu 的变化
-  
+
   return (
     <BaseLayout
       header={!shouldHideHeader && <AppHeader appMenu={appMenu} />}
-      sider={<SliderMenu appMenu={appMenu} />}
+      sider={<SliderMenu
+        appMenu={appMenu}
+      />}
       nested={true}
     />
   );

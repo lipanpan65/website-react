@@ -25,6 +25,9 @@ import './index.css'
 
 
 import { rowKeyF, showTotal } from '@/utils';
+import AppContainer from '@/components/AppContainer';
+import AppContent from '@/components/AppContent';
+import { api } from '@/api';
 
 // 文章标题
 const ArticleTitle = (article: any) => <Link
@@ -68,12 +71,16 @@ const reducer = (state: any, action: any) => {
   }
 }
 
-const CratorArticle: any = (props: any) => {
+interface CratorArticleProps {
+  activeKey?: string
+}
 
+const CratorArticle: React.FC<CratorArticleProps> = ({
+  activeKey = 'publish'
+}) => {
   const {
     token: {
       colorBgContainer,
-      // borderRadiusLG
     },
   } = theme.useToken();
   const navigator = useNavigate()
@@ -88,26 +95,46 @@ const CratorArticle: any = (props: any) => {
       label: (<a>删除</a>),
     },
   ];
+
   const onChange = (page: any, pageSize: any) => {
-    getArticleList({ page, pageSize })
+    queryArticleList({ page, pageSize })
   }
 
-  const getArticleList = (params?: any): any => {
-    request({
-      url: `/api/user/v1/article/`,
-      method: 'GET',
-      params: params || {}
-    }).then((response: any) => {
-      console.log("getArticleList.response",response)
-      const { status, statusText } = response
-      if (status === 200 && statusText === 'OK') {
-        const { success, message, data: { page, data } } = response.data
-        // const { page, data } = response.data
-        dispatch({ type: 'READ_DONE', payload: { data, page } })
+  const queryArticleList = async (params?: any) => {
+    try {
+      const newParams = {
+        status: activeKey,
+        ...params
       }
-    })
+      const response = await api.article.fetch(newParams);
+      if (response && response.success) {
+        const { data, page } = response.data;
+        dispatch({
+          type: 'READ_DONE', payload: {
+            data, page
+          }
+        });
+      } else {
+        message.error(response?.message || '获取数据失败');
+      }
+    } catch (error) {
+      message.error('请求失败，请稍后重试');
+    }
+    // request({
+    //   url: `/api/user/v1/article/`,
+    //   method: 'GET',
+    //   params: params || {}
+    // }).then((response: any) => {
+    //   console.log("getArticleList.response", response)
+    //   const { status, statusText } = response
+    //   if (status === 200 && statusText === 'OK') {
+    //     const { success, message, data: { page, data } } = response.data
+    //     // const { page, data } = response.data
+    //     dispatch({ type: 'READ_DONE', payload: { data, page } })
+    //   }
+    // })
   }
-  
+
   const handleLinkTo = (v: any) => {
     navigator(`/user/article/editor/${v.id}`,
       {
@@ -118,16 +145,14 @@ const CratorArticle: any = (props: any) => {
   }
 
   const handleDeleteArticle = (article: any, cb: Function) => {
-    // TODO 删除后携带分页
     request({
       url: `/api/user/v1/article/${article.id}/`,
       method: 'DELETE',
     }).then(({ status }: any) => {
       message.success("操作成功")
       if (status === 204) {
-        getArticleList()
+        queryArticleList()
       } else {
-        // setLoading(false);
       }
     }).finally(() => cb());
   }
@@ -142,7 +167,7 @@ const CratorArticle: any = (props: any) => {
     })
   }
 
-  const dropDownHandleClick = ({ key }: any, article: any) => {
+  const handleClickDropDown = ({ key }: any, article: any) => {
     console.log('key', key)
     console.log('item', article)
     if (key === "edit") {
@@ -159,13 +184,16 @@ const CratorArticle: any = (props: any) => {
     }
   };
 
-  React.useEffect(() => getArticleList(), [])
+  React.useEffect(() => {
+    (async () => {
+      await queryArticleList();
+    })();
+  }, [activeKey]);
 
   return (
-    <React.Fragment>
+    <div>
       <article style={{
         background: colorBgContainer,
-        // minHeight: '100vh'
       }}>
         <List
           loading={state.loading}
@@ -195,7 +223,7 @@ const CratorArticle: any = (props: any) => {
                     <React.Fragment>
                       <Dropdown menu={{
                         items,
-                        onClick: (e: any) => dropDownHandleClick(e, item)
+                        onClick: (e: any) => handleClickDropDown(e, item)
                       }}>
                         <b onClick={(e) => e.preventDefault()}>
                           <EllipsisOutlined />
@@ -212,7 +240,7 @@ const CratorArticle: any = (props: any) => {
           )}
         />
       </article>
-    </React.Fragment>
+    </div>
   )
 }
 

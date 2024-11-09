@@ -15,9 +15,9 @@ interface Page {
 
 interface ArticleRecord {
   id: number;
-  cname: string;
-  ckey: string;
-  cvalue: string;
+  title: string;
+  summary: string;
+  content: string;
   enable: boolean;
   remark?: string;
 }
@@ -27,20 +27,19 @@ interface ArticleRecordData {
   page: Page;
 }
 
-// 定义 API
 export const articleApi = {
   fetch: (params: any): Promise<ApiResponse<ArticleRecordData>> =>
-    request({ url: '/api/operator/v1/role/', method: 'GET', params }),
+    request({ url: '/api/user/v1/article/', method: 'GET', params }),
 
   create: (data: Partial<ArticleRecord>): Promise<ApiResponse<ArticleRecord>> =>
-    request({ url: '/api/operator/v1/role/', method: 'POST', data }),
+    request({ url: '/api/user/v1/article/', method: 'POST', data }),
 
   update: (data: Partial<ArticleRecord>): Promise<ApiResponse<ArticleRecord>> =>
-    request({ url: `/api/operator/v1/role/${data.id}/`, method: 'PUT', data }),
+    request({ url: `/api/user/v1/article/${data.id}/`, method: 'PUT', data }),
 
   record: (id: number): Promise<ApiResponse<ArticleRecord>> =>
-    request({ url: `/api/operator/v1/role/${id}`, method: 'GET' }),
+    request({ url: `/api/user/v1/article/${id}`, method: 'GET' }),
 
   delete: (id: number): Promise<ApiResponse<null>> =>
-    request({ url: `/api/operator/v1/role/${id}/`, method: 'DELETE' }),
+    request({ url: `/api/user/v1/article/${id}/`, method: 'DELETE' }),
 };

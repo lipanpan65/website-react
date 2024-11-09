@@ -21,7 +21,8 @@
     gap: var(--gap-lg);
     background-color: var(--primary-bg-color);
     box-sizing: border-box;
-    justify-content: center;
+    /* justify-content: center; */
+    /* justify-content: center; */
 }
 
 .app-layout-card {

@@ -248,7 +248,6 @@ const AppRole: React.FC<AppProps> = (props) => {
     searchFormRef.current = form; // 将 form 实例存储到 ref
   };
 
-  // 使用 useEffect 监听 queryParams 变化并触发 enhancedDispatch
   React.useEffect(() => {
     if (Object.keys(queryParams).length > 0) {
       enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });

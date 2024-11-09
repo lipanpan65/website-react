@@ -30,7 +30,7 @@ const AppContainer: React.FC<AppContainerProps> = ({
     padding: '16px', // 外层容器的默认样式
     ...style,
   };
-
+  
   const innerContentStyle: React.CSSProperties = {
     // background: background || colorBgContainer,
     display: 'flex',              // 设置 flex 布局
