@@ -8,27 +8,33 @@ import {
   Tag, message, theme
 } from 'antd'
 import type { TableProps, FormInstance } from 'antd';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import { ExclamationCircleFilled, PlusCircleOutlined } from '@ant-design/icons';
 import { request } from '@/utils';
 import { dateFormate } from '@/utils';
 import './index.css'
+import { ArticleCategoryProvider, useArticleCategory } from '@/hooks/state/useArticleCategory';
+import AppSearch from '@/components/AppSearch';
+import AppContent from '@/components/AppContent';
+import AppContainer from '@/components/AppContainer';
+import AppTable from '@/components/AppTable';
+import ConfirmableButton from '@/components/ConfirmableButton';
+import { api } from '@/api';
 
-const { confirm } = Modal;
 
-const api = {
-  fetch: (params?: any) => request({
-    url: `/api/user/v1/article_category`,
-    method: 'GET',
-    params
-  }).then((r: any) => {
-    const { status, statusText } = r
-    if (status === 200 && statusText === 'OK') {
-      return r.data
-    } else {
-      return r.data
-    }
-  }).catch((e: any) => e)
-}
+// const api = {
+//   fetch: (params?: any) => request({
+//     url: `/api/user/v1/article_category`,
+//     method: 'GET',
+//     params
+//   }).then((r: any) => {
+//     const { status, statusText } = r
+//     if (status === 200 && statusText === 'OK') {
+//       return r.data
+//     } else {
+//       return r.data
+//     }
+//   }).catch((e: any) => e)
+// }
 
 // type FormInstance
 
@@ -37,46 +43,90 @@ const layout = {
   wrapperCol: { span: 16 },
 };
 
-// TODO 基于 props 的方式实现
-const CategorySearch = (props: any) => {
-  const { onFormInstanceReady, showModel, setQqueryParams } = props
-  const [form] = Form.useForm();
-  // 由于是按照加载顺序所以放在最上面
-  React.useEffect(() => {
-    onFormInstanceReady(form);
-  }, []);
 
+interface AppArticleCategorySearchProps {
+  showModel: (event: React.MouseEvent<HTMLElement>, data: any) => void;
+  onFormInstanceReady: (instance: FormInstance<any>) => void;
+  setQueryParams: (params: any) => void;
+}
 
+// 定义分页和表格数据的类型
+interface PaginationProps {
+  total: number;
+  current: number;
+  pageSize: number;
+}
 
-  const onFinish = (values: any) => {
-    console.log(values);
+interface DataItem {
+  id: number;
+  name: string;
+  description: string;
+}
+
+interface AppArticleCategoryTableProps {
+  data?: {
+    page: PaginationProps;
+    data: any[];  // 数据数组，包含 id, name, description
+  };
+  columns?: any;  // 设置可选
+  onChange?: (pagination: PaginationProps, filters?: any, sorter?: any) => void;  // 新增 onChange 属性
+}
+
+const AppArticleCategorySearch: React.FC<AppArticleCategorySearchProps> = ({
+  showModel,
+  onFormInstanceReady,
+  setQueryParams,
+}) => {
+
+  const { state } = useArticleCategory();
+  const formRef = React.useRef<FormInstance | null>(null);
+
+  const handleFormInstanceReady = (form: FormInstance) => { // 该 form 为 AppSearchForm 中的实例
+    formRef.current = form; // 将 AppSearchForm 中的 form 传递给当前组件
+    onFormInstanceReady(form); // 将 form 实例传递给父组件
   };
 
-  const onResetFields = () => {
-    form.resetFields();
+  const buttonConfig = {
+    label: '添加',
+    type: 'primary' as const,  // 明确指定类型以符合 ButtonConfig
+    onClick: (event: React.MouseEvent<HTMLElement>) => showModel(event, {}),
+    disabled: false,
+    icon: <PlusCircleOutlined />,  // 例如使用 Ant Design 的图标
   };
-
-  const onFill = () => {
-    form.setFieldsValue({ note: 'Hello world!', gender: 'male' });
-  };
-
-  const onPressEnter = (k: string, e: any) => {
-    setQqueryParams((preQuerys: any) => {
-      return {
-        ...preQuerys,
-        [k]: e.target.value
-      }
-    })
-  }
 
   return (
     <React.Fragment>
-      <Form
-        // {...layout}
+      <AppContent>
+        <AppSearch
+          buttonConfig={buttonConfig}  // 动态按钮配置
+          onFormInstanceReady={handleFormInstanceReady}
+          setQueryParams={setQueryParams}
+          initialParams={state.params}
+          formItems={[
+            {
+              name: 'search',
+              placeholder: '请输入...',
+              type: 'input',
+            },
+            {
+              name: 'enable',
+              placeholder: '请选择角色类型',
+              type: 'select',
+              width: 150,
+              selectConfig: {
+                allowClear: true,
+                options: [
+                  { label: '启用', value: 1 },
+                  { label: '禁用', value: 0 },
+                ],
+              },
+            },
+          ]}
+        />
+      </AppContent>
+      {/* <Form
         form={form}
         name="control-hooks"
-      // onFinish={onFinish}
-      // style={{ maxWidth: 600 }}
       >
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className='search'>
           <Button type="primary" onClick={(event: any) => showModel(event, {})}>添加</Button>
@@ -93,7 +143,7 @@ const CategorySearch = (props: any) => {
             />
           </Form.Item>
         </Row>
-      </Form>
+      </Form> */}
     </React.Fragment >
   )
 }
@@ -131,33 +181,28 @@ const data: DataType[] = [
   },
 ];
 
-// interface CategoryTableProps {
-//   data: any,
-//   columns: any,
-//   onFormInstanceReady: (instance: FormInstance<ArticleCategory>) => void;
-// }
-
-const CategoryTable = (props: any) => {
-  const { data: { page, data }, columns, onChange, loading } = props
-
-  // 分页参数
-  const pagination = {
-    total: page?.total || 0, // 数据总数
-    current: page?.current || 1, // 当前页码
-    pageSize: page?.pageSize || 5, // 每页显示条数
-    // showSizeChanger: true, // 是否显示 pageSize 改变器
-    // showQuickJumper: true, // 是否显示快速跳转
-    showTotal: (total: number) => `总共 ${total} 条数据`, // 自定义显示总数的格式
+const AppArticleCategoryTable: React.FC<AppArticleCategoryTableProps> = ({
+  columns = [], // 设置默认值为空数组
+  onChange
+}) => {
+  const { state } = useArticleCategory();
+  const { page = { total: 0, current: 1, pageSize: 10 }, data = [], loading } = state;
+  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+    if (onChange) {
+      onChange(pagination, filters, sorter);  // 确保 onChange 已定义
+    }
   };
 
   return (
     <React.Fragment>
-      <Table
-        loading={loading}
-        onChange={onChange}
-        pagination={pagination}
-        columns={columns}
-        dataSource={data} />
+      <AppContent>
+        <AppTable
+          data={{ page, data }}
+          columns={columns}
+          onChange={handleTableChange}
+          loading={loading}
+        />
+      </AppContent>
     </React.Fragment>
   )
 }
@@ -193,13 +238,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
     onFormInstanceReady(form);
   }, []);
 
-  const onResetFields = () => {
-    form.resetFields();
-  };
-
-  const onSetFields = (data: any) => {
-    form.setFieldsValue({ ...data })
-  }
 
   const validateNameExists = (_: any, category_name: any) => new Promise(async (resolve, reject) => {
     const id = form.getFieldValue('id')
@@ -245,13 +283,12 @@ const ModelForm: React.FC<ModelFormProps> = ({
   )
 }
 
-// React.FC<CategoryModelProps>
-const CategoryModel: any = React.forwardRef((props: any, ref: any) => {
+const AppArticleCategoryDialog: any = React.forwardRef((props: any, ref: any) => {
   const { initialValues, onSubmit } = props
   const [open, setOpen] = React.useState<boolean>(false);
   // 将 formInstance 回传到组件中
   const [formInstance, setFormInstance] = React.useState<FormInstance>();
-  // TODO 是否更换变量名称
+
   const [formValues, setFormValues] = React.useState<any>({})
 
   React.useEffect(() => {
@@ -288,8 +325,6 @@ const CategoryModel: any = React.forwardRef((props: any, ref: any) => {
 
   // 仅仅需要处理一些回掉即可
   const afterOpenChange = (open: any) => {
-    console.log('afterOpenChange', open)
-    console.log('afterOpenChange', formValues)
     formInstance?.setFieldsValue({
       ...formValues
     })
@@ -328,13 +363,11 @@ const CategoryModel: any = React.forwardRef((props: any, ref: any) => {
 })
 
 
-const ArticleCategory = (props: any) => {
-
-  const {
-    token: {
-      colorBgContainer,
-    },
-  } = theme.useToken();
+const AppArticleCategory = (props: any) => {
+  const { state, enhancedDispatch } = useArticleCategory();
+  const dialogRef: any = React.useRef()
+  const searchFormRef = React.useRef<FormInstance | null>(null);
+  const [queryParams, setQueryParams] = React.useState<any>({})
 
   const columns: TableProps<DataType>['columns'] = [
     {
@@ -359,34 +392,20 @@ const ArticleCategory = (props: any) => {
       key: 'action',
       render: (_: any, record: any) => (
         <Space size="middle">
-          <a onClick={(event: any) => showModel(event, record)}>编辑</a>
-          <a onClick={(event: any) => handleDelete(event, record)}>删除</a>
+          <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
+            编辑
+          </Button>
+          <ConfirmableButton
+            type='link'
+            onSubmit={() => onSubmit('DELETE', record)}
+          >删除</ConfirmableButton>
         </Space>
       ),
     },
   ];
 
-  const modelRef: any = React.useRef()
-  const tableRef: any = React.useRef()
-  const [formValues, setFormValues] = React.useState<ArticleCategory>();
-  const [data, setData] = React.useState([])
-  // const [modelInstance, setModelInstance] = React.useState<any>();
-  const [queryParams, setQqueryParams] = React.useState<any>({})
-  const [formInstance, setFormInstance] = React.useState<FormInstance>();
-  const [loading, setLoading] = React.useState<boolean>()
-
-  // pagination, filters, sorter, extra: { currentDataSource: [], action: paginate | sort | filter }
   const onChange = (pagination: any) => {
-    setLoading(true)
-    // Promise.name
-    // TODO 这里是异步执行的 https://blog.csdn.net/weixin_41697143/article/details/81837076
-    // https://blog.csdn.net/qq_37581764/article/details/134213648
-    // setTimeout(() => {
-    //   console.log('onChange==doing')
-    //   setLoading(true)
-    //   console.log('onChange==doing')
-    // }, 1000)
-    setQqueryParams((preQueryParams: any) => {
+    setQueryParams((preQueryParams: any) => {
       return {
         ...preQueryParams,
         page: pagination.current,
@@ -396,134 +415,103 @@ const ArticleCategory = (props: any) => {
     })
   }
 
-  const getArticleCategory = () => {
-    api.fetch(queryParams).then((r: any) => {
-      const { code, success, data } = r
-      setData(data)
-    }).finally(() => {
-      setLoading(false)
-    })
-  }
 
-  const handleDelete = (event: any, data?: any) => {
-    const onOk = () => new Promise<void>((resolve, reject) => {
-      request({
-        url: `/api/user/v1/article_category/${data.id}/`,
-        method: 'DELETE',
-      }).then((r: any) => {
-        const { status, statusText
-        } = r
-        if (status === 200 && statusText === 'OK') {
-          message.success('操作成功')
-          resolve(r.data)
-        }
-      }).catch((e: any) => {
-        message.error('操作失败')
-        reject()
-      })
-    }).then((r: any) => {
-    }).finally(() => {
-      modelRef.current.setOpen(false)
-      getArticleCategory()
-    })
+  const onSubmit = async (
+    actionType: 'CREATE' | 'UPDATE' | 'DELETE',
+    data: Record<string, any>
+  ) => {
+    // 确定请求方法
+    const requestAction =
+      actionType === 'DELETE'
+        ? () => api.articleCategory.delete(data.id)
+        : actionType === 'UPDATE'
+          ? api.articleCategory.update
+          : api.articleCategory.create;
 
-    confirm({
-      title: '删除分类',
-      icon: <ExclamationCircleFilled />,
-      content: `确认删除该分类${data.category_name}吗？`,
-      onOk,
-    });
-  }
+    // 设定响应消息
+    const responseMessages = {
+      success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
+      error: actionType === 'UPDATE' ? '更新失败，请重试' : actionType === 'DELETE' ? '删除失败，请重试' : '创建失败，请重试',
+    };
 
-  const onSubmit = (data: any) => {
-    if (!!data.id) {
-      console.log("更新")
-      request({
-        url: `/api/user/v1/article_category/${data.id}/`,
-        method: 'PUT',
-        data
-      }).then((r: any) => {
-        const { status, statusText } = r
-        if (status === 200 && statusText === 'OK') {
-          const { code, success } = r.data
-          if (code === "0000") {
-            message.success('操作成功')
-          } else if (success === false) {
-            message.error(r.data.message)
-          }
-        }
-      }).finally(() => {
-        modelRef.current.setOpen(false)
-        // 重新拉
-        getArticleCategory()
-      })
-    } else {
-      request({
-        url: `/api/user/v1/article_category/`,
-        method: 'POST',
-        data
-      }).then((r: any) => {
-        const { status, statusText
-        } = r
-        if (status === 200 && statusText === 'OK') {
-          const { code, success } = r.data
-          if (code === "0000") {
-            message.success('操作成功')
-          } else if (success === false) {
-            message.error(r.data.message)
-          }
-        }
-      }).finally(() => {
-        modelRef.current.setOpen(false)
-        // 重新拉
-        getArticleCategory()
-      })
+    // 执行状态更新
+    enhancedDispatch({ type: actionType, payload: { data } });
+
+    try {
+      const response = await requestAction(data);
+      const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
+      message[response?.success ? 'success' : 'error'](messageText);
+    } catch (error) {
+      console.error('提交出错:', error);
+      message.error('提交出错，请检查网络或稍后重试');
+    } finally {
+      await queryArticleCategory();
     }
-  }
+  };
+
+  React.useEffect(() => {
+    if (Object.keys(queryParams).length > 0) {
+      enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
+    }
+  }, [queryParams]);
+
+  const onFormInstanceReady = (form: FormInstance) => {
+    searchFormRef.current = form; // 将 form 实例存储到 ref
+  };
 
   const showModel = (event: any, data?: any) => {
-    modelRef.current.showModel(true, data)
+    dialogRef.current.showModel(true, data)
   }
 
-  /**
-   * 按照顺序执行
-   */
+  const queryArticleCategory = async () => {
+    try {
+      const { params } = state;
+      const response = await api.articleCategory.fetch(params);
+      if (response && response.success) {
+        const { data, page } = response.data;
+        enhancedDispatch({
+          type: 'READ_DONE', payload: {
+            data, page
+          }
+        });
+      } else {
+        message.error(response?.message || '获取数据失败');
+      }
+    } catch (error) {
+      message.error('请求失败，请稍后重试');
+    }
+  };
+
   React.useEffect(() => {
-    getArticleCategory()
-  }, [queryParams])
+    (async () => {
+      await queryArticleCategory();
+    })();
+  }, [state.params]);
 
   return (
     <React.Fragment>
-      <div
-        style={{
-          height: '100vh',
-          width: '100%',
-          padding: '20px 20px',
-          background: colorBgContainer
-        }}>
-        <CategorySearch
+      <AppContainer>
+        <AppArticleCategorySearch
           showModel={showModel}
-          onFormInstanceReady={(instance: any) => {
-            setFormInstance(instance);
-          }}
-          setQqueryParams={setQqueryParams}
+          onFormInstanceReady={onFormInstanceReady}
+          setQueryParams={setQueryParams}
         />
-        <CategoryTable
-          ref={tableRef}
-          data={data}
+        <AppArticleCategoryTable
           columns={columns}
           onChange={onChange}
-          loading={loading}
         />
-        <CategoryModel
-          ref={modelRef}
-          open={open}
+        <AppArticleCategoryDialog
+          ref={dialogRef}
           onSubmit={onSubmit}
-          initialValues={{ modifier: 'public' }}
         />
-      </div>
+      </AppContainer>
     </React.Fragment>
   )
 }
 
-export default ArticleCategory
+export default () => (
+  <ArticleCategoryProvider>
+    <AppArticleCategory />
+  </ArticleCategoryProvider>
+);
+
