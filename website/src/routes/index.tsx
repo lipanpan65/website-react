@@ -25,7 +25,10 @@ import {
   SafetyOutlined,
   VerifiedOutlined,
   IdcardOutlined,
+  ApartmentOutlined
 } from '@ant-design/icons'
+
+
 
 import AppLayout from '@/components/AppLayout'
 import Article from '@/pages/user/article'
@@ -57,6 +60,8 @@ import RequireAuth from '@/components/RequireAuth';
 import AppUserInfo from '@/pages/operator/system/account'
 import AppRole from '@/pages/operator/system/role'
 import AppDeveloper from '@/pages/operator/system/developer'
+import OrganizationTree from '@/pages/operator/system/organization'
+import EditorLayout from '@/components/EditorLayout'
 
 
 export const AppRoute: any = [
@@ -246,13 +251,20 @@ export const AdminRoute: any = [
       },
       {
         id: "316",
+        name: "组织架构",
+        url: "/operator/system/organization",
+        hash: "#/operator/system/organization",
+        icon: <ApartmentOutlined />,
+      },
+      {
+        id: "317",
         name: "任务管理",
         icon: <ClockCircleOutlined />,
         url: '/operator/system/task',
         hash: '#/operator/system/task'
       },
       {
-        id: "317",
+        id: "318",
         name: "开发者中心",
         url: "/operator/system/developer",
         hash: "#/operator/system/developer",
@@ -267,7 +279,7 @@ const Routes = () => {
   // const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
   // const isAuthenticated = false;
   const isAuthenticated = true;
-
+  
   return useRoutes(
     [
       {
@@ -394,6 +406,7 @@ const Routes = () => {
               { path: 'role', element: <AppRole /> },
               { path: 'dict', element: <AppGlobalDict /> },
               { path: 'menu', element: <AppMenu /> },
+              { path: 'organization', element: <OrganizationTree /> },
               { path: 'developer', element: <AppDeveloper /> }
             ],
           },

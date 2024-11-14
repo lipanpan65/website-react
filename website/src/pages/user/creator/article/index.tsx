@@ -23,7 +23,6 @@ import modal from 'antd/es/modal';
 
 import './index.css'
 
-
 import { rowKeyF, showTotal } from '@/utils';
 import AppContainer from '@/components/AppContainer';
 import AppContent from '@/components/AppContent';
@@ -156,10 +155,10 @@ const CratorArticle: React.FC<CratorArticleProps> = ({
       }
     }).finally(() => cb());
   }
-
+  
   const redirectEditorPage = (article: any) => {
     navigator(`/user/article/editor/${article.id}`, {
-      // replace: true
+      // replace: true,
       state: {
         id: article.id,
         status: 'draft',

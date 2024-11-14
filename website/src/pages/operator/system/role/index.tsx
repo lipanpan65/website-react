@@ -220,6 +220,7 @@ const AppRoleDialog = React.forwardRef((props: any, ref) => {
     onCancel,
     setOpen,
   }));
+  
   return (
     <React.Fragment>
       <AppDialog
