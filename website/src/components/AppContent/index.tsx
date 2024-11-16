@@ -21,7 +21,7 @@ const AppContent: React.FC<AppContentProps> = ({
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-
+  
   const containerStyle: React.CSSProperties = {
     // display: 'flex',              // 设置 flex 布局
     // flexDirection: 'column',      // 垂直方向排列子元素

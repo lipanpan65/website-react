@@ -26,7 +26,7 @@ interface ButtonConfig extends Omit<ButtonProps, 'children'> {
 
 // Select 配置接口
 interface SelectConfig extends Omit<SelectProps<any>, 'children'> {
-  options: { label: string; value: string | number  }[];
+  options: { label: string; value: string | number }[];
 }
 
 // AppSearch 组件 props 接口
@@ -81,6 +81,7 @@ const AppSearch: React.FC<AppSearchProps> = ({
 
   return (
     <Form form={form}>
+      {/* gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} */}
       <Row gutter={[innerSpacing, 16]} className="app-search" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
         <Col>
           <Button icon={buttonConfig.icon || <SearchOutlined />} {...buttonConfig}>

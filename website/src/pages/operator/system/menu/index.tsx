@@ -171,7 +171,7 @@ const AppMenuTable = (props: any) => {
   const context = React.useContext(MenuContext)
   const { page, data, } = context.state
   const [checkStrictly, setCheckStrictly] = React.useState(false);
-  
+
   const pagination = {
     total: page?.total || 0, // 数据总数
     current: page?.current || 1, // 当前页码
@@ -440,19 +440,18 @@ const AppMenu = () => {
   } = theme.useToken();
 
   const columns: TableColumnsType<DataType> = [
-
-    {
-      title: '菜单名称',
-      dataIndex: 'menu_name',
-      key: 'menu_name',
-    },
     {
       title: '#',
       dataIndex: 'id',
       key: 'id',
     },
     {
-      title: '#',
+      title: '菜单名称',
+      dataIndex: 'menu_name',
+      key: 'menu_name',
+    },
+    {
+      title: '##',
       dataIndex: 'pid',
       key: 'pid',
     },
@@ -533,12 +532,6 @@ const AppMenu = () => {
       icon: <ExclamationCircleFilled />,
       content: `确认删除该菜单名称${data.menu_name}吗？`,
       onOk,
-      // onOk() {
-      //   return new Promise((resolve, reject) => {
-      //     setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-      //   }).catch(() => console.log('Oops errors!'));
-      // },
-      // onCancel() { },
     });
   }
 
@@ -558,7 +551,7 @@ const AppMenu = () => {
         })
       }
     }).finally(() => {
-
+      
     })
   }
 

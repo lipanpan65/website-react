@@ -1,60 +1,55 @@
 import * as React from 'react'
-import { Col, MenuProps, Row, Menu, theme, Tabs, Space } from 'antd'
-
-
 import {
-  UnorderedListOutlined,
-  EditOutlined,
-  MenuOutlined,
-  HomeOutlined,
-  BookOutlined,
-  ProfileOutlined
-} from '@ant-design/icons'
+  theme, Tabs,
+} from 'antd'
 
 import type { TabsProps } from 'antd';
 
 import CreatorAriticle from './article'
 import { IconText } from '@/utils'
+import AppContainer from '@/components/AppContainer';
 
 const CreatorOverView: React.FC = () => {
 
   const {
     token: {
       colorBgContainer,
+      borderRadius
     },
   } = theme.useToken();
 
-  const onChange = (key: string) => {
-    console.log(key);
-  };
+  const [activeKey, setActiveKey] = React.useState<string>('publish')
 
+  const onChange = (key: string) => {
+    setActiveKey(key)
+  };
+  
   const items: TabsProps['items'] = [
     {
-      key: 'article',
+      key: 'publish',
       label: IconText('ProfileOutlined', '文章'),
-      children: <CreatorAriticle />,
+      children: <CreatorAriticle activeKey={activeKey} />,
     },
     {
       key: 'draft',
       label: IconText('EditOutlined', '草稿'),
-      children: <CreatorAriticle />,
+      children: <CreatorAriticle activeKey={activeKey} />,
     },
   ];
 
   return (
-    <React.Fragment>
-      <div style={{
-        // display: 'flex',
-        // gap: 16,
-        width: '100%',
-        height: '100vh',
-        padding: '0 20px',
-        border:'1px solid red'
-        // background: colorBgContainer
-      }}>
-        <Tabs defaultActiveKey="article" items={items} onChange={onChange} />
-      </div>
-    </React.Fragment>
+    <AppContainer style={{
+      background: colorBgContainer,
+      borderRadius: borderRadius,
+      width: "100%",
+      padding: '0px 16px'
+    }}>
+      <Tabs
+        defaultActiveKey="publish"
+        activeKey={activeKey}
+        items={items}
+        onChange={onChange} />
+    </AppContainer>
   )
 }
 

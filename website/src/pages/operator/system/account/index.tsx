@@ -5,7 +5,8 @@ import {
   message,
   Modal,
   Form,
-  Input
+  Input,
+  Button
 } from 'antd'
 
 import {
@@ -22,6 +23,9 @@ import AppContainer from '@/components/AppContainer';
 import AppSearch from '@/components/AppSearch';
 import AppTable from '@/components/AppTable';
 import AppDialog from '@/components/AppDialog';
+import { UserInfoProvider, useUserInfo } from '@/hooks/state/useUserInfo';
+import { api } from '@/api';
+import ConfirmableButton from '@/components/ConfirmableButton';
 
 
 const { confirm } = Modal;
@@ -67,7 +71,6 @@ const AppUserInfoSearch: React.FC<AppUserInfoSearchProps> = ({
           setQueryParams={(params) => console.log('Query params:', params)}
           formItems={[
             {
-              // label: '搜索',
               name: 'search',
               placeholder: '请输入...',
               type: 'input',
@@ -142,7 +145,6 @@ const AppUserInfoTable: React.FC<UserInfoTableProps> = ({
           columns={columns}
           onChange={handleTableChange}
           loading={false}
-          // rowKey={(record) => record.id}  // 自定义 rowKey 为 record.name
         />
       </AppContent>
     </React.Fragment>
@@ -157,10 +159,53 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
 
   const fields = [
     {
+      label: '用户名称',
       name: 'category_name',
-      label: '分类名称',
       rules: [{ required: true, message: '请输入分类名称' }],
       component: <Input placeholder="请输入分类名称" />,
+      span: 12,
+    },
+    {
+      label: 'OA',
+      name: 'category_name',
+      rules: [{ required: true, message: '请输入分类名称' }],
+      component: <Input placeholder="请输入分类名称" />,
+      span: 12,
+    },
+    {
+      label: '手机号',
+      name: 'category_name',
+      rules: [{ required: true, message: '请输入分类名称' }],
+      component: <Input placeholder="请输入分类名称" />,
+      span: 12,
+    },
+    {
+      label: '邮箱',
+      name: 'category_name',
+      rules: [{ required: true, message: '请输入分类名称' }],
+      component: <Input placeholder="请输入分类名称" />,
+      span: 12,
+    },
+    {
+      label: '角色类型',
+      name: 'category_name',
+      rules: [{ required: true, message: '请输入分类名称' }],
+      component: <Input placeholder="请输入分类名称" />,
+      span: 12,
+    },
+    {
+      label: '角色名称',
+      name: 'category_name',
+      rules: [{ required: true, message: '请输入分类名称' }],
+      component: <Input placeholder="请输入分类名称" />,
+      span: 12,
+    },
+    {
+      label: '组织架构',
+      name: 'category_name',
+      rules: [{ required: true, message: '请输入分类名称' }],
+      component: <Input placeholder="请输入分类名称" />,
+      span: 24,
     },
     {
       name: 'remark',
@@ -226,8 +271,8 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
   );
 });
 
-
 const AppUserInfo = () => {
+  const { state, enhancedDispatch } = useUserInfo();
   const dialogRef: any = React.useRef()
   const dataTableRef: any = React.useRef()
   const navigate = useNavigate()
@@ -286,8 +331,13 @@ const AppUserInfo = () => {
       // sortOrder: 'descend',
       render: (_: any, record: any) => (
         <Space size="middle">
-          <a onClick={(event: any) => showModel(event, record)}>编辑</a>
-          <a onClick={(event: any) => handleDelete(event, record)}>删除</a>
+          <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
+            编辑
+          </Button>
+          <ConfirmableButton
+            type='link'
+            onSubmit={() => onSubmit('DELETE', record)}
+          >删除</ConfirmableButton>
         </Space>
       ),
     },
@@ -310,36 +360,6 @@ const AppUserInfo = () => {
     dialogRef.current.showModel(true, data)
   }
 
-  const handleDelete = (event: any, data?: any) => {
-    const onOk = () => new Promise<void>((resolve, reject) => {
-      request({
-        url: `/api/user/v1/article_category/${data.id}/`,
-        method: 'DELETE',
-      }).then((r: any) => {
-        const { status, statusText
-        } = r
-        if (status === 200 && statusText === 'OK') {
-          message.success('操作成功')
-          resolve(r.data)
-        }
-      }).catch((e: any) => {
-        message.error('操作失败')
-        reject()
-      })
-    }).then((r: any) => {
-    }).finally(() => {
-      dialogRef.current.setOpen(false)
-      // getArticleCategory()
-    })
-
-    confirm({
-      title: '删除分类',
-      icon: <ExclamationCircleFilled />,
-      content: `确认删除该分类${data.category_name}吗？`,
-      onOk,
-    });
-  }
-
   /**
  * 按照顺序执行
  */
@@ -347,51 +367,38 @@ const AppUserInfo = () => {
     console.log("加载数据")
   }, [queryParams])
 
-  const onSubmit = (data: any) => {
-    if (!!data.id) {
-      console.log("更新")
-      request({
-        url: `/api/user/v1/article_category/${data.id}/`,
-        method: 'PUT',
-        data
-      }).then((r: any) => {
-        const { status, statusText } = r
-        if (status === 200 && statusText === 'OK') {
-          const { code, success } = r.data
-          if (code === "0000") {
-            message.success('操作成功')
-          } else if (success === false) {
-            message.error(r.data.message)
-          }
-        }
-      }).finally(() => {
-        dialogRef.current.setOpen(false)
-        // 重新拉
-        // getArticleCategory()
-      })
-    } else {
-      request({
-        url: `/api/user/v1/article_category/`,
-        method: 'POST',
-        data
-      }).then((r: any) => {
-        const { status, statusText
-        } = r
-        if (status === 200 && statusText === 'OK') {
-          const { code, success } = r.data
-          if (code === "0000") {
-            message.success('操作成功')
-          } else if (success === false) {
-            message.error(r.data.message)
-          }
-        }
-      }).finally(() => {
-        // modelRef.current.setOpen(false)
-        // 重新拉
-        // getArticleCategory()
-      })
+  const onSubmit = async (
+    actionType: 'CREATE' | 'UPDATE' | 'DELETE',
+    data: Record<string, any>
+  ) => {
+    // 确定请求方法
+    const requestAction =
+      actionType === 'DELETE'
+        ? () => api.role.delete(data.id)
+        : actionType === 'UPDATE'
+          ? api.role.update
+          : api.role.create;
+
+    // 设定响应消息
+    const responseMessages = {
+      success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
+      error: actionType === 'UPDATE' ? '更新失败，请重试' : actionType === 'DELETE' ? '删除失败，请重试' : '创建失败，请重试',
+    };
+
+    // 执行状态更新
+    enhancedDispatch({ type: actionType, payload: { data } });
+
+    try {
+      const response = await requestAction(data);
+      const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
+      message[response?.success ? 'success' : 'error'](messageText);
+    } catch (error) {
+      console.error('提交出错:', error);
+      message.error('提交出错，请检查网络或稍后重试');
+    } finally {
+      // await queryRole();
     }
-  }
+  };
 
   return (
     <AppContainer>
@@ -410,9 +417,13 @@ const AppUserInfo = () => {
         ref={dialogRef}
         onSubmit={onSubmit}
       />
-
     </AppContainer>
   )
 }
 
-export default AppUserInfo
+
+export default () => (
+  <UserInfoProvider>
+    <AppUserInfo />
+  </UserInfoProvider>
+);

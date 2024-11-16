@@ -25,7 +25,10 @@ import {
   SafetyOutlined,
   VerifiedOutlined,
   IdcardOutlined,
+  ApartmentOutlined
 } from '@ant-design/icons'
+
+
 
 import AppLayout from '@/components/AppLayout'
 import Article from '@/pages/user/article'
@@ -42,7 +45,7 @@ import NotFound from '@/components/NotFound'
 import ArticleCategory from '@/pages/operator/article/category'
 import Subject from '@/pages/user/subjects/overview'
 import SubjectDetail from '@/pages/user/subjects/detail'
-import AppMenu from '@/pages/operator/account/menu'
+import AppMenu from '@/pages/operator/system/menu'
 import SubjectManager from '@/pages/operator/article/subjects'
 // 用户登陆主页面
 import Authenticate from '@/pages/operator/account/authenticate'
@@ -57,6 +60,8 @@ import RequireAuth from '@/components/RequireAuth';
 import AppUserInfo from '@/pages/operator/system/account'
 import AppRole from '@/pages/operator/system/role'
 import AppDeveloper from '@/pages/operator/system/developer'
+import OrganizationTree from '@/pages/operator/system/organization'
+import EditorLayout from '@/components/EditorLayout'
 
 
 export const AppRoute: any = [
@@ -105,34 +110,27 @@ export const AppRoute: any = [
         icon: <SwitcherOutlined />,
         childs: [
           {
-            id: "222",
-            name: "分类管理",
-            url: "/user/creator/article-category",
-            hash: "#/user/creator/article-category",
-            icon: <GroupOutlined />,
-          },
-          {
             id: "221",
             name: "文章管理",
             url: "/user/creator/overview",
             hash: "#/user/creator/overview",
             icon: <OrderedListOutlined />,
           },
+          // {
+          //   id: "222",
+          //   name: "分类管理",
+          //   url: "/user/creator/article-category",
+          //   hash: "#/user/creator/article-category",
+          //   icon: <GroupOutlined />,
+          // },
 
-          {
-            id: "223",
-            name: "菜单管理",
-            url: "/user/creator/menu",
-            hash: "#/user/creator/menu",
-            icon: <MenuOutlined />,
-          },
-          {
-            id: "224",
-            name: "专题管理",
-            url: "/user/creator/subjects",
-            hash: "#/user/creator/subjects",
-            icon: <GatewayOutlined />,
-          },
+          // {
+          //   id: "224",
+          //   name: "专题管理",
+          //   url: "/user/creator/subjects",
+          //   hash: "#/user/creator/subjects",
+          //   icon: <GatewayOutlined />,
+          // },
         ]
       },
     ]
@@ -246,22 +244,27 @@ export const AdminRoute: any = [
       },
       {
         id: "315",
-        name: "任务管理",
-        icon: <ClockCircleOutlined />,
-        url: '/operator/system/task',
-        hash: '#/operator/system/task',
-        childs: [
-          {
-            id: "3151",
-            name: "角色管理",
-            icon: <SafetyOutlined />,
-            url: '/operator/system/role',
-            hash: '#/operator/system/role',
-          },
-        ]
+        name: "菜单管理",
+        url: "/operator/system/menu",
+        hash: "#/operator/system/menu",
+        icon: <MenuOutlined />,
       },
       {
         id: "316",
+        name: "组织架构",
+        url: "/operator/system/organization",
+        hash: "#/operator/system/organization",
+        icon: <ApartmentOutlined />,
+      },
+      {
+        id: "317",
+        name: "任务管理",
+        icon: <ClockCircleOutlined />,
+        url: '/operator/system/task',
+        hash: '#/operator/system/task'
+      },
+      {
+        id: "318",
         name: "开发者中心",
         url: "/operator/system/developer",
         hash: "#/operator/system/developer",
@@ -276,7 +279,7 @@ const Routes = () => {
   // const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
   // const isAuthenticated = false;
   const isAuthenticated = true;
-
+  
   return useRoutes(
     [
       {
@@ -357,10 +360,10 @@ const Routes = () => {
             path: '/user/creator/subjects',
             element: <SubjectManager />
           },
-          {
-            path: '/user/creator/menu',
-            element: <AppMenu />
-          },
+          // {
+          //   path: '/user/creator/menu',
+          //   element: <AppMenu />
+          // },
         ]
       },
       {
@@ -402,6 +405,8 @@ const Routes = () => {
               { path: 'account', element: <AppUserInfo /> },
               { path: 'role', element: <AppRole /> },
               { path: 'dict', element: <AppGlobalDict /> },
+              { path: 'menu', element: <AppMenu /> },
+              { path: 'organization', element: <OrganizationTree /> },
               { path: 'developer', element: <AppDeveloper /> }
             ],
           },
