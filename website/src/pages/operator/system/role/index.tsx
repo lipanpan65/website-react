@@ -299,7 +299,7 @@ const AppRole: React.FC<AppProps> = (props) => {
   const showModel = (_: any, data?: any) => {
     dialogRef.current.showModel(true, data)
   }
-
+  
   const onSubmit = async (
     actionType: 'CREATE' | 'UPDATE' | 'DELETE',
     data: Record<string, any>
