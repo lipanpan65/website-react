@@ -37,44 +37,37 @@ interface ArticleType {
   category_id: string | null;
 }
 
-const initialState = {
-  loading: false,
-  article: { id: null, title: null, content: null, summary: null, html: null, category_id: null },
-  options: [],
-};
+// const initialState = {
+//   loading: false,
+//   article: { id: null, title: null, content: null, summary: null, html: null, category_id: null },
+//   options: [],
+// };
 
-export const EditArticleContext = createContext<{
-  state: typeof initialState,
-  dispatch: React.Dispatch<any>
-}>({
-  state: initialState,
-  dispatch: () => { }
-});
 
-const reducer = (state: any, action: any) => {
-  switch (action.type) {
-    case 'READ':
-      return { ...state, loading: true };
-    case 'READ_DONE':
-      return { loading: false, article: action.payload.article };
-    case 'UPDATE_TITLE':
-      return { ...state, article: { ...state.article, title: action.payload.title } };
-    case 'UPDATE_CONTENT':
-      return {
-        ...state,
-        article: {
-          ...state.article,
-          content: action.payload.content,
-          html: action.payload.html,
-          summary: removeMarkdownSyntax(action.payload.content, 100),
-        }
-      };
-    case 'UPDATE_ID':
-      return { ...state, article: { ...state.article, id: action.payload.id } };
-    default:
-      return state;
-  }
-};
+// const reducer = (state: any, action: any) => {
+//   switch (action.type) {
+//     case 'READ':
+//       return { ...state, loading: true };
+//     case 'READ_DONE':
+//       return { loading: false, article: action.payload.article };
+//     case 'UPDATE_TITLE':
+//       return { ...state, article: { ...state.article, title: action.payload.title } };
+//     case 'UPDATE_CONTENT':
+//       return {
+//         ...state,
+//         article: {
+//           ...state.article,
+//           content: action.payload.content,
+//           html: action.payload.html,
+//           summary: removeMarkdownSyntax(action.payload.content, 100),
+//         }
+//       };
+//     case 'UPDATE_ID':
+//       return { ...state, article: { ...state.article, id: action.payload.id } };
+//     default:
+//       return state;
+//   }
+// };
 
 const useThrottle = (callback: () => Promise<void>, delay: number) => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -103,7 +96,6 @@ const useThrottle = (callback: () => Promise<void>, delay: number) => {
 
 const ArticleEditor = () => {
   const params = useParams();
-
   const navigate = useNavigate();
   const publishRef = useRef<any>();
   // const [state, dispatch] = useReducer(reducer, initialState);
@@ -115,7 +107,7 @@ const ArticleEditor = () => {
     if (!state.article.title && !state.article.content) return;
     setSaveStatus('文章保存中...');
     isSaving.current = true;
-
+    
     if (state.article.id) {
       await updateArticle();
     } else {
@@ -168,9 +160,7 @@ const ArticleEditor = () => {
   const handleInputChange = (fields: Partial<typeof state.article>) => {
     setSaveStatus('文章保存中...');
     isSaving.current = true;
-
     enhancedDispatch({ type: 'UPDATE_ARTICLE', payload: fields });
-
     saveArticle();
   };
 
