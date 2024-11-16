@@ -119,19 +119,6 @@ const CratorArticle: React.FC<CratorArticleProps> = ({
     } catch (error) {
       message.error('请求失败，请稍后重试');
     }
-    // request({
-    //   url: `/api/user/v1/article/`,
-    //   method: 'GET',
-    //   params: params || {}
-    // }).then((response: any) => {
-    //   console.log("getArticleList.response", response)
-    //   const { status, statusText } = response
-    //   if (status === 200 && statusText === 'OK') {
-    //     const { success, message, data: { page, data } } = response.data
-    //     // const { page, data } = response.data
-    //     dispatch({ type: 'READ_DONE', payload: { data, page } })
-    //   }
-    // })
   }
 
   const handleLinkTo = (v: any) => {
