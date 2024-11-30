@@ -405,19 +405,6 @@ const Subject = () => {
         }
       }
     })
-    // if (key === 'add') {
-    //   dispatch({
-    //     type: 'SHOW_MODEL', payload: {
-    //       open: true, entry: {
-    //         id: data.id,
-    //         menu_name: data.menu_name,
-    //         pid: data.id
-    //       }
-    //     }
-    //   })
-    // } else {
-    //   dispatch({ type: 'SHOW_MODEL', payload: { open: true, entry: { ...data } } })
-    // }
   }
 
   // 定义action 
@@ -431,7 +418,6 @@ const Subject = () => {
   }
 
   const querySubjects = () => {
-    console.log('--------没有执行-----')
     const { params } = state
     api.fetch(params).then((r: any) => {
       console.log("-------")

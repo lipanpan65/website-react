@@ -46,7 +46,7 @@ import ArticleCategory from '@/pages/operator/article/category'
 import Subject from '@/pages/user/subjects/overview'
 import SubjectDetail from '@/pages/user/subjects/detail'
 import AppMenu from '@/pages/operator/system/menu'
-import SubjectManager from '@/pages/operator/article/subjects'
+import SubjectManager from '@/pages/operator/article/topics'
 // 用户登陆主页面
 import Authenticate from '@/pages/operator/account/authenticate'
 import System from '@/pages/operator/system'
@@ -201,8 +201,8 @@ export const AdminRoute: any = [
       {
         id: "23",
         name: "专题管理",
-        url: "/operator/creator/subjects",
-        hash: "#/operator/creator/subjects",
+        url: "/operator/creator/topics",
+        hash: "#/operator/creator/topics",
         icon: <GatewayOutlined />,
       },
     ]
@@ -357,7 +357,7 @@ const Routes = () => {
             element: <ArticleCategory />
           },
           {
-            path: '/user/creator/subjects',
+            path: '/user/creator/topics',
             element: <SubjectManager />
           },
           // {
@@ -389,7 +389,7 @@ const Routes = () => {
               { index: true, element: <Navigate to="article" /> }, // 使用 index 路由来表示默认路径
               { path: 'article', element: <ArticleCategory /> },
               { path: 'category', element: <ArticleCategory /> },
-              { path: 'subject', element: <ArticleCategory /> },
+              { path: 'topics', element: <ArticleCategory /> },
             ],
           },
         ]

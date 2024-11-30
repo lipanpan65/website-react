@@ -88,9 +88,11 @@ const items: MenuItem[] = [
   // },
 ];
 
-
-// 首页文章渲染
 const Article: React.FC = () => {
+
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
 
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
@@ -122,7 +124,7 @@ const Article: React.FC = () => {
       <div className='article-wrapper'>
         <div className="section section-left" style={{
           padding: '0',
-          minHeight: ''
+          minHeight: '',
           // flexDirection: 'column',
           // backgroundColor: "#fff",
           // height: 'fix-content',
@@ -131,7 +133,9 @@ const Article: React.FC = () => {
           {/* <Button>你好</Button> */}
           <Menu
             onClick={onClick}
-            // style={{ width: 256 }}
+            style={{
+              borderRadius: borderRadiusLG
+            }}
             defaultSelectedKeys={['1']}
             defaultOpenKeys={['sub1']}
             mode="inline"
