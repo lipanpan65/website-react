@@ -18,6 +18,7 @@
     background-color: var(--card-bg-color);
     border-radius: var(--border-radius-lg);
     max-height: calc(100vh - 140px);
+    border-radius: 8px;
 }
 
 .section-right {
