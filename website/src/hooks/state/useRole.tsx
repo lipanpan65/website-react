@@ -48,7 +48,7 @@ const initialState: StateType = {
 
 // 定义 enhancedDispatch 类型，支持 ActionType 和函数
 type EnhancedDispatch = (action: ActionType | ((dispatch: Dispatch<ActionType>) => void)) => void;
-
+    
 const reducer = (state: StateType, action: ActionType): StateType => {
   switch (action.type) {
     case 'READ':
