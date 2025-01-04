@@ -5,12 +5,9 @@ import AppDialog from '@/components/AppDialog';
 import { PlusOutlined, AndroidOutlined, AppleOutlined, CheckOutlined, EditOutlined, DeleteOutlined, CarryOutOutlined, FormOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { Button, Flex, Input, Splitter, Tooltip, Typography, TreeSelect, Tabs, Tree, Switch, Select, FormInstance, message, TreeDataNode, Menu, Dropdown } from 'antd';
 import { DataNode } from 'antd/es/tree';
+import { api } from '@/api';
 // import { DataNode } from 'antd/es/tree';
 // import type { DataNode, TreeProps, TreeDataNode } from 'antd/es/tree';
-
-
-
-
 
 const { SHOW_PARENT } = TreeSelect;
 
@@ -131,11 +128,11 @@ const OrganizationTreeDialog: React.FC<any> = React.forwardRef((props: any, ref)
 
   const fields = [
     {
-      label: '角色名称',
+      label: '组织架构名称',
       name: 'role_name',
-      rules: [{ required: true, message: '请输入角色名称' }],
-      component: <Input placeholder="请输入角色名称" />,
-      span: 24,  // 使字段占据一半宽度
+      rules: [{ required: true, message: '请输入组织架构名称' }],
+      component: <Input placeholder="请输入组织架构名称" />,
+      span: 24,
     },
     {
       label: '状态',
@@ -147,20 +144,6 @@ const OrganizationTreeDialog: React.FC<any> = React.forwardRef((props: any, ref)
           <Select.Option value={0}>禁用</Select.Option>
         </Select>
       ),
-      span: 12,
-    },
-    {
-      label: '角色类型',
-      name: 'role_type',
-      rules: [{ required: true, message: '请输入角色类型' }],
-      component: (
-        <Select placeholder="请选择角色类型" allowClear>
-          <Select.Option value={0}>普通用户</Select.Option>
-          <Select.Option value={1}>管理员</Select.Option>
-          <Select.Option value={2}>超级管理员</Select.Option>
-        </Select>
-      ),
-      span: 12,
     },
     {
       name: 'remark',
@@ -218,7 +201,7 @@ const OrganizationTreeDialog: React.FC<any> = React.forwardRef((props: any, ref)
     <div>
       <React.Fragment>
         <AppDialog
-          title='添加角色'
+          title='添加组织架构'
           fields={fields}
           record={record}
           onCancel={onCancel}
@@ -278,8 +261,7 @@ const OrganizationTree: React.FC<any> = ({ }) => {
     style: {
       width: '100%',
     },
-    fieldNames: { title: 'title', key: 'key', children: 'children' },
-    
+    fieldNames: { title: 'title', key: 'key', children: 'children' }
   };
 
   const onSelect = (selectedKeys: React.Key[], info: any) => {
@@ -292,69 +274,7 @@ const OrganizationTree: React.FC<any> = ({ }) => {
 
   {/* <Desc text="First" /> */ }
 
-
-  // const renderTitle = (node: TreeDataNode) => (
-  //   <div
-  //     onMouseEnter={() => setHoveredKey(node.key as string)}
-  //     onMouseLeave={() => setHoveredKey(null)}
-  //     style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-  //   >
-  //     <span>{node.title}</span>
-  //     {hoveredKey === node.key && (
-  //       <div style={{ display: 'flex', gap: '8px', marginLeft: '8px' }}>
-  //         <Tooltip title="添加">
-  //           <PlusOutlined onClick={() => console.log('Add', node.key)} />
-  //         </Tooltip>
-  //         <Tooltip title="编辑">
-  //           <EditOutlined onClick={() => console.log('Edit', node.key)} />
-  //         </Tooltip>
-  //         <Tooltip title="删除">
-  //           <DeleteOutlined onClick={() => console.log('Delete', node.key)} />
-  //         </Tooltip>
-  //       </div>
-  //     )}
-  //   </div>
-  // );
-
-
-  // const renderTitle = (node: any) => (
-  //   <div
-  //     onMouseEnter={() => setHoveredKey(node.key as string)}
-  //     onMouseLeave={() => setHoveredKey(null)}
-  //     style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-  //   >
-  //     <span>{node.title}</span>
-  //     {hoveredKey === node.key && (
-  //       <div style={{ display: 'flex', gap: '8px', marginLeft: '8px' }}>
-  //         <Tooltip title="添加">
-  //           <PlusOutlined onClick={() => console.log('Add', node.key)} />
-  //         </Tooltip>
-  //         <Tooltip title="编辑">
-  //           <EditOutlined onClick={() => console.log('Edit', node.key)} />
-  //         </Tooltip>
-  //         <Tooltip title="删除">
-  //           <DeleteOutlined onClick={() => console.log('Delete', node.key)} />
-  //         </Tooltip>
-  //       </div>
-  //     )}
-  //   </div>
-  // );
-
   const renderTitle = (node: any) => {
-
-    // const menuItems = (
-    //   <Menu>
-    //     <Menu.Item key="add" icon={<PlusOutlined />} onClick={() => console.log('Add', node.key)}>
-    //       添加
-    //     </Menu.Item>
-    //     <Menu.Item key="edit" icon={<EditOutlined />} onClick={() => console.log('Edit', node.key)}>
-    //       编辑
-    //     </Menu.Item>
-    //     <Menu.Item key="delete" icon={<DeleteOutlined />} onClick={() => console.log('Delete', node.key)}>
-    //       删除
-    //     </Menu.Item>
-    //   </Menu>
-    // );
 
     const menu = (
       <Menu>
@@ -409,14 +329,31 @@ const OrganizationTree: React.FC<any> = ({ }) => {
   };
 
   // 递归处理树节点数据，将自定义渲染的 `title` 直接赋值
-  const processTreeData = (data: DataNode[]): DataNode[] =>
+  const mapTreeData = (data: DataNode[]): DataNode[] =>
     data.map((node) => ({
       ...node,
       title: renderTitle(node), // 直接赋值 `renderTitle(node)` 的返回值给 `title`
-      children: node.children ? processTreeData(node.children) : undefined,
+      children: node.children ? mapTreeData(node.children) : undefined,
     }));
 
-  const customTreeData = processTreeData(treeData);
+  const onSubmit = async (
+    actionType: 'CREATE' | 'UPDATE' | 'DELETE',
+    data: Record<string, any>
+  ) => {
+    const requestAction =
+      actionType === 'DELETE'
+        ? () => api.org.delete(data.id)
+        : actionType === 'UPDATE'
+          ? api.org.update
+          : api.org.create;
+    
+    
+  }
+
+  const customTreeData = mapTreeData(treeData);
+
+
+
 
   return (
     <div>
@@ -470,6 +407,7 @@ const OrganizationTree: React.FC<any> = ({ }) => {
         </Splitter>
         <OrganizationTreeDialog
           ref={dialogRef}
+          onSubmit={onSubmit}
         />
       </AppContainer >
     </div >
