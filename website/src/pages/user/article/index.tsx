@@ -10,7 +10,8 @@ import {
   List,
   Menu,
   MenuProps,
-  theme
+  theme,
+  Skeleton
 } from 'antd'
 
 import { request, rowKeyF, showTotal } from '@/utils'
@@ -91,8 +92,10 @@ const items: MenuItem[] = [
 const Article: React.FC = () => {
 
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { borderRadiusLG },
   } = theme.useToken();
+
+  const [loading, setLoading] = React.useState<boolean>(true)
 
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
@@ -110,6 +113,7 @@ const Article: React.FC = () => {
         const { page, data } = response.data
         dispatch({ type: 'READ_DONE', payload: { data, page } })
       }
+      setLoading(false)
     })
   }
 
@@ -143,40 +147,42 @@ const Article: React.FC = () => {
           />
         </div>
         <div className="section center">
-          <div className="article-list">
-            <List
-              itemLayout="vertical"
-              loading={state.loading}
-              dataSource={state.data}
-              split={false}
-              pagination={{
-                ...state.page,
-                showTotal,
-                align: 'center',
-                showSizeChanger: false,
-                onChange // function(page, pageSize)
-              }}
-              rowKey={rowKeyF}
-              renderItem={(item: any, index: number) => (
-                <List.Item
-                  style={{
-                    // padding: '12px 12px 12px 12px'
-                  }}
-                  actions={[
-                    <span>{item.creator || '皮皮虾'}</span>,
-                    <span>{item.create_time}</span>,
-                    <span>{item.category_name}</span>,
-                  ]}
-                >
-                  <List.Item.Meta
-                    // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
-                    title={ArticleTitle(item)}
-                    description={<div style={{ width: '100%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.summary}</div>}
-                  />
-                </List.Item>
-              )}
-            />
-          </div>
+          <Skeleton loading={loading}>
+            <div className="article-list">
+              <List
+                itemLayout="vertical"
+                loading={state.loading}
+                dataSource={state.data}
+                split={false}
+                pagination={{
+                  ...state.page,
+                  showTotal,
+                  align: 'center',
+                  showSizeChanger: false,
+                  onChange // function(page, pageSize)
+                }}
+                rowKey={rowKeyF}
+                renderItem={(item: any, index: number) => (
+                  <List.Item
+                    style={{
+                      // padding: '12px 12px 12px 12px'
+                    }}
+                    actions={[
+                      <span>{item.creator || '皮皮虾'}</span>,
+                      <span>{item.create_time}</span>,
+                      <span>{item.category_name}</span>,
+                    ]}
+                  >
+                    <List.Item.Meta
+                      // avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
+                      title={ArticleTitle(item)}
+                      description={<div style={{ width: '100%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.summary}</div>}
+                    />
+                  </List.Item>
+                )}
+              />
+            </div>
+          </Skeleton>
         </div>
         <div className="section section-right">
           <div className="right-pane">
@@ -198,7 +204,6 @@ const Article: React.FC = () => {
     </React.Fragment>
   )
 }
-
 export default Article
 
 
