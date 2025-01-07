@@ -21,7 +21,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({
   layoutStyle,
   nested = false,
 }) => {
-  
+
   const {
     token: { colorBgContainer,
       borderRadiusLG },
@@ -30,9 +30,13 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({
   return (
     <div style={layoutStyle}>
       {nested ? (
-        <Layout>
+        <Layout style={{
+          background: '#f2f0f5'
+        }}>
           {header && <Header>{header}</Header>}
-          <Content >
+          <Content style={{
+            background: '#f2f0f5'
+          }}>
             <Layout className='app-layout'>
               {sider && <Sider
                 style={{ background: colorBgContainer, borderRadius: borderRadiusLG }}
@@ -45,7 +49,9 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({
       ) : (
         <>
           {header && <Header>{header}</Header>}
-          <Layout>
+          <Layout style={{
+            background: '#f2f0f5'
+          }}>
             {sider && <Sider>{sider}</Sider>}
             <Content style={contentStyle}>
               <Outlet />

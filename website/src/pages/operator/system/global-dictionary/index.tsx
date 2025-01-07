@@ -11,7 +11,6 @@ import {
 
 import { ExclamationCircleFilled, PlusCircleOutlined } from '@ant-design/icons';
 
-import { request } from '@/utils';
 import { api } from '@/api';
 import AppContainer from '@/components/AppContainer'
 import AppContent from '@/components/AppContent';
@@ -351,7 +350,7 @@ const AppGlobalDict = () => {
       )
     },
   ];
-
+  
   const onSubmit = async (
     actionType: 'CREATE' | 'UPDATE' | 'DELETE',
     data: Record<string, any>

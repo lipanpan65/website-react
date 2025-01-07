@@ -1,11 +1,15 @@
 // 导入各个模块的 API
 import { globalDictApi } from './globalDict';
 import { roleApi } from './role'
-// import { articleApi } from './article';
-// 可以继续添加其他 API 模块...
+import { articleCategoryApi } from './articleCategory'
+import { articleApi } from './article';
+import { orgApi } from './organization';
 
-// 统一导出 API
+// TODO 修改常用的名称
 export const api = {
+    article: articleApi,
     globalDict: globalDictApi,
-    role: roleApi
+    role: roleApi,
+    articleCategory: articleCategoryApi,
+    org: orgApi
 };

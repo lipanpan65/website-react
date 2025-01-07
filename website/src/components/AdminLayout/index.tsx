@@ -46,7 +46,7 @@ const AdminLayout: React.FC = () => {
     document.title = pageTitle;
     console.log("Document title updated to: ", pageTitle);
   }, [appMenu]);  // 依赖 appMenu 的变化
-  
+
   return (
     <Layout>
       <AdminHeader
@@ -54,7 +54,9 @@ const AdminLayout: React.FC = () => {
         collapsed={collapsed}
         onCollapsed={onCollapsed}
       />
-      <Layout>
+      <Layout style={{
+        background: '#f2f0f5'
+      }}>
         <AdminSider collapsed={collapsed} appMenu={appMenu} />
         {/* <div>
           <Outlet />

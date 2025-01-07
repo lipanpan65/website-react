@@ -1,51 +1,57 @@
 .edit-container {
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    height: '100vh';
-    /* background-color: aqua; */
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: '100vh';
 }
 
 .edit-container .header {
-    padding: 0 27px;
-    /* width: 100%; */
-    height: 64px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  padding: 0 27px;
+  height: 64px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .edit-container .header .header-left {
-    width: 70%;
-    line-height: 64px;
+  flex: 1.8;
+  width: 65%;
+  line-height: 64px;
+}
+
+.edit-container .header-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .header-left .input-title {
-    /* width: 70%; */
-    padding: 0px;
-    font-weight: 500;
-    height: '100%';
-    /* width: 70%; */
-    /* 未生效 */
-    font-size: 24 !important;
-}
-
-/* TODO 让元素向右浮动,总结如何让元素向右对齐 */
-.edit-container .header-right {
-    line-height: 64px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+  padding: 0px;
+  font-weight: 500;
+  height: '100%';
+  font-size: 24 !important;
 }
 
 .header-right button {
-    margin-left: 16px;
+  margin-left: 16px;
 }
 
 .edit-container .btn {
-    /* width: 0%; */
-    /* display: inline-block; */
-    width: 20%;
-    /* background-color: azure; */
+  /* width: 0%; */
+  /* display: inline-block; */
+  width: 20%;
+  /* background-color: azure; */
+}
+
+.save-status {
+  font-size: 14px;
+  white-space: nowrap;
+  color: #c9cdd4;
+  cursor: default;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
