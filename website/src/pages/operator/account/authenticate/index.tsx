@@ -15,7 +15,7 @@ import './index.css'
 const Authenticate = () => {
 
   const dispatch = useDispatch();
-
+  
   const navigate = useNavigate()
 
   const handleLinkTo = () => {

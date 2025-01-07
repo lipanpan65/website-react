@@ -6,8 +6,7 @@ import { PlusOutlined, AndroidOutlined, AppleOutlined, CheckOutlined, EditOutlin
 import { Button, Flex, Input, Splitter, Tooltip, Typography, TreeSelect, Tabs, Tree, Switch, Select, FormInstance, message, TreeDataNode, Menu, Dropdown } from 'antd';
 import { DataNode } from 'antd/es/tree';
 import { api } from '@/api';
-// import { DataNode } from 'antd/es/tree';
-// import type { DataNode, TreeProps, TreeDataNode } from 'antd/es/tree';
+import { useOrginationTree, OrginationTreeProvider } from '@/hooks/state/useOrgination';
 
 const { SHOW_PARENT } = TreeSelect;
 
@@ -129,7 +128,7 @@ const OrganizationTreeDialog: React.FC<any> = React.forwardRef((props: any, ref)
   const fields = [
     {
       label: '组织架构名称',
-      name: 'role_name',
+      name: 'org_name',
       rules: [{ required: true, message: '请输入组织架构名称' }],
       component: <Input placeholder="请输入组织架构名称" />,
       span: 24,
@@ -237,7 +236,7 @@ const OrganizationTreeTab: React.FC<any> = ({ }) => {
 }
 
 const OrganizationTree: React.FC<any> = ({ }) => {
-
+  const { state, enhancedDispatch } = useOrginationTree();
   const [value, setValue] = React.useState(['0-0']);
   const [showLine, setShowLine] = React.useState<boolean>(true);
   const [showIcon, setShowIcon] = React.useState<boolean>(false);
@@ -346,14 +345,31 @@ const OrganizationTree: React.FC<any> = ({ }) => {
         : actionType === 'UPDATE'
           ? api.org.update
           : api.org.create;
+
+    console.log("onSubmit===>", data)
+
+    // 设定响应消息
+    const responseMessages = {
+      success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
+      error: actionType === 'UPDATE' ? '更新失败，请重试' : actionType === 'DELETE' ? '删除失败，请重试' : '创建失败，请重试',
+    };
     
-    
+    // 执行状态更新
+    enhancedDispatch({ type: actionType, payload: { data } });
+
+    try {
+      const response = await requestAction(data);
+      const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
+      message[response?.success ? 'success' : 'error'](messageText);
+    } catch (error) {
+      console.error('提交出错:', error);
+      message.error('提交出错，请检查网络或稍后重试');
+    } finally {
+      // await queryGlobalDict();
+    }
   }
 
   const customTreeData = mapTreeData(treeData);
-
-
-
 
   return (
     <div>
@@ -413,7 +429,9 @@ const OrganizationTree: React.FC<any> = ({ }) => {
     </div >
   )
 }
-export default OrganizationTree
 
-
-
+export default () => (
+  <OrginationTreeProvider>
+    <OrganizationTree />
+  </OrginationTreeProvider>
+);

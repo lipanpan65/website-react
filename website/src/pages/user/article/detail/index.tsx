@@ -98,11 +98,12 @@ const ArticleDetail: React.FC = () => {
     )
   }
   React.useEffect(() => getArticle(), [])
-
+  
   let ref: any = ''
   const Pre = (preProps: any) => {
     return (
       <pre
+        style={{ tabSize: 2 }}
         className='blog-pre'
         // 兼容移动端的触摸事件
         onTouchStart={({ currentTarget }) => {
@@ -116,7 +117,7 @@ const ArticleDetail: React.FC = () => {
       </pre>
     )
   }
-  
+
   return (
     <React.Fragment>
       <div className="layout-3-1 app-layout debug-border">
