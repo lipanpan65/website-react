@@ -110,7 +110,7 @@ export const OrginationTreeProvider = ({ children }: { children: ReactNode }) =>
       dispatch(action);
     }
   };
-
+  
   return (
     <OrginationTreeContext.Provider value={{ state, enhancedDispatch }}>
       {children}
