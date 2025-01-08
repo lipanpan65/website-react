@@ -74,7 +74,8 @@ const treeData: TreeDataNode[] = [
         icon: <CarryOutOutlined />,
         children: [
           {
-            title: 'leaf', key: '0-0-2-0',
+            title: 'leaf',
+            key: '0-0-2-0',
             // value: '0-0-2-0', 
             icon: <CarryOutOutlined />
           },
@@ -166,7 +167,7 @@ const OrganizationTreeDialog: React.FC<any> = React.forwardRef((props: any, ref)
       setRecord(data); // 更新 record 状态
     }
   };
-
+  
   const handleSubmit = async () => {
     try {
       const data = await formInstance?.validateFields();
@@ -261,6 +262,7 @@ const OrganizationTree: React.FC<any> = ({ }) => {
       width: '100%',
     },
     fieldNames: { title: 'title', key: 'key', children: 'children' }
+    // fieldNames: { title: 'org_name', key: 'org_id', children: 'children' }
   };
 
   const onSelect = (selectedKeys: React.Key[], info: any) => {
@@ -273,17 +275,18 @@ const OrganizationTree: React.FC<any> = ({ }) => {
 
   {/* <Desc text="First" /> */ }
 
-  const renderTitle = (node: any) => {
 
+  const renderTitle = (node: any) => {
+    console.log("renderTitle", node)
     const menu = (
       <Menu>
         <Menu.Item key="add" icon={<PlusOutlined />} onClick={() => console.log('Add', node.key)}>
           添加
         </Menu.Item>
-        <Menu.Item key="edit" icon={<EditOutlined />} onClick={() => console.log('Edit', node.key)}>
+        <Menu.Item key="edit" icon={<EditOutlined />} onClick={() => console.log('Edit', node.org_id)}>
           编辑
         </Menu.Item>
-        <Menu.Item key="delete" icon={<DeleteOutlined />} onClick={() => console.log('Delete', node.key)}>
+        <Menu.Item key="delete" icon={<DeleteOutlined />} onClick={() => console.log('Delete', node.org_id)}>
           删除
         </Menu.Item>
       </Menu>
@@ -291,21 +294,23 @@ const OrganizationTree: React.FC<any> = ({ }) => {
 
     return (
       <div
-        onMouseEnter={() => setHoveredKey(node.key as string)}
+        onMouseEnter={() => setHoveredKey(node.org_id as string)}
         onMouseLeave={() => setHoveredKey(null)}
         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
       >
-        <span>{node.title}</span>
-        {hoveredKey === node.key && (
+        <span>{node.org_name}</span>
+        {hoveredKey === node.org_id && (
           <div style={{ display: 'flex', gap: '8px', marginLeft: '8px' }}>
-            <Tooltip title="添加">
-              <PlusOutlined onClick={() => console.log('Add', node.key)} />
+            <Tooltip title={`向${node.org_name}添加组织架构`}>
+              <PlusOutlined onClick={(event: any) => showModel(event, {
+                org_id: node.org_id
+              })} />
             </Tooltip>
             <Tooltip title="编辑">
-              <EditOutlined onClick={() => console.log('Edit', node.key)} />
+              <EditOutlined onClick={(event: any) => showModel(event, node)} />
             </Tooltip>
             <Tooltip title="删除">
-              <DeleteOutlined onClick={() => console.log('Delete', node.key)} />
+              <DeleteOutlined onClick={() => console.log('Delete', node.org_id)} />
             </Tooltip>
             <Dropdown overlay={menu} trigger={['click']}>
               <EllipsisOutlined style={{ cursor: 'pointer' }} />
@@ -353,7 +358,7 @@ const OrganizationTree: React.FC<any> = ({ }) => {
       success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
       error: actionType === 'UPDATE' ? '更新失败，请重试' : actionType === 'DELETE' ? '删除失败，请重试' : '创建失败，请重试',
     };
-    
+
     // 执行状态更新
     enhancedDispatch({ type: actionType, payload: { data } });
 
@@ -365,12 +370,42 @@ const OrganizationTree: React.FC<any> = ({ }) => {
       console.error('提交出错:', error);
       message.error('提交出错，请检查网络或稍后重试');
     } finally {
-      // await queryGlobalDict();
+      await queryOrgination();
     }
   }
 
-  const customTreeData = mapTreeData(treeData);
+  const queryOrgination = async () => {
+    try {
+      const { params } = state;
+      const response = await api.org.fetch(params);
+      if (response && response.success) {
+        const { data, page } = response.data;
+        console.log("============")
+        console.log(data)
+        console.log("============")
+        enhancedDispatch({
+          type: 'READ_DONE', payload: {
+            data, page
+          }
+        });
+      } else {
+        message.error(response?.message || '获取数据失败');
+      }
+    } catch (error) {
+      message.error('请求失败，请稍后重试');
+    }
+  };
 
+  React.useEffect(() => {
+    console.log("Updated state.params in useEffect:", state.params);
+    (async () => {
+      await queryOrgination();
+    })();
+  }, [state.params]);
+  // console.log("state.data", state.data)
+  // const customTreeData = mapTreeData(treeData);
+  const customTreeData = mapTreeData(state.data);
+  // console.log("customTreeData", customTreeData)
   return (
     <div>
       <AppContainer>
@@ -397,6 +432,8 @@ const OrganizationTree: React.FC<any> = ({ }) => {
                   // defaultExpandedKeys={['0-0-0']}
                   onSelect={onSelect}
                   treeData={customTreeData}
+                  // fieldNames={{ label: 'org_name', value: 'org_id', children: 'children' }}
+                  // fieldNames={{ title: 'org_name', key: 'org_id', children: 'children' }}
                   blockNode
                 />
                 <div style={{ marginBottom: 16 }}>
