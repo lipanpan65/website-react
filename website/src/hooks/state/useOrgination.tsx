@@ -39,7 +39,7 @@ type ActionType =
 
 // 初始化 state
 const initialState: StateType = {
-  loading: false,
+  loading: true,
   open: false,
   record: {},
   page: { total: 0, current: 0, pageSize: 5 },

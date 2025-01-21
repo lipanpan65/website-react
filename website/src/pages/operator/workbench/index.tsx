@@ -1,30 +1,23 @@
-import { theme } from 'antd';
 import * as React from 'react'
+import { theme } from 'antd';
+import AppContainer from '@/components/AppContainer';
 
-const WorkBench = () => {
-  
+const AppWorkBench = () => {
+
   const {
     token: {
       colorBgContainer,
       borderRadiusLG
     },
   } = theme.useToken();
-  
+
   return (
     <React.Fragment>
-      <div className="container" >
-        <div style={{
-          background: colorBgContainer,
-          borderRadius: borderRadiusLG,
-          minHeight: '100vh',
-          width: '100%'
-        }}>
-          我的工作台
-        </div>
-      </div>
+      <AppContainer>
+        我的工作台
+      </AppContainer>
     </React.Fragment>
   )
 }
 
-
-export default WorkBench
+export default AppWorkBench

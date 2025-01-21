@@ -47,6 +47,8 @@ import Subject from '@/pages/user/subjects/overview'
 import SubjectDetail from '@/pages/user/subjects/detail'
 import AppMenu from '@/pages/operator/system/menu'
 import SubjectManager from '@/pages/operator/article/topics'
+import AppTopic from '@/pages/operator/article/topics'
+
 // 用户登陆主页面
 import Authenticate from '@/pages/operator/account/authenticate'
 import System from '@/pages/operator/system'
@@ -389,7 +391,7 @@ const Routes = () => {
               { index: true, element: <Navigate to="article" /> }, // 使用 index 路由来表示默认路径
               { path: 'article', element: <ArticleCategory /> },
               { path: 'category', element: <ArticleCategory /> },
-              { path: 'topics', element: <ArticleCategory /> },
+              { path: 'topics', element: <AppTopic /> },
             ],
           },
         ]

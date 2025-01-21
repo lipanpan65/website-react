@@ -27,8 +27,12 @@ build() {
   if [ $? -eq 0 ]; then
     echo "打包完成，开始压缩..."
     DATE=$(date +%Y%m%d)  # 获取当前日期
-    
-    tar -czf "dist-$DATE.tar.gz" -C build . # 创建压缩文件
+
+    # 删除扩展属性（如果有的话），确保归档中不包含 macOS 特有的扩展属性
+    # echo "删除文件扩展属性..."
+    # find build -type f -exec xattr -c {} \;  # 删除所有文件的扩展属性
+
+    tar --no-xattrs -czf "dist-$DATE.tar.gz" -C build . # 创建压缩文件
     echo "压缩文件创建完成，开始上传到服务器..."
     scp "dist-$DATE.tar.gz" "$SERVER_USER@$SERVER_HOST:$SERVER_DIR"
     echo "文件上传完成"

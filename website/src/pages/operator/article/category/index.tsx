@@ -9,7 +9,6 @@ import {
 } from 'antd'
 import type { TableProps, FormInstance } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
-import { request } from '@/utils';
 import { dateFormate } from '@/utils';
 import './index.css'
 import { ArticleCategoryProvider, useArticleCategory } from '@/hooks/state/useArticleCategory';
