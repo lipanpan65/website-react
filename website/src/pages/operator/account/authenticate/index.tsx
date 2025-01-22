@@ -77,7 +77,6 @@ const Authenticate = () => {
             </Form.Item>
           </Form>
         </div>
-
       </div>
     </React.Fragment>
   )

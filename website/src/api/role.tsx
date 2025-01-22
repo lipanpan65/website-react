@@ -32,7 +32,7 @@ interface RocleRecordData {
 // 定义 API
 export const roleApi = {
   // 获取列表（带分页）
-  fetch: (params: any): Promise<ApiResponse<RocleRecordData>> =>
+  fetch: (params?: any): Promise<ApiResponse<RocleRecordData>> =>
     request({ url: '/api/operator/v1/role/', method: 'GET', params }),
 
   // 创建新的全局字典

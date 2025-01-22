@@ -1,6 +1,13 @@
 import * as React from 'react';
-import { Button, Col, Form, FormInstance, Input, Modal, Row, Space, Table, TableProps, theme } from 'antd';
+import { Button, Col, Form, FormInstance, Input, message, Modal, PaginationProps, Row, Select, Space, Table, TableProps, theme } from 'antd';
 import { dateFormate, request, rowKeyF } from '@/utils';
+import { TopicProvider, useTopic } from '@/hooks/state/useTopic';
+import AppContainer from '@/components/AppContainer';
+import AppTable from '@/components/AppTable';
+import AppContent from '@/components/AppContent';
+import AppDialog from '@/components/AppDialog';
+import { PlusCircleOutlined } from '@ant-design/icons';
+import AppSearch from '@/components/AppSearch';
 
 // 初始化参数
 const initialState = {
@@ -28,14 +35,16 @@ const layout = {
   wrapperCol: { span: 16 },
 };
 
-// 定义context
-export const SubjectContext = React.createContext<{
-  state: typeof initialState,
-  dispatch: React.Dispatch<any>
-}>({
-  state: initialState,
-  dispatch: () => { }
-})
+interface AppTopicTableProps {
+  data?: {
+    page: PaginationProps;
+    data: any[];  // 数据数组，包含 id, name, description
+  };
+  columns?: any;  // 设置可选
+  onChange?: (pagination: PaginationProps, filters?: any, sorter?: any) => void;  // 新增 onChange 属性
+}
+
+
 
 const api: any = {
   fetch: (params: any) => request({
@@ -76,7 +85,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
 }) => {
 
   const [form] = Form.useForm();
-  const context = React.useContext(SubjectContext)
 
   React.useEffect(() => onFormInstanceReady(form), [])
 
@@ -109,194 +117,192 @@ const ModelForm: React.FC<ModelFormProps> = ({
   )
 }
 
-const SubjectModal = React.forwardRef((props: any, ref) => {
-  const { onSubmit } = props
-  const context = React.useContext(SubjectContext)
-  const [title, setTitle] = React.useState<string>('添加专题')
-  const [formInstance, setFormInstance] = React.useState<FormInstance>();
+const AppTopicDialog = React.forwardRef((props: any, ref) => {
+  const [open, setOpen] = React.useState<boolean>(false);
+  const { onSubmit, initialValues } = props
+  const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
+  const [record, setRecord] = React.useState<any>({})
 
+  React.useEffect(() => {
+    if (formInstance && record) {
+      formInstance.setFieldsValue(record);
+    }
+  }, [record, formInstance]);
 
-  const onOk = () => {
-    formInstance?.validateFields()
-      .then((entry: any) => {
-        const { pid } = context.state.entry
-        context.dispatch((f: any) => onSubmit(f, {
-          ...entry,
-          pid
-        }))
-      }).finally(() => {
-        context.dispatch({
-          type: 'SHOW_MODEL', payload: {
-            open: false
-          }
-        })
-      })
-  }
+  const showModel = (isOpen: boolean, data?: any) => {
+    setOpen(isOpen);
+    if (isOpen && data) {
+      setRecord(data); // 更新 record 状态
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const data = await formInstance?.validateFields();
+      if (!!record.id) {
+        const newRecord = { id: record.id, ...data };
+        await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
+      } else {
+        await onSubmit('CREATE', data); // 不再需要传递 `dispatch`
+      }
+      // enhancedDispatch((dispatch) => onSubmit(dispatch, 'UPDATE', newRecord));
+      setOpen(false);
+    } catch (error: any) {
+      console.error('捕获的异常:', error);
+      message.error(error.message || '表单验证失败，请检查输入内容。');
+    }
+  };
 
   const onCancel = () => {
-    context.dispatch({
-      type: 'SHOW_MODEL', payload: {
-        open: false
-      }
-    })
-  }
+    formInstance?.resetFields();
+    setOpen(false);
+  };
+  
+  const fields = [
+    {
+      label: '专题名称',
+      name: 'category_name',
+      rules: [{ required: true, message: '请输入专题名称' }],
+      component: <Input
+        disabled={!!record.id}
+        placeholder="请输入专题名称" />,
+      span: 24,
+    },
+    {
+      label: '状态',
+      name: 'enable',
+      rules: [{ required: true, message: '请输入角色类型' }],
+      component: (
+        <Select placeholder="请选择状态" allowClear>
+          <Select.Option value={1}>启用</Select.Option>
+          <Select.Option value={0}>禁用</Select.Option>
+        </Select>
+      ),
+      span: 24,
+    },
+    {
+      name: 'remark',
+      label: '备注',
+      component: <Input.TextArea placeholder="请输入备注" showCount maxLength={100} />,
+      span: 24,
+    },
+  ];
+
+  React.useImperativeHandle(ref, () => ({
+    showModel,
+    onCancel,
+    setOpen,
+  }))
 
   return (
     <React.Fragment>
-      <Modal
-        // width={'65%'}
-        open={context.state.open}
-        title={title}
-        okText="确定"
-        cancelText="取消"
-        okButtonProps={{ autoFocus: true }}
+      <AppDialog
+        title='添加专题'
+        fields={fields}
+        record={record}
         onCancel={onCancel}
-        destroyOnClose
-        onOk={onOk}
-      >
-        <ModelForm
-          initialValues={{}}
-          onFormInstanceReady={(instance) => {
-            setFormInstance(instance);
-          }}
-          isUpdate={false}
-        />
-      </Modal>
+        open={open}
+        onSubmit={handleSubmit}
+        isEditing={!!record.id}
+        setFormInstance={(instance) => {
+          setFormInstance(instance);
+        }}
+      />
     </React.Fragment>
   )
 })
 
 
-const SubjectSearch = (props: any) => {
-  const { onFormInstanceReady, showModel, setQqueryParams } = props
-  const [form] = Form.useForm();
+interface AppTopicSearchProps {
+  showModel: (event: React.MouseEvent<HTMLElement>, data: any) => void;
+  onFormInstanceReady: (instance: FormInstance<any>) => void;
+  setQueryParams: (params: any) => void;
+}
 
-  React.useEffect(() => {
-    onFormInstanceReady(form);
-  }, []);
+const AppTopicSearch: React.FC<AppTopicSearchProps> = ({
+  showModel,
+  onFormInstanceReady,
+  setQueryParams,
+}) => {
 
-  const onGenderChange = (value: string) => {
-    switch (value) {
-      case 'male':
-        form.setFieldsValue({ note: 'Hi, man!' });
-        break;
-      case 'female':
-        form.setFieldsValue({ note: 'Hi, lady!' });
-        break;
-      case 'other':
-        form.setFieldsValue({ note: 'Hi there!' });
-        break;
-      default:
-    }
+  const { state } = useTopic();
+  const formRef = React.useRef<FormInstance | null>(null);
+
+  const handleFormInstanceReady = (form: FormInstance) => { // 该 form 为 AppSearchForm 中的实例
+    formRef.current = form; // 将 AppSearchForm 中的 form 传递给当前组件
+    onFormInstanceReady(form); // 将 form 实例传递给父组件
   };
 
-  const onFinish = (values: any) => {
-    console.log(values);
+  const buttonConfig = {
+    label: '添加',
+    type: 'primary' as const,  // 明确指定类型以符合 ButtonConfig
+    onClick: (event: React.MouseEvent<HTMLElement>) => showModel(event, {}),
+    disabled: false,
+    icon: <PlusCircleOutlined />,  // 例如使用 Ant Design 的图标
   };
-
-  const onResetFields = () => {
-    form.resetFields();
-  };
-
-  const onFill = () => {
-    form.setFieldsValue({ note: 'Hello world!', gender: 'male' });
-  };
-
-  const onPressEnter = (k: string, e: any) => {
-    console.log('onPressEnter') // 优先执行
-    setQqueryParams((preQuerys: any) => {
-      return {
-        ...preQuerys,
-        [k]: e.target.value
-      }
-    })
-  }
 
   return (
     <React.Fragment>
-      <Form
-        {...layout}
-        form={form}
-        name="control-hooks"
-      // onFinish={onFinish}
-      // style={{ maxWidth: 600 }}
-      >
-        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className='search'>
-          <Button type="primary" onClick={(event: any) => showModel(event, {})}>添加</Button>
-          <Form.Item
-            name="search"
-            // label="搜索" 
-            rules={[{ required: false }]}>
-            <Input
-              placeholder='请搜索...'
-              allowClear
-              // onPressEnter={onPressEnter}
-              onPressEnter={(e: any) => onPressEnter('search', e)}
-              onFocus={() => { console.log('onFocus') }}
-              onBlur={() => { console.log('onBlur') }}
-            />
-          </Form.Item>
-        </Row>
-      </Form>
+      <AppContent>
+        <AppSearch
+          buttonConfig={buttonConfig}  // 动态按钮配置
+          onFormInstanceReady={handleFormInstanceReady}
+          setQueryParams={setQueryParams}
+          initialParams={state.params}
+          formItems={[
+            {
+              name: 'search',
+              placeholder: '请输入...',
+              type: 'input',
+            },
+            {
+              name: 'enable',
+              placeholder: '请选择状态',
+              type: 'select',
+              width: 150,
+              selectConfig: {
+                allowClear: true,
+                options: [
+                  { label: '启用', value: 1 },
+                  { label: '禁用', value: 0 },
+                ],
+              },
+            },
+          ]}
+        />
+        {/* </AppSearch> */}
+      </AppContent>
     </React.Fragment >
   )
 }
 
 
-const SubjectTable = (props: any) => {
-  const { columns } = props
-  const context = React.useContext(SubjectContext)
-  const { page, data, } = context.state
+
+const AppTopicTable: React.FC<AppTopicTableProps> = ({
+  columns = [], // 设置默认值为空数组
+  onChange
+}) => {
+  const { state } = useTopic();
+  const { page = { total: 0, current: 1, pageSize: 10 }, data = [], loading } = state;
+
   const [checkStrictly, setCheckStrictly] = React.useState(false);
 
-  const pagination = {
-    total: page?.total || 0, // 数据总数
-    current: page?.current || 1, // 当前页码
-    pageSize: page?.pageSize || 5, // 每页显示条数
-    // showSizeChanger: true, // 是否显示 pageSize 改变器
-    // showQuickJumper: true, // 是否显示快速跳转
-    showTotal: (total: number) => `总共 ${total} 条数据`, // 自定义显示总数的格式
-  };
-
-  const onChange = (pagination: any) => {
-    const preQueryParams = context.state.params
-    console.log('onChange===>', pagination)
-    const params = {
-      ...preQueryParams,
-      page: pagination.current,
-      pageSize: pagination.pageSize,
-      total: pagination.total
+  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+    if (onChange) {
+      onChange(pagination, filters, sorter);  // 确保 onChange 已定义
     }
-    context.dispatch({
-      type: 'READ',
-      payload: {
-        params
-      }
-    })
-  }
-
-  // const rowSelection: TableRowSelection<DataType> = {
-  //   onChange: (selectedRowKeys, selectedRows) => {
-  //     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  //   },
-  //   onSelect: (record, selected, selectedRows) => {
-  //     console.log(record, selected, selectedRows);
-  //   },
-  //   onSelectAll: (selected, selectedRows, changeRows) => {
-  //     console.log(selected, selectedRows, changeRows);
-  //   },
-  // };
+  };
 
   return (
     <React.Fragment>
-      <Table
-        rowKey={rowKeyF}
-        onChange={onChange}
-        pagination={pagination}
-        columns={columns}
-        // rowSelection={{ ...rowSelection, checkStrictly }}
-        dataSource={data}
-      />
+      <AppContent>
+        <AppTable
+          data={{ page, data }}
+          columns={columns}
+          onChange={handleTableChange}
+          loading={loading}
+        />
+      </AppContent>
     </React.Fragment>
   )
 }
@@ -310,54 +316,13 @@ interface DataType {
 }
 
 
-const reducer = (preState: any, action: any) => {
-
-  let { type } = action;
-  if (typeof action == 'function') {
-    type = action()
-  }
-  switch (action.type) {
-    case 'READ':
-      const { params } = action.payload
-      preState.loading = true
-      preState.params = params
-      return {
-        ...preState
-      }
-    case 'READ_DONE':
-      const { data, page } = action.payload
-      preState.loading = false
-      preState.data = data
-      preState.page = page
-      return {
-        ...preState
-      }
-    case 'CREATE':
-      preState.loading = true
-      return {
-        ...preState
-      }
-    case 'UPDATE':
-      return preState
-    case 'SHOW_MODEL':
-      const { open, entry } = action.payload
-      preState.open = open
-      preState.entry = entry
-      return {
-        ...preState
-      }
-    default:
-      return preState
-  }
-}
-
-const Subject = () => {
+const AppTopic = () => {
 
   const columns: TableProps<DataType>['columns'] = [
     {
       title: '专题名称',
       dataIndex: 'subject_name',
-      key: 'subject_name',
+      key: 'topic_name',
       render: (text) => <a>{text}</a>,
     },
     {
@@ -387,37 +352,32 @@ const Subject = () => {
     token: { colorBgContainer }
   } = theme.useToken();
 
-  const modelRef: any = React.useRef()
-  const tableRef: any = React.useRef()
-  const [queryParams, setQqueryParams] = React.useState<any>({})
-  const [formInstance, setFormInstance] = React.useState<FormInstance>();
+  const { state, enhancedDispatch } = useTopic();
 
-  const [state, dispatch] = React.useReducer(reducer, initialState)
+  const dialogRef: any = React.useRef()
+  const searchFormRef = React.useRef<FormInstance | null>(null);
+  const [queryParams, setQueryParams] = React.useState<any>({})
 
-  const showModel = (event: any, data?: any, key?: any) => {
-    console.log('showModel')
-    dispatch({
-      type: 'SHOW_MODEL', payload: {
-        open: true, entry: {
-          id: data.id,
-          menu_name: data.menu_name,
-          pid: data.id
-        }
+  const onFormInstanceReady = (form: FormInstance) => {
+    searchFormRef.current = form; // 将 form 实例存储到 ref
+  };
+
+  const onChange = (pagination: any) => {
+    setQueryParams((preQueryParams: any) => {
+      return {
+        ...preQueryParams,
+        page: pagination.current,
+        pageSize: pagination.pageSize,
+        total: pagination.total
       }
     })
   }
 
-  // 定义action 
-  const dispatchF: React.Dispatch<any> = (action: any) => {
-    // 判断action是不是函数，如果是函数，就执行,并且把dispatch传进去
-    if (typeof action === 'function') {
-      action(dispatch)
-    } else {
-      dispatch(action)
-    }
+  const showModel = (event: any, data?: any) => {
+    dialogRef.current.showModel(true, data)
   }
 
-  const querySubjects = () => {
+  const queryTopics = () => {
     const { params } = state
     api.fetch(params).then((r: any) => {
       console.log("-------")
@@ -429,7 +389,7 @@ const Subject = () => {
   }
 
   // React.useEffect(() => querySubjects(), [state.params])
-  React.useEffect(() => querySubjects(), [])
+  // React.useEffect(() => queryTopics(), [])
 
 
   // submit 方法
@@ -447,41 +407,43 @@ const Subject = () => {
   /**
  * 按照顺序执行
  */
+  // React.useEffect(() => {
+  //   console.log('组件加载queryParams', queryParams)
+  //   console.log('-queryParams-', queryParams)
+  //   queryTopics()
+  // }, [queryParams])
+
   React.useEffect(() => {
-    console.log('组件加载queryParams', queryParams)
-    console.log('-queryParams-', queryParams)
-    querySubjects()
-  }, [queryParams])
+    (async () => {
+      await queryTopics();
+    })();
+  }, [state.params]);
 
   return (
     <React.Fragment>
-      <div
-        style={{
-          height: '100vh',
-          padding: '20px 20px',
-          background: colorBgContainer
-        }}
-      >
-        <SubjectContext.Provider value={{ state, dispatch: dispatchF }} >
-          <SubjectSearch
-            showModel={showModel}
-            onFormInstanceReady={(instance: any) => {
-              setFormInstance(instance);
-            }}
-            setQqueryParams={setQqueryParams}
-          />
-          <SubjectTable
-            ref={tableRef}
-            columns={columns}
-          />
-          <SubjectModal
-            ref={modelRef}
-            onSubmit={onSubmit}
-          />
-        </SubjectContext.Provider>
-      </div>
+      <AppContainer>
+        <AppTopicSearch
+          showModel={showModel}
+          onFormInstanceReady={onFormInstanceReady}
+          setQueryParams={setQueryParams}
+        />
+        <AppTopicTable
+          columns={columns}
+          onChange={onChange}
+        />
+        <AppTopicDialog
+          ref={dialogRef}
+          onSubmit={onSubmit}
+        />
+      </AppContainer>
     </React.Fragment>
   )
 }
 
-export default Subject
+export default () => (
+  <TopicProvider>
+    <AppTopic />
+  </TopicProvider>
+);
+
+

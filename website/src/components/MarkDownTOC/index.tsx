@@ -16,7 +16,13 @@ interface MarkDownTOCProps {
 
 // 解析 Markdown 标题为树形结构
 const parseMarkdownToTree = (source: string): NavItem[] => {
-  const headings = source.match(/(#+\s.*)/g);
+
+  // Step 1: 去掉代码块
+  // 匹配多行代码块（包括 ``` 和 `），并替换为空字符串
+  const cleanedSource = source.replace(/```[\s\S]*?```|`[^`]+`/g, '');
+
+  // Step 2: 解析剩余的 Markdown 标题
+  const headings = cleanedSource.match(/(#+\s.*)/g);
   if (!headings) return [];
 
   const root: NavItem[] = [];
@@ -76,17 +82,13 @@ const updateHash = (hash: string) => {
 
   // 获取当前 URL 并去掉所有哈希部分
   const currentUrl = window.location.href;
-  console.log("currentUrl:", currentUrl);
 
   // 提取基础路径并保留 #/user/article/detail/25 部分
   const basePathMatch = currentUrl.match(/(.*#\/[^#]*)/);
   const basePath = basePathMatch ? basePathMatch[1] : currentUrl.split('#')[0];
 
-  console.log("basePath:", basePath);
-
   // 拼接新的完整哈希路径
   const newUrl = `${basePath}#${hash}`;
-  console.log("Updated URL:", newUrl);
 
   // 更新浏览器 URL
   window.history.replaceState({}, '', newUrl);

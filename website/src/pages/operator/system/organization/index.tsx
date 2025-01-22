@@ -3,10 +3,16 @@ import * as React from 'react'
 import AppContainer from '@/components/AppContainer';
 import AppDialog from '@/components/AppDialog';
 import { PlusOutlined, AndroidOutlined, AppleOutlined, CheckOutlined, EditOutlined, DeleteOutlined, CarryOutOutlined, FormOutlined, EllipsisOutlined } from '@ant-design/icons';
-import { Button, Flex, Input, Splitter, Tooltip, Typography, TreeSelect, Tabs, Tree, Switch, Select, FormInstance, message, TreeDataNode, Menu, Dropdown } from 'antd';
+import { Button, Flex, Input, Splitter, Tooltip, Typography, TreeSelect, Tabs, Tree, Switch, Select, FormInstance, message, TreeDataNode, Menu, Dropdown, Skeleton } from 'antd';
 import { DataNode } from 'antd/es/tree';
 import { api } from '@/api';
 import { useOrginationTree, OrginationTreeProvider } from '@/hooks/state/useOrgination';
+import AppContent from '@/components/AppContent';
+import ConfirmableButton from '@/components/ConfirmableButton';
+import { current } from '@reduxjs/toolkit';
+
+
+
 
 const { SHOW_PARENT } = TreeSelect;
 
@@ -74,7 +80,8 @@ const treeData: TreeDataNode[] = [
         icon: <CarryOutOutlined />,
         children: [
           {
-            title: 'leaf', key: '0-0-2-0',
+            title: 'leaf',
+            key: '0-0-2-0',
             // value: '0-0-2-0', 
             icon: <CarryOutOutlined />
           },
@@ -124,7 +131,7 @@ const OrganizationTreeDialog: React.FC<any> = React.forwardRef((props: any, ref)
   const { onSubmit, initialValues } = props
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
   const [record, setRecord] = React.useState<any>({}) // 添加状态管理表示当前数据
-
+  
   const fields = [
     {
       label: '组织架构名称',
@@ -167,16 +174,21 @@ const OrganizationTreeDialog: React.FC<any> = React.forwardRef((props: any, ref)
     }
   };
 
+  // 添加操作
   const handleSubmit = async () => {
     try {
       const data = await formInstance?.validateFields();
       if (!!record.id) {
-        const newRecord = { id: record.id, ...data };
+        const newRecord = {
+          id: record.id,
+          org_id: record.org_id,
+          ...data
+        };
         await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
       } else {
-        await onSubmit('CREATE', data); // 不再需要传递 `dispatch`
+        const newRecord = Object.assign({}, data, { ...record })
+        await onSubmit('CREATE', newRecord); // 不再需要传递 `dispatch`
       }
-      // enhancedDispatch((dispatch) => onSubmit(dispatch, 'UPDATE', newRecord));
       setOpen(false);
     } catch (error: any) {
       console.error('捕获的异常:', error);
@@ -188,7 +200,6 @@ const OrganizationTreeDialog: React.FC<any> = React.forwardRef((props: any, ref)
     formInstance?.resetFields();
     setOpen(false);
   };
-
 
   React.useImperativeHandle(ref, () => ({
     showModel,
@@ -242,8 +253,9 @@ const OrganizationTree: React.FC<any> = ({ }) => {
   const [showIcon, setShowIcon] = React.useState<boolean>(false);
   const [showLeafIcon, setShowLeafIcon] = React.useState<React.ReactNode>(true);
   const dialogRef: any = React.useRef()
-
   const [hoveredKey, setHoveredKey] = React.useState<string | null>(null);
+
+  console.log("state===>", state)
 
   const onChange = (newValue: string[]) => {
     console.log('onChange ', newValue);
@@ -260,7 +272,8 @@ const OrganizationTree: React.FC<any> = ({ }) => {
     style: {
       width: '100%',
     },
-    fieldNames: { title: 'title', key: 'key', children: 'children' }
+    // fieldNames: { title: 'title', key: 'key', children: 'children' }
+    // fieldNames: { title: 'org_name', key: 'org_id', children: 'children' }
   };
 
   const onSelect = (selectedKeys: React.Key[], info: any) => {
@@ -273,17 +286,18 @@ const OrganizationTree: React.FC<any> = ({ }) => {
 
   {/* <Desc text="First" /> */ }
 
-  const renderTitle = (node: any) => {
 
+  const renderTitle = (node: any) => {
+    // console.log("renderTitle", node)
     const menu = (
       <Menu>
         <Menu.Item key="add" icon={<PlusOutlined />} onClick={() => console.log('Add', node.key)}>
           添加
         </Menu.Item>
-        <Menu.Item key="edit" icon={<EditOutlined />} onClick={() => console.log('Edit', node.key)}>
+        <Menu.Item key="edit" icon={<EditOutlined />} onClick={() => console.log('Edit', node.org_id)}>
           编辑
         </Menu.Item>
-        <Menu.Item key="delete" icon={<DeleteOutlined />} onClick={() => console.log('Delete', node.key)}>
+        <Menu.Item key="delete" icon={<DeleteOutlined />} onClick={() => console.log('Delete', node.org_id)}>
           删除
         </Menu.Item>
       </Menu>
@@ -291,21 +305,28 @@ const OrganizationTree: React.FC<any> = ({ }) => {
 
     return (
       <div
-        onMouseEnter={() => setHoveredKey(node.key as string)}
+        onMouseEnter={() => setHoveredKey(node.org_id as string)}
         onMouseLeave={() => setHoveredKey(null)}
         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
       >
-        <span>{node.title}</span>
-        {hoveredKey === node.key && (
+        <span>{node.org_name}</span>
+        {hoveredKey === node.org_id && (
           <div style={{ display: 'flex', gap: '8px', marginLeft: '8px' }}>
-            <Tooltip title="添加">
-              <PlusOutlined onClick={() => console.log('Add', node.key)} />
+            <Tooltip title={`向【${node.org_name}】添加子集组织架构`}>
+              <PlusOutlined onClick={(event: any) => showModel(event, {
+                parent_org_id: node.org_id
+              })} />
             </Tooltip>
             <Tooltip title="编辑">
-              <EditOutlined onClick={() => console.log('Edit', node.key)} />
+              <EditOutlined onClick={(event: any) => showModel(event, node)} />
             </Tooltip>
             <Tooltip title="删除">
-              <DeleteOutlined onClick={() => console.log('Delete', node.key)} />
+              <ConfirmableButton
+                type='text'
+                onSubmit={() => onSubmit('DELETE', node)}
+              >
+                <DeleteOutlined />
+              </ConfirmableButton>
             </Tooltip>
             <Dropdown overlay={menu} trigger={['click']}>
               <EllipsisOutlined style={{ cursor: 'pointer' }} />
@@ -328,7 +349,7 @@ const OrganizationTree: React.FC<any> = ({ }) => {
   };
 
   // 递归处理树节点数据，将自定义渲染的 `title` 直接赋值
-  const mapTreeData = (data: DataNode[]): DataNode[] =>
+  const mapTreeData = (data: DataNode[]): any[] =>
     data.map((node) => ({
       ...node,
       title: renderTitle(node), // 直接赋值 `renderTitle(node)` 的返回值给 `title`
@@ -353,7 +374,7 @@ const OrganizationTree: React.FC<any> = ({ }) => {
       success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
       error: actionType === 'UPDATE' ? '更新失败，请重试' : actionType === 'DELETE' ? '删除失败，请重试' : '创建失败，请重试',
     };
-    
+
     // 执行状态更新
     enhancedDispatch({ type: actionType, payload: { data } });
 
@@ -365,62 +386,99 @@ const OrganizationTree: React.FC<any> = ({ }) => {
       console.error('提交出错:', error);
       message.error('提交出错，请检查网络或稍后重试');
     } finally {
-      // await queryGlobalDict();
+      await queryOrgination();
     }
   }
 
-  const customTreeData = mapTreeData(treeData);
+  const queryOrgination = async () => {
+    try {
+      const { params } = state;
+      const response = await api.org.fetch(params);
+      if (response && response.success) {
+        const { data, page } = response.data;
+        console.log("============")
+        console.log(data)
+        console.log("============")
+        enhancedDispatch({
+          type: 'READ_DONE', payload: {
+            data, page
+          }
+        });
+      } else {
+        message.error(response?.message || '获取数据失败');
+      }
+    } catch (error) {
+      message.error('请求失败，请稍后重试');
+    }
+  };
 
+  React.useEffect(() => {
+    console.log("Updated state.params in useEffect:", state.params);
+    (async () => {
+      await queryOrgination();
+    })();
+  }, [state.params]);
+
+  const customTreeData = mapTreeData(state.data);
+  console.log("customTreeData", customTreeData)
   return (
     <div>
       <AppContainer>
-        <Splitter style={{
-          height: 200,
-          boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)'
-        }}>
-          <Splitter.Panel defaultSize="30%" min="20%" max="40%">
-            <div style={{ padding: 8 }}>
-              <Flex gap={16} vertical={true}>
-                <Flex gap={8} >
-                  <Input placeholder="Basic usage" />
-                  <Tooltip title="添加一级组织架构">
-                    <Button icon={<PlusOutlined />}
-                      iconPosition={'end'}
-                      onClick={(event: React.MouseEvent<HTMLElement>) => showModel(event, {})}
+        <AppContent>
+          <Skeleton loading={state.loading}>
+            <Splitter style={{
+              // boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)'
+            }}>
+              <Splitter.Panel defaultSize="30%" min="20%" max="40%">
+                <div style={{ padding: 8 }}>
+                  <Flex gap={16} vertical={true}>
+                    <Flex gap={8} >
+                      <Input placeholder="搜索：组织架构名称" />
+                      <Tooltip title="添加一级组织架构">
+                        <Button
+                          color="default"
+                          variant="filled"
+                          icon={<PlusOutlined />}
+                          iconPosition={'end'}
+                          onClick={(event: React.MouseEvent<HTMLElement>) => showModel(event, {})}
+                        ></Button>
+                      </Tooltip>
+                    </Flex>
+                    <Tree
+                      showLine={true}
+                      // showLine={showLine ? { showLeafIcon } : false}
+                      // showIcon={showIcon}
+                      defaultExpandedKeys={customTreeData.length > 0 ? [customTreeData[0].org_id] : []}
+                      onSelect={onSelect}
+                      treeData={customTreeData}
+                      fieldNames={{ title: 'org_name', key: 'org_id', children: 'children' }}
+                      blockNode
                     />
-                  </Tooltip>
-                </Flex>
-                <TreeSelect {...tProps} />
-                <Tree
-                  showLine={showLine ? { showLeafIcon } : false}
-                  showIcon={showIcon}
-                  // defaultExpandedKeys={['0-0-0']}
-                  onSelect={onSelect}
-                  treeData={customTreeData}
-                  blockNode
-                />
-                <div style={{ marginBottom: 16 }}>
-                  showLine: <Switch checked={!!showLine} onChange={setShowLine} />
-                  <br />
-                  <br />
-                  showIcon: <Switch checked={showIcon} onChange={setShowIcon} />
-                  <br />
-                  <br />
-                  showLeafIcon:{' '}
-                  <Select defaultValue="true" onChange={handleLeafIconChange}>
-                    <Select.Option value="true">True</Select.Option>
-                    <Select.Option value="false">False</Select.Option>
-                    <Select.Option value="custom">Custom icon</Select.Option>
-                  </Select>
+                    {/* <div style={{ marginBottom: 16 }}>
+                    showLine: <Switch checked={!!showLine} onChange={setShowLine} />
+                    <br />
+                    <br />
+                    showIcon: <Switch checked={showIcon} onChange={setShowIcon} />
+                    <br />
+                    <br />
+                    showLeafIcon:{' '}
+                    <Select defaultValue="true" onChange={handleLeafIconChange}>
+                      <Select.Option value="true">True</Select.Option>
+                      <Select.Option value="false">False</Select.Option>
+                      <Select.Option value="custom">Custom icon</Select.Option>
+                    </Select>
+                  </div> */}
+                  </Flex>
                 </div>
-              </Flex>
-            </div>
-          </Splitter.Panel>
-          <Splitter.Panel>
-            {/* <Desc text="Second" /> */}
-            <OrganizationTreeTab />
-          </Splitter.Panel>
-        </Splitter>
+              </Splitter.Panel>
+              <Splitter.Panel>
+                {/* <Desc text="Second" /> */}
+                <OrganizationTreeTab />
+              </Splitter.Panel>
+            </Splitter>
+          </Skeleton >
+        </AppContent>
+
         <OrganizationTreeDialog
           ref={dialogRef}
           onSubmit={onSubmit}

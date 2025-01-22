@@ -6,7 +6,8 @@ import {
   Modal,
   Form,
   Input,
-  Button
+  Button,
+  Select
 } from 'antd'
 
 import {
@@ -26,6 +27,7 @@ import AppDialog from '@/components/AppDialog';
 import { UserInfoProvider, useUserInfo } from '@/hooks/state/useUserInfo';
 import { api } from '@/api';
 import ConfirmableButton from '@/components/ConfirmableButton';
+import AppPassInput from '@/components/AppPassInput';
 
 
 const { confirm } = Modal;
@@ -152,57 +154,96 @@ const AppUserInfoTable: React.FC<UserInfoTableProps> = ({
 }
 
 const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
+  console.log("AppUserInfoDialog")
   const [open, setOpen] = React.useState<boolean>(false);
   const { onSubmit } = props
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
   const [formValues, setFormValues] = React.useState<any>({});
+  const [roleTypes, setRoleTypes] = React.useState<any[]>([]); // 用于存储角色类型
+
+  const queryRole = async () => {
+    console.log("掉用了")
+    try {
+      const response = await api.role.fetch();
+      if (response && response.success) {
+        const { data, page } = response.data;
+        console.log("data", data)
+        setRoleTypes(data)
+      } else {
+        message.error(response?.message || '获取数据失败');
+      }
+    } catch (error) {
+      message.error('请求失败，请稍后重试');
+    }
+  };
+
+  // 在任意组件如果存在该方法都会加载
+  React.useEffect(() => {
+    queryRole();
+  }, []);  // 空
+
 
   const fields = [
     {
       label: '用户名称',
-      name: 'category_name',
-      rules: [{ required: true, message: '请输入分类名称' }],
-      component: <Input placeholder="请输入分类名称" />,
+      name: 'name',
+      rules: [{ required: true, message: '请输入用户名称' }],
+      component: <Input placeholder="请输入用户名称" />,
       span: 12,
     },
     {
       label: 'OA',
-      name: 'category_name',
+      name: 'username',
       rules: [{ required: true, message: '请输入分类名称' }],
       component: <Input placeholder="请输入分类名称" />,
       span: 12,
     },
     {
       label: '手机号',
-      name: 'category_name',
-      rules: [{ required: true, message: '请输入分类名称' }],
-      component: <Input placeholder="请输入分类名称" />,
+      name: 'phone',
+      rules: [{ required: true, message: '请输入手机号' }],
+      component: <Input placeholder="请输入手机号" />,
       span: 12,
     },
     {
       label: '邮箱',
-      name: 'category_name',
-      rules: [{ required: true, message: '请输入分类名称' }],
-      component: <Input placeholder="请输入分类名称" />,
+      name: 'email',
+      rules: [{ required: true, message: '请输入邮箱' }],
+      component: <Input placeholder="请输入邮箱" />,
       span: 12,
     },
     {
       label: '角色类型',
-      name: 'category_name',
-      rules: [{ required: true, message: '请输入分类名称' }],
-      component: <Input placeholder="请输入分类名称" />,
+      name: 'role',
+      rules: [{ required: true, message: '请选择角色类型' }],
+      component: (
+        <Select placeholder="请选择角色类型" allowClear>
+          {roleTypes.map((role) => (
+            <Select.Option key={role.id} value={role.id}>
+              {role.role_name}
+            </Select.Option>
+          ))}
+        </Select>
+      ),
       span: 12,
     },
     {
       label: '角色名称',
-      name: 'category_name',
+      name: 'role_name',
       rules: [{ required: true, message: '请输入分类名称' }],
       component: <Input placeholder="请输入分类名称" />,
       span: 12,
     },
     {
+      label: '密码',
+      name: 'password',
+      rules: [{ required: true, message: '请输入分类名称' }],
+      component: <AppPassInput></AppPassInput>,
+      span: 12,
+    },
+    {
       label: '组织架构',
-      name: 'category_name',
+      name: 'orgs',
       rules: [{ required: true, message: '请输入分类名称' }],
       component: <Input placeholder="请输入分类名称" />,
       span: 24,
@@ -232,7 +273,6 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
   }, [formInstance, formValues]);
 
   const onOk = () => {
-    console.log("ok")
     formInstance?.validateFields()
       .then((values: any) => {
         if (formValues.id) {
@@ -279,6 +319,7 @@ const AppUserInfo = () => {
   const [formInstance, setFormInstance] = React.useState<FormInstance>();
   const [queryParams, setQqueryParams] = React.useState<any>({})
   const [loading, setLoading] = React.useState<boolean>()
+
 
   const columns: TableProps<any>['columns'] = [
     {

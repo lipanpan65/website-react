@@ -140,3 +140,6 @@ $ nvm ls
     10.15.3
 
 ```
+
+git config user.name "lipanpan"
+git config user.email "1299793997@qq.com"
