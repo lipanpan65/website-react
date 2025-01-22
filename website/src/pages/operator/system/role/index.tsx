@@ -68,7 +68,7 @@ const AppRoleSearch: React.FC<AppRoleSearchProps> = ({
     disabled: false,
     icon: <PlusCircleOutlined />,  // 例如使用 Ant Design 的图标
   };
-
+  
   return (
     <React.Fragment>
       <AppContent>
@@ -357,7 +357,7 @@ const AppRole: React.FC<AppProps> = (props) => {
       await queryRole();
     })();
   }, [state.params]);
-
+  
   return (
     <AppContainer>
       <AppRoleSearch

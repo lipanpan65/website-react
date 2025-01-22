@@ -64,6 +64,7 @@ import AppRole from '@/pages/operator/system/role'
 import AppDeveloper from '@/pages/operator/system/developer'
 import OrganizationTree from '@/pages/operator/system/organization'
 import EditorLayout from '@/components/EditorLayout'
+import AppTasks from '@/pages/operator/system/tasks'
 
 
 export const AppRoute: any = [
@@ -262,8 +263,8 @@ export const AdminRoute: any = [
         id: "317",
         name: "任务管理",
         icon: <ClockCircleOutlined />,
-        url: '/operator/system/task',
-        hash: '#/operator/system/task'
+        url: '/operator/system/tasks',
+        hash: '#/operator/system/tasks'
       },
       {
         id: "318",
@@ -281,7 +282,7 @@ const Routes = () => {
   // const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
   // const isAuthenticated = false;
   const isAuthenticated = true;
-  
+
   return useRoutes(
     [
       {
@@ -409,7 +410,8 @@ const Routes = () => {
               { path: 'dict', element: <AppGlobalDict /> },
               { path: 'menu', element: <AppMenu /> },
               { path: 'organization', element: <OrganizationTree /> },
-              { path: 'developer', element: <AppDeveloper /> }
+              { path: 'tasks', element: <AppTasks /> },
+              { path: 'developer', element: <AppDeveloper /> },
             ],
           },
         ]
