@@ -9,9 +9,6 @@ import { api } from '@/api';
 import { useOrginationTree, OrginationTreeProvider } from '@/hooks/state/useOrgination';
 import AppContent from '@/components/AppContent';
 import ConfirmableButton from '@/components/ConfirmableButton';
-import { current } from '@reduxjs/toolkit';
-
-
 
 
 const { SHOW_PARENT } = TreeSelect;
@@ -131,7 +128,7 @@ const OrganizationTreeDialog: React.FC<any> = React.forwardRef((props: any, ref)
   const { onSubmit, initialValues } = props
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
   const [record, setRecord] = React.useState<any>({}) // 添加状态管理表示当前数据
-  
+
   const fields = [
     {
       label: '组织架构名称',
@@ -347,11 +344,12 @@ const OrganizationTree: React.FC<any> = ({ }) => {
 
     return setShowLeafIcon(false);
   };
-
+  
   // 递归处理树节点数据，将自定义渲染的 `title` 直接赋值
   const mapTreeData = (data: DataNode[]): any[] =>
-    data.map((node) => ({
+    data.map((node: any) => ({
       ...node,
+      key: node.org_id,
       title: renderTitle(node), // 直接赋值 `renderTitle(node)` 的返回值给 `title`
       children: node.children ? mapTreeData(node.children) : undefined,
     }));
@@ -451,7 +449,7 @@ const OrganizationTree: React.FC<any> = ({ }) => {
                       defaultExpandedKeys={customTreeData.length > 0 ? [customTreeData[0].org_id] : []}
                       onSelect={onSelect}
                       treeData={customTreeData}
-                      fieldNames={{ title: 'org_name', key: 'org_id', children: 'children' }}
+                      // fieldNames={{ title: 'org_name', key: 'org_id', children: 'children' }}
                       blockNode
                     />
                     {/* <div style={{ marginBottom: 16 }}>

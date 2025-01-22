@@ -68,7 +68,7 @@ const AppRoleSearch: React.FC<AppRoleSearchProps> = ({
     disabled: false,
     icon: <PlusCircleOutlined />,  // 例如使用 Ant Design 的图标
   };
-
+  
   return (
     <React.Fragment>
       <AppContent>
@@ -254,12 +254,17 @@ const AppRole: React.FC<AppProps> = (props) => {
       enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
     }
   }, [queryParams]);
-
+  
   const columns = [
     {
       title: '角色名称',
       dataIndex: 'role_name',
       key: 'role_name',
+    },
+    {
+      title: '角色类型',
+      dataIndex: 'role_type_display',
+      key: 'role_type_display',
     },
     {
       title: '状态',
@@ -357,7 +362,7 @@ const AppRole: React.FC<AppProps> = (props) => {
       await queryRole();
     })();
   }, [state.params]);
-
+  
   return (
     <AppContainer>
       <AppRoleSearch

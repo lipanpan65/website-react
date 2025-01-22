@@ -16,7 +16,7 @@ import {
 
 import type { TableProps, FormInstance } from 'antd';
 
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import { ExclamationCircleFilled, PlusCircleOutlined } from '@ant-design/icons';
 
 import { dateFormate, request } from '@/utils'
 import AppContent from '@/components/AppContent';
@@ -28,7 +28,6 @@ import { UserInfoProvider, useUserInfo } from '@/hooks/state/useUserInfo';
 import { api } from '@/api';
 import ConfirmableButton from '@/components/ConfirmableButton';
 import AppPassInput from '@/components/AppPassInput';
-
 
 const { confirm } = Modal;
 
@@ -54,14 +53,14 @@ const AppUserInfoSearch: React.FC<AppUserInfoSearchProps> = ({
     console.log('搜索按钮点击');
     // 你可以在这里添加显示模态框的逻辑，例如调用 showModel
   };
-
+  
   const buttonConfig = {
     label: '添加',
     type: 'primary' as const,  // 明确指定类型以符合 ButtonConfig
     onClick: (event: React.MouseEvent<HTMLElement>) => showModel(event, {}),
     // 你可以添加更多的 Button 属性，如 disabled, icon 等
     disabled: false,
-    // icon: <SomeIcon />,  // 例如使用 Ant Design 的图标
+    icon: <PlusCircleOutlined />,  // 例如使用 Ant Design 的图标
   };
 
   return (
@@ -230,22 +229,22 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
     {
       label: '角色名称',
       name: 'role_name',
-      rules: [{ required: true, message: '请输入分类名称' }],
-      component: <Input placeholder="请输入分类名称" />,
+      rules: [{ required: true, message: '请输入角色名称' }],
+      component: <Input placeholder="请输入角色名称" />,
       span: 12,
     },
     {
       label: '密码',
       name: 'password',
-      rules: [{ required: true, message: '请输入分类名称' }],
-      component: <AppPassInput></AppPassInput>,
+      rules: [{ required: true, message: '请输入密码' }],
+      component: <AppPassInput />,
       span: 12,
     },
     {
       label: '组织架构',
       name: 'orgs',
-      rules: [{ required: true, message: '请输入分类名称' }],
-      component: <Input placeholder="请输入分类名称" />,
+      rules: [{ required: true, message: '请输入组织架构' }],
+      component: <Input placeholder="请输入组织架构" />,
       span: 24,
     },
     {

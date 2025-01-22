@@ -16,7 +16,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import MarkDownTOC from '@/components/MarkDownTOC';
 import './style.css'
-import { Col, Row, message, theme, Card } from 'antd'
+import { Col, Row, message, theme, Card, Skeleton } from 'antd'
 import CodeCopy from '@/components/CodeCopy';
 
 
@@ -47,8 +47,6 @@ const initialState = {
 const reducer = (preState: any, action: any) => {
   switch (action.type) {
     case 'READ':
-      console.log('READ.preState', preState)
-      // debugger
       return {
         loading: true,
         article: preState.article
@@ -97,8 +95,9 @@ const ArticleDetail: React.FC = () => {
     }
     )
   }
+
   React.useEffect(() => getArticle(), [])
-  
+
   let ref: any = ''
   const Pre = (preProps: any) => {
     return (
@@ -120,65 +119,58 @@ const ArticleDetail: React.FC = () => {
 
   return (
     <React.Fragment>
-      <div className="layout-3-1 app-layout debug-border">
-        <div className="left-column main-container">
-          <div style={{
-            padding: '2.667rem',
-            // boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)"
-          }}>
-            <h1 className='article-title'>{state.article.title}</h1>
-            <div className='article-body' style={{
-              position: 'relative'
+      <div className="layout-3-1 app-layout debug-border" style={{ borderRadius: borderRadiusLG }}>
+        <Skeleton loading={state.loading}>
+          <div className="left-column main-container">
+            <div style={{
+              padding: '2.667rem',
+              borderRadius: borderRadiusLG,
+              boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)"
             }}>
-              <Markdown
-                className={'markdown-body'}
-                remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
-                components={{
-                  pre: Pre, // 修改pre标签
-                  code({ node, inline, className, children, ...props }: any) {
-                    return <code className={className} {...props} children={children} />
-                    // const match = /language-(\w+)/.exec(className || '')
-                    // return !inline && match ? (
-                    //   <SyntaxHighlighter
-                    //     children={String(children).replace(/\n$/, '')}
-                    //     // style={coldarkDark}
-                    //     // language={match[1]}
-                    //     PreTag="div"
-                    //     // showLineNumbers={true}
-                    //     // showInlineLineNumbers={true}
-                    //     {...props}
-                    //   />
-                    // ) : (
-                    //   <code className={className} {...props} children={children} />
-                    // )
-                  }
-                }}
-              >
-                {state.article.content}
-              </Markdown>
+              <h1 className='article-title'>{state.article.title}</h1>
+              <div className='article-body' style={{
+                position: 'relative'
+              }}>
+                <Markdown
+                  className={'markdown-body'}
+                  remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
+                  components={{
+                    pre: Pre, // 修改pre标签
+                    code({ node, inline, className, children, ...props }: any) {
+                      return <code className={className} {...props} children={children} />
+                      // const match = /language-(\w+)/.exec(className || '')
+                      // return !inline && match ? (
+                      //   <SyntaxHighlighter
+                      //     children={String(children).replace(/\n$/, '')}
+                      //     // style={coldarkDark}
+                      //     // language={match[1]}
+                      //     PreTag="div"
+                      //     // showLineNumbers={true}
+                      //     // showInlineLineNumbers={true}
+                      //     {...props}
+                      //   />
+                      // ) : (
+                      //   <code className={className} {...props} children={children} />
+                      // )
+                    }
+                  }}
+                >
+                  {state.article.content}
+                </Markdown>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="right-column">
-          <Card title="目录" style={{
-            width: '100%'
-          }}>
-            {state.article.content &&
-              <div className="navigation">
-                <MarkDownTOC source={state.article.content || ""} />
-              </div>
-            }
-          </Card>
-          {/* <Card title="目录" style={{
-            width: '100%'
-          }}>
-            {state.article.content &&
-              <div className="navigation">
-                <MarkDownTOC source={state.article.content || ""} />
-              </div>
-            }
-          </Card> */}
-          {/* <Card title="目录" style={{
+          <div className="right-column">
+            <Card title="目录" style={{
+              width: '100%'
+            }}>
+              {state.article.content &&
+                <div className="navigation">
+                  <MarkDownTOC source={state.article.content || ""} />
+                </div>
+              }
+            </Card>
+            {/* <Card title="目录" style={{
             width: '100%'
           }}>
             {state.article.content &&
@@ -187,7 +179,17 @@ const ArticleDetail: React.FC = () => {
               </div>
             }
           </Card> */}
-        </div>
+            {/* <Card title="目录" style={{
+            width: '100%'
+          }}>
+            {state.article.content &&
+              <div className="navigation">
+                <MarkDownTOC source={state.article.content || ""} />
+              </div>
+            }
+          </Card> */}
+          </div>
+        </Skeleton>
       </div>
     </React.Fragment>
   )
