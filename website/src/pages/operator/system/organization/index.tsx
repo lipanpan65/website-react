@@ -131,7 +131,7 @@ const OrganizationTreeDialog: React.FC<any> = React.forwardRef((props: any, ref)
   const { onSubmit, initialValues } = props
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
   const [record, setRecord] = React.useState<any>({}) // 添加状态管理表示当前数据
-
+  
   const fields = [
     {
       label: '组织架构名称',

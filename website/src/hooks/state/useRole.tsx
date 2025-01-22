@@ -38,7 +38,7 @@ type ActionType =
 
 // 初始化 state
 const initialState: StateType = {
-  loading: false,
+  loading: true,
   open: false,
   record: {},
   page: { total: 0, current: 0, pageSize: 5 },
@@ -79,6 +79,7 @@ const reducer = (state: StateType, action: ActionType): StateType => {
           ...state.params,
           ...(action.payload.params ?? {}), // 安全地合并 `params`
         },
+        loading: true,
       };
     default:
       return state;
