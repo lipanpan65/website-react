@@ -110,7 +110,7 @@ const AppRoleTable: React.FC<AppRoleTableProps> = ({
   const { state } = useRole();
 
   const { page = { total: 0, current: 1, pageSize: 10 }, data = [], loading } = state;
-
+  
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
     if (onChange) {
       onChange(pagination, filters, sorter);  // 确保 onChange 已定义

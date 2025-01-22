@@ -344,7 +344,7 @@ const OrganizationTree: React.FC<any> = ({ }) => {
 
     return setShowLeafIcon(false);
   };
-  
+
   // 递归处理树节点数据，将自定义渲染的 `title` 直接赋值
   const mapTreeData = (data: DataNode[]): any[] =>
     data.map((node: any) => ({
@@ -394,9 +394,6 @@ const OrganizationTree: React.FC<any> = ({ }) => {
       const response = await api.org.fetch(params);
       if (response && response.success) {
         const { data, page } = response.data;
-        console.log("============")
-        console.log(data)
-        console.log("============")
         enhancedDispatch({
           type: 'READ_DONE', payload: {
             data, page
@@ -418,7 +415,7 @@ const OrganizationTree: React.FC<any> = ({ }) => {
   }, [state.params]);
 
   const customTreeData = mapTreeData(state.data);
-  console.log("customTreeData", customTreeData)
+  // console.log("customTreeData", customTreeData)
   return (
     <div>
       <AppContainer>

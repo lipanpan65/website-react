@@ -20,9 +20,9 @@ interface Organization {
 // 定义 API
 export const orgApi = {
   // 获取列表（带分页）
-  fetch: (params: any): Promise<ApiResponse<any>> =>
+  fetch: (params?: any): Promise<ApiResponse<any>> =>
     request({ url: '/api/operator/v1/organizations/', method: 'GET', params }),
-
+  
   // 创建新的全局字典
   create: (data: Partial<any>): Promise<ApiResponse<any>> =>
     request({ url: '/api/operator/v1/organizations/', method: 'POST', data }),

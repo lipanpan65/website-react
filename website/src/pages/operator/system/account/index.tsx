@@ -7,7 +7,8 @@ import {
   Form,
   Input,
   Button,
-  Select
+  Select,
+  TreeSelect
 } from 'antd'
 
 import {
@@ -28,6 +29,7 @@ import { UserInfoProvider, useUserInfo } from '@/hooks/state/useUserInfo';
 import { api } from '@/api';
 import ConfirmableButton from '@/components/ConfirmableButton';
 import AppPassInput from '@/components/AppPassInput';
+import AppOrgSelect from '@/components/AppOrgSelect';
 
 const { confirm } = Modal;
 
@@ -53,7 +55,7 @@ const AppUserInfoSearch: React.FC<AppUserInfoSearchProps> = ({
     console.log('搜索按钮点击');
     // 你可以在这里添加显示模态框的逻辑，例如调用 showModel
   };
-  
+
   const buttonConfig = {
     label: '添加',
     type: 'primary' as const,  // 明确指定类型以符合 ButtonConfig
@@ -120,17 +122,13 @@ interface UserInfoTableProps {
 }
 
 const AppUserInfoTable: React.FC<UserInfoTableProps> = ({
-  data = {
-    page: {
-      total: 0,
-      current: 1,
-      pageSize: 5
-    },
-    data: []
-  },
   columns = [], // 设置默认值为空数组
   onChange
 }) => {
+
+  const { state } = useUserInfo();
+
+  const { page = { total: 0, current: 1, pageSize: 10 }, data = [], loading } = state;
 
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
     if (onChange) {
@@ -142,10 +140,10 @@ const AppUserInfoTable: React.FC<UserInfoTableProps> = ({
     <React.Fragment>
       <AppContent>
         <AppTable
-          data={data}
+          data={{ page, data }}
           columns={columns}
           onChange={handleTableChange}
-          loading={false}
+          loading={loading}
         />
       </AppContent>
     </React.Fragment>
@@ -159,14 +157,13 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
   const [formValues, setFormValues] = React.useState<any>({});
   const [roleTypes, setRoleTypes] = React.useState<any[]>([]); // 用于存储角色类型
+  const [record, setRecord] = React.useState<any>({}) // 添加状态管理表示当前数据
 
-  const queryRole = async () => {
-    console.log("掉用了")
+  const queryRoles = async () => {
     try {
       const response = await api.role.fetch();
       if (response && response.success) {
-        const { data, page } = response.data;
-        console.log("data", data)
+        const { data } = response.data;
         setRoleTypes(data)
       } else {
         message.error(response?.message || '获取数据失败');
@@ -178,9 +175,8 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
 
   // 在任意组件如果存在该方法都会加载
   React.useEffect(() => {
-    queryRole();
+    queryRoles();
   }, []);  // 空
-
 
   const fields = [
     {
@@ -243,8 +239,8 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
     {
       label: '组织架构',
       name: 'orgs',
-      rules: [{ required: true, message: '请输入组织架构' }],
-      component: <Input placeholder="请输入组织架构" />,
+      rules: [{ required: true, message: '请选择组织架构' }],
+      component: <AppOrgSelect />,
       span: 24,
     },
     {
@@ -254,16 +250,37 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
     },
   ];
 
-  const showModel = (open: boolean, data?: any) => {
-    setOpen(open);
-    if (data) {
-      // setFormValues(() => data)
+  // 监听 record 变化并更新表单
+  React.useEffect(() => {
+    if (formInstance && record) {
+      console.log("Updating form with record:", record);
+      formInstance.setFieldsValue(record);
+    }
+  }, [record, formInstance]);
+
+  const showModel = (isOpen: boolean, data?: any) => {
+    setOpen(isOpen);
+    if (isOpen && data) {
+      setRecord(data); // 更新 record 状态
     }
   };
 
-  const handleSubmit = (values: any) => {
-    console.log('提交的数据:', values);
+  const handleSubmit = async () => {
+    try {
+      const data = await formInstance?.validateFields();
+      if (!!record.id) {
+        const newRecord = { id: record.id, ...data };
+        await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
+      } else {
+        await onSubmit('CREATE', data); // 不再需要传递 `dispatch`
+      }
+      setOpen(false);
+    } catch (error: any) {
+      console.error('捕获的异常:', error);
+      message.error(error.message || '表单验证失败，请检查输入内容。');
+    }
   };
+
 
   React.useEffect(() => {
     if (formInstance) {
@@ -271,18 +288,20 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
     }
   }, [formInstance, formValues]);
 
-  const onOk = () => {
-    formInstance?.validateFields()
-      .then((values: any) => {
-        if (formValues.id) {
-          values["id"] = formValues.id
-        }
-        onSubmit(values)
-      }).catch((e: any) => {
-        console.log('e', e)
-        return;
-      })
-  }
+  // const onOk = () => {
+  //   formInstance?.validateFields()
+  //     .then((values: any) => {
+  //       if (formValues.id) {
+  //         values["id"] = formValues.id
+  //       }
+  //       console.log("onOk", values)
+  //       onSubmit(values)
+  //       // handleSubmit(values)
+  //     }).catch((e: any) => {
+  //       console.log('e', e)
+  //       return;
+  //     })
+  // }
 
   const onCancel = () => {
     formInstance?.resetFields();
@@ -291,7 +310,6 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
 
   React.useImperativeHandle(ref, () => ({
     showModel,
-    onOk,
     onCancel
   }));
 
@@ -301,7 +319,6 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
         setFormInstance={setFormInstance}  // 管理表单实例
         fields={fields}
         title='添加用户'
-        onOk={onOk}
         onCancel={onCancel}
         open={open}
         onSubmit={handleSubmit}
@@ -414,10 +431,13 @@ const AppUserInfo = () => {
     // 确定请求方法
     const requestAction =
       actionType === 'DELETE'
-        ? () => api.role.delete(data.id)
+        ? () => api.userInfo.delete(data.id)
         : actionType === 'UPDATE'
-          ? api.role.update
-          : api.role.create;
+          ? api.userInfo.update
+          : api.userInfo.create;
+    console.log("===============")
+    console.log("data====>", data)
+    console.log("===============")
 
     // 设定响应消息
     const responseMessages = {
@@ -436,9 +456,34 @@ const AppUserInfo = () => {
       console.error('提交出错:', error);
       message.error('提交出错，请检查网络或稍后重试');
     } finally {
-      // await queryRole();
+      await queryUserInfo();
     }
   };
+
+  const queryUserInfo = async () => {
+    try {
+      const { params } = state;
+      const response = await api.userInfo.fetch(params);
+      if (response && response.success) {
+        const { data, page } = response.data;
+        enhancedDispatch({
+          type: 'READ_DONE', payload: {
+            data, page
+          }
+        });
+      } else {
+        message.error(response?.message || '获取数据失败');
+      }
+    } catch (error) {
+      message.error('请求失败，请稍后重试');
+    }
+  };
+
+  React.useEffect(() => {
+    (async () => {
+      await queryUserInfo();
+    })();
+  }, [state.params]);
 
   return (
     <AppContainer>
