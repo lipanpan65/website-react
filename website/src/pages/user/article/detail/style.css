@@ -48,3 +48,15 @@
   /* background-color: #f8f8f8; */
   text-decoration: inherit;
 }
+
+.right-column {
+  position: sticky;
+  top: 20px;
+  /* 距离顶部的偏移量，根据需要调整 */
+  z-index: 10;
+  /* 确保它在其他内容之上 */
+  height: calc(100vh - 40px);
+  /* 设置右侧栏的高度，使其适应视口 */
+  overflow-y: auto;
+  /* 让内容可滚动 */
+}

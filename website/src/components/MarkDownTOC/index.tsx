@@ -177,18 +177,21 @@ const MarkDownTOC: React.FC<MarkDownTOCProps> = ({ source, offsetTop = 0 }) => {
   const anchorItems = renderAnchorItems(navTree);
 
   return (
-    <Anchor
-      items={anchorItems}
-      offsetTop={offsetTop}
-      affix={false}
-      onClick={(e, link) => {
-        e.preventDefault(); // 阻止默认行为
-        const newHash = link.href.replace('#', '');
-        smoothScrollToElement(newHash, offsetTop); // 平滑滚动到目标
-        updateHash(newHash); // 更新 URL 哈希
-        setActiveLink(link.href);
-      }}
-    />
+    <>
+      <Anchor
+        items={anchorItems}
+        offsetTop={offsetTop}
+        affix={false}
+        onClick={(e, link) => {
+          e.preventDefault(); // 阻止默认行为
+          const newHash = link.href.replace('#', '');
+          smoothScrollToElement(newHash, offsetTop); // 平滑滚动到目标
+          updateHash(newHash); // 更新 URL 哈希
+          setActiveLink(link.href);
+        }}
+      />
+    </>
+
   );
 };
 

@@ -1,38 +1,39 @@
 .code-copy-btn {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    display: none;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: none;
 
-    .copy-btn {
-        padding: 5px;
-        line-height: 1;
-        border-radius: 5px;
-        color: #fff;
-        background-color: #d9534f;
-        border-color: #d43f3a;
-    }
+  // 暂时启用
+  .copy-btn {
+    padding: 5px;
+    line-height: 1;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+  }
 
-    .ant-btn-default:not(:disabled):hover {
-        color: #000 !important;
-        border-color: #000 !important;
-    }
+  .ant-btn-default:not(:disabled):hover {
+    color: #000 !important;
+    border-color: #000 !important;
+  }
 
-    .ant-btn {
-        height: auto;
-    }
+  .ant-btn {
+    height: auto;
+  }
 
-    pre.blog-pre {
-        position: relative !important;
-    }
+  pre.blog-pre {
+    position: relative !important;
+  }
 
-    // 鼠标hover代码块控制按钮出现
-    pre.blog-pre:hover & {
-        display: block;
-    }
+  // 鼠标hover代码块控制按钮出现
+  pre.blog-pre:hover & {
+    display: block;
+  }
 
-    // 兼容移动端的触摸事件
-    pre.blog-pre.active & {
-        display: block;
-    }
+  // 兼容移动端的触摸事件
+  pre.blog-pre.active & {
+    display: block;
+  }
 }

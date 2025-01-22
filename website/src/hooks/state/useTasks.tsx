@@ -99,7 +99,7 @@ export const useTask = () => useContext(TaskContext);
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-
+  
   const enhancedDispatch: EnhancedDispatch = (action) => {
     if (typeof action === 'function') {
       action(dispatch);
