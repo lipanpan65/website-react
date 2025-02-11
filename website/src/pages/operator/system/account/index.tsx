@@ -8,7 +8,8 @@ import {
   Input,
   Button,
   Select,
-  TreeSelect
+  TreeSelect,
+  Spin
 } from 'antd'
 
 import {
@@ -30,6 +31,7 @@ import { api } from '@/api';
 import ConfirmableButton from '@/components/ConfirmableButton';
 import AppPassInput from '@/components/AppPassInput';
 import AppOrgSelect from '@/components/AppOrgSelect';
+import StatusTag from '@/components/StatusTag';
 
 const { confirm } = Modal;
 
@@ -151,34 +153,18 @@ const AppUserInfoTable: React.FC<UserInfoTableProps> = ({
 }
 
 const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
-  console.log("AppUserInfoDialog")
   const [open, setOpen] = React.useState<boolean>(false);
-  const { onSubmit } = props
+  const { onSubmit, roleTypes } = props
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
-  const [formValues, setFormValues] = React.useState<any>({});
-  const [roleTypes, setRoleTypes] = React.useState<any[]>([]); // 用于存储角色类型
   const [record, setRecord] = React.useState<any>({}) // 添加状态管理表示当前数据
+  const [isOrgDataLoaded, setIsOrgDataLoaded] = React.useState<boolean>(false);
 
-  const queryRoles = async () => {
-    try {
-      const response = await api.role.fetch();
-      if (response && response.success) {
-        const { data } = response.data;
-        setRoleTypes(data)
-      } else {
-        message.error(response?.message || '获取数据失败');
-      }
-    } catch (error) {
-      message.error('请求失败，请稍后重试');
-    }
-  };
+  // 使用 useCallback 缓存回调函数
+  const handleOrgDataLoaded = React.useCallback((loaded: boolean) => {
+    setIsOrgDataLoaded(loaded);
+  }, []);
 
-  // 在任意组件如果存在该方法都会加载
-  React.useEffect(() => {
-    queryRoles();
-  }, []);  // 空
-
-  const fields = [
+  const fields: any = [
     {
       label: '用户名称',
       name: 'name',
@@ -213,7 +199,7 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
       rules: [{ required: true, message: '请选择角色类型' }],
       component: (
         <Select placeholder="请选择角色类型" allowClear>
-          {roleTypes.map((role) => (
+          {roleTypes.map((role: any) => (
             <Select.Option key={role.id} value={role.id}>
               {role.role_name}
             </Select.Option>
@@ -240,7 +226,9 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
       label: '组织架构',
       name: 'orgs',
       rules: [{ required: true, message: '请选择组织架构' }],
-      component: <AppOrgSelect />,
+      component: <AppOrgSelect
+        onDataLoaded={handleOrgDataLoaded} // 使用缓存的回调函数
+      />,
       span: 24,
     },
     {
@@ -252,11 +240,11 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
 
   // 监听 record 变化并更新表单
   React.useEffect(() => {
-    if (formInstance && record) {
+    if (formInstance && record && isOrgDataLoaded) {
       console.log("Updating form with record:", record);
       formInstance.setFieldsValue(record);
     }
-  }, [record, formInstance]);
+  }, [record, formInstance, isOrgDataLoaded]);
 
   const showModel = (isOpen: boolean, data?: any) => {
     setOpen(isOpen);
@@ -281,28 +269,6 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
     }
   };
 
-
-  React.useEffect(() => {
-    if (formInstance) {
-      formInstance.setFieldsValue({ ...formValues });
-    }
-  }, [formInstance, formValues]);
-
-  // const onOk = () => {
-  //   formInstance?.validateFields()
-  //     .then((values: any) => {
-  //       if (formValues.id) {
-  //         values["id"] = formValues.id
-  //       }
-  //       console.log("onOk", values)
-  //       onSubmit(values)
-  //       // handleSubmit(values)
-  //     }).catch((e: any) => {
-  //       console.log('e', e)
-  //       return;
-  //     })
-  // }
-
   const onCancel = () => {
     formInstance?.resetFields();
     setOpen(false)
@@ -315,27 +281,59 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
 
   return (
     <React.Fragment>
-      <AppDialog
-        setFormInstance={setFormInstance}  // 管理表单实例
-        fields={fields}
-        title='添加用户'
-        onCancel={onCancel}
-        open={open}
-        onSubmit={handleSubmit}
-      />
+        <AppDialog
+          setFormInstance={setFormInstance}  // 管理表单实例
+          fields={fields}
+          title='添加用户'
+          onCancel={onCancel}
+          open={open}
+          onSubmit={handleSubmit}
+        />
     </React.Fragment>
   );
 });
 
 const AppUserInfo = () => {
+  const navigate = useNavigate()
   const { state, enhancedDispatch } = useUserInfo();
   const dialogRef: any = React.useRef()
-  const dataTableRef: any = React.useRef()
-  const navigate = useNavigate()
   const [formInstance, setFormInstance] = React.useState<FormInstance>();
   const [queryParams, setQqueryParams] = React.useState<any>({})
   const [loading, setLoading] = React.useState<boolean>()
+  const [roleTypes, setRoleTypes] = React.useState<any[]>([]); // 新增角色类型状态
 
+  console.log("AppUserInfo")
+
+  // 获取角色数据
+  const queryRoles = async () => {
+    try {
+      const response = await api.role.fetch();
+      if (response && response.success) {
+        const { data } = response.data;
+        console.log("已经获取到最新的数据...")
+        setRoleTypes(data);
+      } else {
+        message.error(response?.message || '获取数据失败');
+      }
+    } catch (error) {
+      message.error('请求失败，请稍后重试');
+    }
+  };
+
+  // /**
+  // * 按照顺序执行
+  // */
+  // React.useEffect(() => {
+  //   console.log("加载数据")
+  //   queryRoles();
+  // }, [])
+
+  /**
+  * 按照顺序执行
+  */
+  React.useEffect(() => {
+    console.log("加载数据")
+  }, [queryParams])
 
   const columns: TableProps<any>['columns'] = [
     {
@@ -358,7 +356,6 @@ const AppUserInfo = () => {
       title: '角色类型',
       dataIndex: 'role_type',
       key: 'role_type',
-      // render: (text: any, _: any, __: any) => USER_ROLE_MAP[text]
     },
     {
       title: '角色名称',
@@ -366,26 +363,30 @@ const AppUserInfo = () => {
       key: 'role_name',
     },
     {
+      title: '邮箱',
+      dataIndex: 'email',
+      key: 'email',
+    },
+    {
+      title: '手机号',
+      dataIndex: 'phone',
+      key: 'phone',
+    },
+    {
+      title: '状态',
+      dataIndex: 'enable',
+      key: 'enable',
+      render: (text: number) => <StatusTag status={text} />
+    },
+    {
       title: '组织架构',
       dataIndex: 'orgs',
       key: 'orgs',
     },
     {
-      title: '状态',
-      dataIndex: 'status',
-      key: 'status',
-      // render: (text: any, _: any, __: boolean) => {
-      //   return <Tag color={USER_STATUS_COLOR[text]}>{USER_STATUS[text]}</Tag>
-      // }
-    },
-    {
       title: '操作',
       dataIndex: 'id',
       key: 'id',
-      // sorter: true,
-      // 升序 1,2,3,4,5 ascending order
-      // 降序 5,4,3,2,1 descending order
-      // sortOrder: 'descend',
       render: (_: any, record: any) => (
         <Space size="middle">
           <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
@@ -416,13 +417,6 @@ const AppUserInfo = () => {
   const showModel = (_: any, data?: any) => {
     dialogRef.current.showModel(true, data)
   }
-
-  /**
- * 按照顺序执行
- */
-  React.useEffect(() => {
-    console.log("加载数据")
-  }, [queryParams])
 
   const onSubmit = async (
     actionType: 'CREATE' | 'UPDATE' | 'DELETE',
@@ -501,11 +495,11 @@ const AppUserInfo = () => {
       <AppUserInfoDialog
         ref={dialogRef}
         onSubmit={onSubmit}
+        roleTypes={roleTypes}
       />
     </AppContainer>
   )
 }
-
 
 export default () => (
   <UserInfoProvider>

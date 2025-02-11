@@ -17,18 +17,20 @@ interface AppOrgSelectProps {
   onChange?: (value: string) => void; // 值变化的回调
   // loadData?: (parentValue: string) => Promise<TreeNode[]>; // 远程加载数据的接口
   placeholder?: string; // 占位符
+  onDataLoaded?: any
 }
 
-const AppOrgSelect: React.FC<AppOrgSelectProps> = ({ value, onChange, placeholder = '请选择组织' }) => {
+const AppOrgSelect: React.FC<AppOrgSelectProps> = ({ value, onChange, onDataLoaded, placeholder = '请选择组织' }) => {
   const [treeData, setTreeData] = useState<TreeNode[]>([]); // 存储树数据
   const [loading, setLoading] = useState<boolean>(false); // 加载状态
+  const [initialValue, setInitialValue] = useState<string | undefined>(undefined); // 初始值
 
   const mapTreeData = (data: any[]): any[] =>
     data.map((node: any) => ({
       ...node,
       title: node.org_name,
       value: node.org_id,
-      // title: renderTitle(node), // 直接赋值 `renderTitle(node)` 的返回值给 `title`
+      key: node.org_id,      // key 必须唯一，通常与 value 一致
       children: node.children ? mapTreeData(node.children) : undefined,
     }));
 
@@ -38,6 +40,8 @@ const AppOrgSelect: React.FC<AppOrgSelectProps> = ({ value, onChange, placeholde
       if (success) {
         const treeData = mapTreeData(data)
         setTreeData(treeData)
+        onDataLoaded?.(true); // 通知父组件数据加载完成
+        setInitialValue(value); // 数据加载完成后设置初始值
       }
       // return data
     } catch (error) {
@@ -51,24 +55,7 @@ const AppOrgSelect: React.FC<AppOrgSelectProps> = ({ value, onChange, placeholde
 
   useEffect(() => {
     queryOrgs()
-  }, [])
-
-  // // 初次加载根节点数据
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const data = await api.org.fetch(); // 加载根节点，传入空字符串表示根节点
-  //       console.log("data===>", data)
-  //       // setTreeData(data);
-  //     } catch (error) {
-  //       console.error('加载根节点数据失败', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [loadData]);
+  }, [onDataLoaded])
 
   // 远程加载数据的处理函数
   const handleLoadData = async (node: any) => {
@@ -85,9 +72,16 @@ const AppOrgSelect: React.FC<AppOrgSelectProps> = ({ value, onChange, placeholde
     }
   };
 
+  // 监听 value 变化，确保数据加载后更新 initialValue
+  useEffect(() => {
+    if (treeData.length > 0 && value) {
+      setInitialValue(value);
+    }
+  }, [value, treeData]);
+
   return (
     <TreeSelect
-      value={value}
+      value={initialValue}
       onChange={onChange}
       treeData={treeData}
       // loadData={handleLoadData} // 配置远程加载数据
@@ -101,4 +95,5 @@ const AppOrgSelect: React.FC<AppOrgSelectProps> = ({ value, onChange, placeholde
   );
 };
 
-export default AppOrgSelect;
+// export default AppOrgSelect;
+export default React.memo(AppOrgSelect);

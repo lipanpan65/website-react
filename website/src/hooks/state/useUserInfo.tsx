@@ -1,4 +1,6 @@
-import { useReducer, useContext, createContext, ReactNode, Dispatch } from 'react';
+import { api } from '@/api';
+import { message } from 'antd';
+import { useReducer, useContext, createContext, ReactNode, Dispatch, useState, useEffect } from 'react';
 
 // 定义 state 的类型
 interface StateType {
@@ -89,15 +91,39 @@ const reducer = (state: StateType, action: ActionType): StateType => {
 export const UserInfoContext = createContext<{
   state: StateType;
   enhancedDispatch: EnhancedDispatch;
+  // roleTypes: any[]; // 新增角色类型
 }>({
   state: initialState,
   enhancedDispatch: () => { },
+  // roleTypes: [], // 默认值为空数组
 });
 
 export const useUserInfo = () => useContext(UserInfoContext);
 
 export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  // const [roleTypes, setRoleTypes] = useState<any[]>([]); // 新增角色类型状态
+
+  // 获取角色数据
+  // const queryRoles = async () => {
+  //   try {
+  //     const response = await api.role.fetch();
+  //     if (response && response.success) {
+  //       const { data } = response.data;
+  //       console.log("已经获取到最新的数据...")
+  //       setRoleTypes(data);
+  //     } else {
+  //       message.error(response?.message || '获取数据失败');
+  //     }
+  //   } catch (error) {
+  //     message.error('请求失败，请稍后重试');
+  //   }
+  // };
+
+  // // 在 UserInfoProvider 加载时获取角色数据
+  // useEffect(() => {
+  //   queryRoles();
+  // }, []);
 
   const enhancedDispatch: EnhancedDispatch = (action) => {
     if (typeof action === 'function') {
