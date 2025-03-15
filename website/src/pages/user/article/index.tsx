@@ -184,7 +184,7 @@ const Article: React.FC = () => {
             </div>
           </Skeleton>
         </div>
-        <div className="section section-right">
+        {/* <div className="section section-right">
           <div className="right-pane">
             <Card>
               <p>晚上好</p>
@@ -199,7 +199,7 @@ const Article: React.FC = () => {
           </div>
           <div className="right-pane">
           </div>
-        </div>
+        </div> */}
       </div>
     </React.Fragment>
   )

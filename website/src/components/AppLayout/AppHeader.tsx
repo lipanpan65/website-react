@@ -96,7 +96,6 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
           className="menu"
         />
         <Space className="header-actions">
-
           <AuthButton
             isAuthenticated={isAuthenticated}
             requiredRole={requiredRole}
