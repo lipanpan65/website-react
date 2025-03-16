@@ -7,8 +7,16 @@ interface LoginModalProps {
   onLoginSuccess: () => void;  // 登录成功的回调
 }
 
+
+
+
+
 const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, onLoginSuccess }) => {
   const [form] = Form.useForm();
+
+
+  
+
 
   // 模拟登录逻辑
   const handleLogin = (values: { username: string; password: string }) => {
@@ -19,7 +27,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, onLoginSuccess }
       onLoginSuccess();  // 登录成功后调用回调
       onClose();         // 关闭模态框
     } else {
-      // 显示登录失败的错误信息
+      // 显示登录失败的错误信息（动态的显示了用户信息）
       form.setFields([
         {
           name: 'password',

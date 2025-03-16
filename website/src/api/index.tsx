@@ -4,6 +4,7 @@ import { roleApi } from './role'
 import { articleCategoryApi } from './articleCategory'
 import { articleApi } from './article';
 import { orgApi } from './organization';
+import { userInfoApi } from './userinfo';
 
 // TODO 修改常用的名称
 export const api = {
@@ -11,5 +12,6 @@ export const api = {
     globalDict: globalDictApi,
     role: roleApi,
     articleCategory: articleCategoryApi,
-    org: orgApi
+    org: orgApi,
+    userInfo: userInfoApi
 };

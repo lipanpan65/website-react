@@ -310,7 +310,6 @@ const AppGlobalDict = () => {
     }
   }, [queryParams]);
 
-
   const columns: TableProps<any>['columns'] = [
     {
       title: '#', dataIndex: 'id', key: 'id', sorter: true,
@@ -336,21 +335,20 @@ const AppGlobalDict = () => {
       title: '操作',
       dataIndex: 'id',
       key: 'id',
-      // sortOrder: 'descend',
       render: (_: any, record: any) => (
         <Space size="middle">
-            <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
-              编辑
-            </Button>
-            <ConfirmableButton
-              type='link'
-              onSubmit={() => onSubmit('DELETE', record)}
-            >删除</ConfirmableButton>
+          <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
+            编辑
+          </Button>
+          <ConfirmableButton
+            type='link'
+            onSubmit={() => onSubmit('DELETE', record)}
+          >删除</ConfirmableButton>
         </Space>
       )
     },
   ];
-  
+
   const onSubmit = async (
     actionType: 'CREATE' | 'UPDATE' | 'DELETE',
     data: Record<string, any>
@@ -396,8 +394,7 @@ const AppGlobalDict = () => {
         pageSize: pagination.pageSize,
         total: pagination.total
       }
-    }
-    )
+    })
   }
 
   const queryGlobalDict = async () => {

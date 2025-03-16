@@ -8,6 +8,8 @@ import AppContent from '@/components/AppContent';
 import AppDialog from '@/components/AppDialog';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import AppSearch from '@/components/AppSearch';
+import { topicApi } from '@/api/topics';
+
 
 // 初始化参数
 const initialState = {
@@ -46,31 +48,31 @@ interface AppTopicTableProps {
 
 
 
-const api: any = {
-  fetch: (params: any) => request({
-    url: `/api/v1/users/`,
-    method: 'GET',
-    params
-  }),
-  create: (data: any) => request({
-    url: `/api/user/v1/account/menus/`,
-    method: 'POST',
-    data
-  }),
-  update: (data: any) => request({
-    url: `/api/user/v1/account/menus/${data.id}`,
-    method: 'PUT',
-    data
-  }),
-  entry: (id: any) => request({
-    url: `/api/user/v1/account/menus/${id}`,
-    method: 'GET',
-  }),
-  delete: (id: any) => request({
-    url: `/api/user/v1/account/menus/${id}`,
-    method: 'DELETE',
-  }),
-}
+// const api: any = {
+//   fetch: (params: any) => request({
+//     url: `/api/v1/users/`,
+//     method: 'GET',
+//     params
+//   }),
+//   create: (data: any) => request({
+//     url: `/api/user/v1/account/menus/`,
+//     method: 'POST',
+//     data
+//   }),
+//   update: (data: any) => request({
+//     url: `/api/user/v1/account/menus/${data.id}`,
+//     method: 'PUT',
+//     data
+//   }),
+//   entry: (id: any) => request({
+//     url: `/api/user/v1/account/menus/${id}`,
+//     method: 'GET',
+//   }),
+//   delete: (id: any) => request({
+//     url: `/api/user/v1/account/menus/${id}`,
+//     method: 'DELETE',
+//   }),
+// }
 
 
 interface ModelFormProps {
@@ -145,7 +147,6 @@ const AppTopicDialog = React.forwardRef((props: any, ref) => {
       } else {
         await onSubmit('CREATE', data); // 不再需要传递 `dispatch`
       }
-      // enhancedDispatch((dispatch) => onSubmit(dispatch, 'UPDATE', newRecord));
       setOpen(false);
     } catch (error: any) {
       console.error('捕获的异常:', error);
@@ -157,7 +158,7 @@ const AppTopicDialog = React.forwardRef((props: any, ref) => {
     formInstance?.resetFields();
     setOpen(false);
   };
-  
+
   const fields = [
     {
       label: '专题名称',
@@ -379,7 +380,7 @@ const AppTopic = () => {
 
   const queryTopics = () => {
     const { params } = state
-    api.fetch(params).then((r: any) => {
+    topicApi.fetch(params).then((r: any) => {
       console.log("-------")
       console.log(r)
       console.log("-------")
@@ -388,30 +389,17 @@ const AppTopic = () => {
     })
   }
 
-  // React.useEffect(() => querySubjects(), [state.params])
-  // React.useEffect(() => queryTopics(), [])
-
-
   // submit 方法
   const onSubmit = (dispatch: React.Dispatch<any>, data: any) => {
     console.log('dispatch', dispatch)
     console.log('data===>', data)
     dispatch({ type: 'CREATE', payload: { data } })
-    api.create(data).then((r: any) => {
+    topicApi.create(data).then((r: any) => {
       console.log('onSubmit.r===>', r)
     }).finally(() => {
       // dispatch({ type: 'READ_DONE', payload: {} })
     })
   }
-
-  /**
- * 按照顺序执行
- */
-  // React.useEffect(() => {
-  //   console.log('组件加载queryParams', queryParams)
-  //   console.log('-queryParams-', queryParams)
-  //   queryTopics()
-  // }, [queryParams])
 
   React.useEffect(() => {
     (async () => {

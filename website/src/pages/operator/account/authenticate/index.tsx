@@ -27,7 +27,7 @@ const Authenticate = () => {
     const { username, password } = values
     dispatch(actions.login({ username, password }));
   };
-
+  
   return (
     <React.Fragment>
       <div className='auth-wrapper'>
