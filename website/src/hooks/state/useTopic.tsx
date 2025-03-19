@@ -100,7 +100,7 @@ export const useTopic = () => useContext(TopicContext);
 
 export const TopicProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-
+  
   const enhancedDispatch: EnhancedDispatch = (action) => {
     if (typeof action === 'function') {
       action(dispatch);

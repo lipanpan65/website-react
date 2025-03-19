@@ -8,29 +8,11 @@ import AppContent from '@/components/AppContent';
 import AppDialog from '@/components/AppDialog';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import AppSearch from '@/components/AppSearch';
-import { topicApi } from '@/api/topics';
+// import { topicApi } from '@/api/topics';
+import { api } from '@/api';
+import StatusTag from '@/components/StatusTag';
+import ConfirmableButton from '@/components/ConfirmableButton';
 
-
-// 初始化参数
-const initialState = {
-  loading: false,
-  open: false,
-  entry: {
-    id: null,
-    menu_name: null,
-    enable: null,
-    url: null,
-    element: null,
-    pid: null
-  },
-  page: {
-    total: 0,
-    current: 0,
-    pageSize: 5
-  },
-  data: [],
-  params: {}
-};
 
 const layout = {
   labelCol: { span: 8 },
@@ -46,77 +28,10 @@ interface AppTopicTableProps {
   onChange?: (pagination: PaginationProps, filters?: any, sorter?: any) => void;  // 新增 onChange 属性
 }
 
-
-
-// const api: any = {
-//   fetch: (params: any) => request({
-//     url: `/api/v1/users/`,
-//     method: 'GET',
-//     params
-//   }),
-//   create: (data: any) => request({
-//     url: `/api/user/v1/account/menus/`,
-//     method: 'POST',
-//     data
-//   }),
-//   update: (data: any) => request({
-//     url: `/api/user/v1/account/menus/${data.id}`,
-//     method: 'PUT',
-//     data
-//   }),
-//   entry: (id: any) => request({
-//     url: `/api/user/v1/account/menus/${id}`,
-//     method: 'GET',
-//   }),
-//   delete: (id: any) => request({
-//     url: `/api/user/v1/account/menus/${id}`,
-//     method: 'DELETE',
-//   }),
-// }
-
-
 interface ModelFormProps {
   isUpdate: boolean;
   initialValues: any; // todo 
   onFormInstanceReady: (instance: FormInstance<any>) => void;
-}
-
-const ModelForm: React.FC<ModelFormProps> = ({
-  onFormInstanceReady,
-  initialValues
-}) => {
-
-  const [form] = Form.useForm();
-
-  React.useEffect(() => onFormInstanceReady(form), [])
-
-  return (
-    <React.Fragment>
-      <Form layout="vertical"
-        form={form}
-        initialValues={initialValues}
-      >
-        <Form.Item
-          name="subject_name"
-          label="专题名称"
-          rules={[
-            { required: true, message: '请输入分类名称' },
-            // { validator: validateNameExists }
-          ]}
-        >
-          <Input
-            placeholder='请输入专题名称'
-          // disabled={isUpdate}
-          />
-        </Form.Item>
-        <Form.Item name="remark" label="备注">
-          <Input.TextArea
-            placeholder='请输入备注'
-            showCount maxLength={100} />
-        </Form.Item>
-      </Form>
-    </React.Fragment>
-  )
 }
 
 const AppTopicDialog = React.forwardRef((props: any, ref) => {
@@ -162,7 +77,7 @@ const AppTopicDialog = React.forwardRef((props: any, ref) => {
   const fields = [
     {
       label: '专题名称',
-      name: 'category_name',
+      name: 'topic_name',
       rules: [{ required: true, message: '请输入专题名称' }],
       component: <Input
         disabled={!!record.id}
@@ -286,9 +201,8 @@ const AppTopicTable: React.FC<AppTopicTableProps> = ({
   const { state } = useTopic();
   const { page = { total: 0, current: 1, pageSize: 10 }, data = [], loading } = state;
 
-  const [checkStrictly, setCheckStrictly] = React.useState(false);
-
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+    console.log(pagination)
     if (onChange) {
       onChange(pagination, filters, sorter);  // 确保 onChange 已定义
     }
@@ -318,13 +232,28 @@ interface DataType {
 
 
 const AppTopic = () => {
+  const {
+    token: { colorBgContainer }
+  } = theme.useToken();
+
+  const { state, enhancedDispatch } = useTopic();
+
+  const dialogRef: any = React.useRef()
+  const searchFormRef = React.useRef<FormInstance | null>(null);
+  const [queryParams, setQueryParams] = React.useState<any>({})
 
   const columns: TableProps<DataType>['columns'] = [
     {
       title: '专题名称',
-      dataIndex: 'subject_name',
+      dataIndex: 'topic_name',
       key: 'topic_name',
       render: (text) => <a>{text}</a>,
+    },
+    {
+      title: '状态',
+      dataIndex: 'enable',
+      key: 'enable',
+      render: (text: number) => <StatusTag status={text} />
     },
     {
       title: '更新人',
@@ -338,29 +267,74 @@ const AppTopic = () => {
       render: dateFormate
     },
     {
+      title: '备注',
+      dataIndex: 'remark',
+      key: 'remark',
+    },
+    {
       title: '操作',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <a onClick={(event: any) => showModel(event, record)}>编辑</a>
-          {/* <a onClick={(event: any) => onDelete(event, record)}>删除</a> */}
+          <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
+            编辑
+          </Button>
+          <ConfirmableButton
+            type='link'
+            onSubmit={() => onSubmit('DELETE', record)}
+          >删除</ConfirmableButton>
         </Space>
       ),
     },
   ];
 
-  const {
-    token: { colorBgContainer }
-  } = theme.useToken();
-
-  const { state, enhancedDispatch } = useTopic();
-
-  const dialogRef: any = React.useRef()
-  const searchFormRef = React.useRef<FormInstance | null>(null);
-  const [queryParams, setQueryParams] = React.useState<any>({})
+  React.useEffect(() => {
+    if (Object.keys(queryParams).length > 0) {
+      enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
+    }
+  }, [queryParams]);
 
   const onFormInstanceReady = (form: FormInstance) => {
     searchFormRef.current = form; // 将 form 实例存储到 ref
+  };
+
+  const showModel = (_: any, data?: any) => {
+    dialogRef.current.showModel(true, data)
+  }
+
+  const onSubmit = async (
+    actionType: 'CREATE' | 'UPDATE' | 'DELETE',
+    data: Record<string, any>
+  ) => {
+    // 确定请求方法
+    const requestAction =
+      actionType === 'DELETE'
+        ? () => api.topic.delete(data.id)
+        : actionType === 'UPDATE'
+          ? api.topic.update
+          : api.topic.create;
+
+    // 设定响应消息
+    const responseMessages = {
+      success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
+      error: actionType === 'UPDATE' ? '更新失败，请重试' : actionType === 'DELETE' ? '删除失败，请重试' : '创建失败，请重试',
+    };
+
+    // 执行状态更新
+    enhancedDispatch({ type: actionType, payload: { data } });
+
+    try {
+      const response = await requestAction(data);
+      debugger
+      const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
+      message[response?.success ? 'success' : 'error'](messageText);
+    } catch (error) {
+      console.error('提交出错:', error);
+      // TODO 完成提交出错的内容
+      // message.error('提交出错，请检查网络或稍后重试');
+    } finally {
+      await queryTopics();
+    }
   };
 
   const onChange = (pagination: any) => {
@@ -374,31 +348,24 @@ const AppTopic = () => {
     })
   }
 
-  const showModel = (event: any, data?: any) => {
-    dialogRef.current.showModel(true, data)
-  }
-
-  const queryTopics = () => {
-    const { params } = state
-    topicApi.fetch(params).then((r: any) => {
-      console.log("-------")
-      console.log(r)
-      console.log("-------")
-    }).catch((e: any) => {
-      console.log(e)
-    })
-  }
-
-  // submit 方法
-  const onSubmit = (dispatch: React.Dispatch<any>, data: any) => {
-    console.log('dispatch', dispatch)
-    console.log('data===>', data)
-    dispatch({ type: 'CREATE', payload: { data } })
-    topicApi.create(data).then((r: any) => {
-      console.log('onSubmit.r===>', r)
-    }).finally(() => {
-      // dispatch({ type: 'READ_DONE', payload: {} })
-    })
+  const queryTopics = async () => {
+    console.log("参数", state)
+    try {
+      const { params } = state
+      const response = await api.topic.fetch(params)
+      if (response && response.success) {
+        const { data, page } = response.data
+        enhancedDispatch({
+          type: 'READ_DONE', payload: {
+            data, page
+          }
+        });
+      } else {
+        message.error(response?.message || '获取数据失败');
+      }
+    } catch (error) {
+      message.error('请求失败，请稍后重试');
+    }
   }
 
   React.useEffect(() => {

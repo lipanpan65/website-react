@@ -276,7 +276,7 @@ const AppGlobalDict = () => {
   const searchFormRef = React.useRef<FormInstance | null>(null);
   const [queryParams, setQueryParams] = React.useState<any>({})
 
-  console.log("Initial state at render:", state);
+  // console.log("Initial state at render:", state);
 
   // const handleSetQueryParams = (newParams: any) => {
   //   console.log("Received newParams:", newParams);
@@ -349,6 +349,11 @@ const AppGlobalDict = () => {
     },
   ];
 
+  // 用于处理 AppGlobalDictSearch 中传递的 form 实例
+  const onFormInstanceReady = (form: FormInstance) => {
+    searchFormRef.current = form; // 将 form 实例存储到 ref
+  };
+
   const onSubmit = async (
     actionType: 'CREATE' | 'UPDATE' | 'DELETE',
     data: Record<string, any>
@@ -417,16 +422,12 @@ const AppGlobalDict = () => {
   };
 
   React.useEffect(() => {
-    console.log("Updated state.params in useEffect:", state.params);
     (async () => {
       await queryGlobalDict();
     })();
   }, [state.params]);
 
-  // 用于处理 AppGlobalDictSearch 中传递的 form 实例
-  const onFormInstanceReady = (form: FormInstance) => {
-    searchFormRef.current = form; // 将 form 实例存储到 ref
-  };
+
 
   // 示例：获取表单值
   const handleGetFormValues = () => {

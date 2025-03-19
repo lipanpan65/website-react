@@ -182,66 +182,6 @@ interface CategoryModelProps {
   initialValues: ArticleCategory;
 }
 
-// interface ModelFormProps {
-//   isUpdate: boolean;
-//   initialValues: ArticleCategory;
-//   onFormInstanceReady: (instance: FormInstance<ArticleCategory>) => void;
-// }
-
-// const ModelForm: React.FC<ModelFormProps> = ({
-//   isUpdate,
-//   initialValues,
-//   onFormInstanceReady,
-// }) => {
-//   const [form] = Form.useForm();
-
-//   React.useEffect(() => {
-//     onFormInstanceReady(form);
-//   }, []);
-
-//   const validateNameExists = (_: any, category_name: any) => new Promise(async (resolve, reject) => {
-//     const id = form.getFieldValue('id')
-//     if (id) {
-//       resolve(category_name)
-//     }
-//     const r: any = await request({
-//       url: `/api/user/v1/article_category/validate_category_name`,
-//       method: 'GET',
-//       params: { category_name }
-//     })
-//     const { data: { code, success, message: msg } } = r
-//     if (!success) {
-//       reject(msg)
-//     } else {
-//       resolve(category_name)
-//     }
-//   })
-
-//   return (
-//     <React.Fragment>
-//       <Form layout="vertical" form={form} name="form_in_modal" initialValues={initialValues}>
-//         <Form.Item
-//           name="category_name"
-//           label="分类名称"
-//           rules={[
-//             { required: true, message: '请输入分类名称' },
-//             { validator: validateNameExists }
-//           ]}
-//         >
-//           <Input
-//             placeholder='请输入分类名称'
-//             disabled={isUpdate}
-//           />
-//         </Form.Item>
-//         <Form.Item name="remark" label="备注">
-//           <Input.TextArea
-//             placeholder='请输入备注'
-//             showCount maxLength={100} />
-//         </Form.Item>
-//       </Form>
-//     </React.Fragment>
-//   )
-// }
 
 const AppArticleCategoryDialog: any = React.forwardRef((props: any, ref: any) => {
   const [open, setOpen] = React.useState<boolean>(false);
