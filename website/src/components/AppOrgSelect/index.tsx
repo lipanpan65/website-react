@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TreeSelect } from 'antd';
+import { message, TreeSelect } from 'antd';
 import { TreeSelectProps } from 'antd/es/tree-select';
 import { request } from '@/utils'; // 假设这是你封装的请求工具
 import { api } from '@/api';
@@ -11,13 +11,12 @@ interface TreeNode {
   key: string;
   children?: TreeNode[];
 }
-
 interface AppOrgSelectProps {
   value?: string; // 当前选中的值
   onChange?: (value: string) => void; // 值变化的回调
   // loadData?: (parentValue: string) => Promise<TreeNode[]>; // 远程加载数据的接口
   placeholder?: string; // 占位符
-  onDataLoaded?: any
+  onDataLoaded?: (loaded: boolean) => void;
 }
 
 const AppOrgSelect: React.FC<AppOrgSelectProps> = ({ value, onChange, onDataLoaded, placeholder = '请选择组织' }) => {
@@ -34,24 +33,27 @@ const AppOrgSelect: React.FC<AppOrgSelectProps> = ({ value, onChange, onDataLoad
       children: node.children ? mapTreeData(node.children) : undefined,
     }));
 
-  const queryOrgs = async (orgId?: string) => {
-    try {
-      const { code, success, data: { page, data } } = await api.org.fetch(); // 加载根节点，传入空字符串表示根节点
-      if (success) {
-        const treeData = mapTreeData(data)
-        setTreeData(treeData)
-        onDataLoaded?.(true); // 通知父组件数据加载完成
-        setInitialValue(value); // 数据加载完成后设置初始值
+    const queryOrgs = async (orgId?: string) => {
+      try {
+        const { code, success, data: { page, data } } = await api.org.fetch(); // 加载根节点，传入空字符串表示根节点
+        if (success) {
+          const treeData = mapTreeData(data);
+          setTreeData(treeData);
+          setInitialValue(value); // 数据加载完成后设置初始值
+        }
+      } catch (error) {
+        console.error('加载组织数据失败', error);
+        message.error('加载组织数据失败，请稍后重试');
+        if (onDataLoaded) {
+          onDataLoaded(false); // 通知父组件数据加载失败
+        }
+      } finally {
+        setLoading(false);
+        if (onDataLoaded) {
+          onDataLoaded(true); // 通知父组件数据加载完成
+        }
       }
-      // return data
-    } catch (error) {
-      setLoading(false)
-    } finally {
-      () => {
-        setLoading(false)
-      }
-    }
-  }
+    };
 
   useEffect(() => {
     queryOrgs()

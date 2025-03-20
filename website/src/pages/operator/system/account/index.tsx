@@ -159,10 +159,9 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
   const [record, setRecord] = React.useState<any>({}) // 添加状态管理表示当前数据
   const [isOrgDataLoaded, setIsOrgDataLoaded] = React.useState<boolean>(false);
+
   const [loading, setLoading] = React.useState(false);
   const [roles, setRoles] = React.useState<any>([])
-
-  console.log("roles===>", roles)
 
   const roleTypes = [
     { role_type: 0, role_name: '普通用户' },
@@ -194,6 +193,7 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
 
   // 使用 useCallback 缓存回调函数
   const handleOrgDataLoaded = React.useCallback((loaded: boolean) => {
+    console.log("loaded", loaded)
     setIsOrgDataLoaded(loaded);
   }, []);
 
@@ -271,7 +271,7 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
       name: 'org_id',
       rules: [{ required: true, message: '请选择组织架构' }],
       component: <AppOrgSelect
-        onDataLoaded={handleOrgDataLoaded} // 使用缓存的回调函数
+        onDataLoaded={handleOrgDataLoaded} // 修改：传递回调函数
       />,
       span: 24,
     },
@@ -323,6 +323,8 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
     onCancel
   }));
 
+  console.log("isOrgDataLoaded===>", isOrgDataLoaded)
+
   return (
     <React.Fragment>
       <AppDialog
@@ -332,7 +334,9 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
         onCancel={onCancel}
         open={open}
         onSubmit={handleSubmit}
-      />
+      // loading={isOrgDataLoaded}
+      >
+      </AppDialog>
     </React.Fragment>
   );
 });
