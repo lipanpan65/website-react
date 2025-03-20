@@ -154,10 +154,43 @@ const AppUserInfoTable: React.FC<UserInfoTableProps> = ({
 
 const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const { onSubmit, roleTypes } = props
+  // const { onSubmit, roleTypes } = props
+  const { onSubmit } = props
   const [formInstance, setFormInstance] = React.useState<FormInstance | null>(null);
   const [record, setRecord] = React.useState<any>({}) // 添加状态管理表示当前数据
   const [isOrgDataLoaded, setIsOrgDataLoaded] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState(false);
+  const [roles, setRoles] = React.useState<any>([])
+
+  console.log("roles===>", roles)
+
+  const roleTypes = [
+    { role_type: 0, role_name: '普通用户' },
+    { role_type: 1, role_name: '管理员' },
+  ]
+
+  // 监听角色选择变化
+  const handleRoleChange = async (roleType: string) => {
+    setLoading(true);
+    const params = { role_type: roleType }
+    try {
+      const response = await api.role.fetch(params)
+      console.log("response===>", response)
+      if (response && response.success) {
+        const { data } = response.data
+        setRoles(data)
+      }
+      formInstance?.setFieldsValue({ role_id: undefined })
+    } catch (error) {
+      message.error('获取角色数据失败');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    handleRoleChange(record.role_type)
+  }, [open])
 
   // 使用 useCallback 缓存回调函数
   const handleOrgDataLoaded = React.useCallback((loaded: boolean) => {
@@ -195,12 +228,14 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
     },
     {
       label: '角色类型',
-      name: 'role',
+      name: 'role_type',
       rules: [{ required: true, message: '请选择角色类型' }],
       component: (
-        <Select placeholder="请选择角色类型" allowClear>
+        <Select placeholder="请选择角色类型"
+          onChange={handleRoleChange}
+          allowClear>
           {roleTypes.map((role: any) => (
-            <Select.Option key={role.id} value={role.id}>
+            <Select.Option key={role.role_type} value={role.role_type}>
               {role.role_name}
             </Select.Option>
           ))}
@@ -210,9 +245,18 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
     },
     {
       label: '角色名称',
-      name: 'role_name',
+      name: 'role_id',
       rules: [{ required: true, message: '请输入角色名称' }],
-      component: <Input placeholder="请输入角色名称" />,
+      component: (
+        <Select placeholder="请选择角色类型"
+          allowClear>
+          {roles.map((role: any) => (
+            <Select.Option key={role.id} value={role.id}>
+              {role.role_name}
+            </Select.Option>
+          ))}
+        </Select>
+      ),
       span: 12,
     },
     {
@@ -224,7 +268,7 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
     },
     {
       label: '组织架构',
-      name: 'orgs',
+      name: 'org_id',
       rules: [{ required: true, message: '请选择组织架构' }],
       component: <AppOrgSelect
         onDataLoaded={handleOrgDataLoaded} // 使用缓存的回调函数
@@ -241,10 +285,10 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
   // 监听 record 变化并更新表单
   React.useEffect(() => {
     if (formInstance && record && isOrgDataLoaded) {
-      console.log("Updating form with record:", record);
       formInstance.setFieldsValue(record);
     }
   }, [record, formInstance, isOrgDataLoaded]);
+
 
   const showModel = (isOpen: boolean, data?: any) => {
     setOpen(isOpen);
@@ -281,14 +325,14 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
 
   return (
     <React.Fragment>
-        <AppDialog
-          setFormInstance={setFormInstance}  // 管理表单实例
-          fields={fields}
-          title='添加用户'
-          onCancel={onCancel}
-          open={open}
-          onSubmit={handleSubmit}
-        />
+      <AppDialog
+        setFormInstance={setFormInstance}  // 管理表单实例
+        fields={fields}
+        title='添加用户'
+        onCancel={onCancel}
+        open={open}
+        onSubmit={handleSubmit}
+      />
     </React.Fragment>
   );
 });
@@ -320,13 +364,13 @@ const AppUserInfo = () => {
     }
   };
 
-  // /**
-  // * 按照顺序执行
-  // */
-  // React.useEffect(() => {
-  //   console.log("加载数据")
-  //   queryRoles();
-  // }, [])
+  /**
+  * 按照顺序执行
+  */
+  React.useEffect(() => {
+    console.log("加载数据")
+    queryRoles();
+  }, [])
 
   /**
   * 按照顺序执行
@@ -356,6 +400,14 @@ const AppUserInfo = () => {
       title: '角色类型',
       dataIndex: 'role_type',
       key: 'role_type',
+      render: (role_type) => {
+        const roleTypes = [
+          { role_type: 0, role_name: '普通用户' },
+          { role_type: 1, role_name: '管理员' },
+        ];
+        const role = roleTypes.find(item => item.role_type === role_type);
+        return role ? role.role_name : '未知角色';
+      },
     },
     {
       title: '角色名称',
@@ -380,8 +432,8 @@ const AppUserInfo = () => {
     },
     {
       title: '组织架构',
-      dataIndex: 'orgs',
-      key: 'orgs',
+      dataIndex: 'org_fullname',
+      key: 'org_fullname',
     },
     {
       title: '操作',

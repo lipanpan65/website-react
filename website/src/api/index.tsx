@@ -6,7 +6,7 @@ import { articleApi } from './article';
 import { orgApi } from './organization';
 import { userInfoApi } from './userinfo';
 import { topicApi } from './topics';
-
+import { authApi } from './auth';
 
 // TODO 修改常用的名称
 export const api = {
@@ -17,4 +17,5 @@ export const api = {
     org: orgApi,
     userInfo: userInfoApi,
     topic: topicApi,
+    auth: authApi
 };

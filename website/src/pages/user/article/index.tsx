@@ -68,17 +68,17 @@ type MenuItem = Required<MenuProps>['items'][number];
 
 const items: MenuItem[] = [
   {
-    key: '综合',
+    key: 'recommended',
     label: '综合',
     icon: < CompassOutlined />,
   },
   {
-    key: '后端',
+    key: 'backend',
     label: '后端',
     icon: <ConsoleSqlOutlined />,
   },
   {
-    key: '前端',
+    key: 'frontend',
     label: '前端',
     icon: <LaptopOutlined />,
   },
@@ -121,6 +121,8 @@ const Article: React.FC = () => {
 
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
+    
+
   };
 
   return (

@@ -9,6 +9,7 @@ import {
   InteractionOutlined
 } from '@ant-design/icons';
 import AuthButton from '../AuthButton';
+import { getCookie } from '@/utils';
 
 const { Header } = Layout;
 
@@ -30,10 +31,16 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
   const { topMenu = [], topActive } = appMenu;
   const navigate = useNavigate();
 
-  const isAuthenticated = false;  // 模拟用户未登录
+  const csrfToken = getCookie('csrftoken');
+  const authToken = getCookie('token');
+  const sessionId = getCookie('sessionid')
+  // const curRole = getCookie('')
+
+  // const isAuthenticated = !!(csrfToken && authToken) // 模拟用户未登录
+  const isAuthenticated = false // 模拟用户未登录
+  console.log("isAuthenticated===>",isAuthenticated)
   const userRole = 'user';        // 模拟用户角色
   const requiredRole = 'admin';   // 需要的角色
-
 
   console.log("AppHeader.AppHeader", topActive)
 
@@ -45,7 +52,6 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
       label: <Link to={item.url}>{item.name}</Link>,
     }))
   ), [topMenu]);
-
 
 
   const [selectedKeys, setSelectedKeys] = React.useState<string[]>(topActive ? [topActive.id] : []);
@@ -63,12 +69,34 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
     },
     {
       key: 'edit',
-      label: <Link to="/user/article/editor/new">写文章</Link>,
+      // label: <Link to="/user/article/editor/new">写文章</Link>,
+      label: (
+        <AuthButton
+          isAuthenticated={isAuthenticated}
+          requiredRole={requiredRole}
+          userRole={userRole}
+          button={
+            <Link to="/user/article/editor/new">写文章</Link>
+          }
+        >
+        </AuthButton>
+      ),
       icon: <FileTextOutlined />,
     },
     {
       key: 'creator',
-      label: <Link to="/user/creator/overview">创作者中心</Link>,
+      // label: <Link to="/user/creator/overview">创作者中心</Link>,
+      label: (
+        <AuthButton
+          isAuthenticated={isAuthenticated}
+          requiredRole={requiredRole}
+          userRole={userRole}
+          button={
+            <Link to="/user/creator/overview">创作者中心</Link>
+          }
+        >
+        </AuthButton>
+      ),
       icon: <HomeOutlined />,
     },
     {
@@ -105,7 +133,6 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
             }
           >
           </AuthButton>
-
           {/* <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button> */}
           <Dropdown menu={{ items: userMenuItems }}>
             <Avatar className="avatar">李</Avatar>

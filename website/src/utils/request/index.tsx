@@ -1,5 +1,6 @@
 import { message } from 'antd';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { getCookie } from '../cookie';
 
 // 获取 baseURL
 const getBaseUrl = (): string => {
@@ -51,10 +52,29 @@ export const request = async <T = any>(cfg: AxiosRequestConfig, options?: AxiosR
     headers: { 'Content-Type': 'application/json' },
     ...options,
   });
-
+  
+  const csrfToken = getCookie('csrftoken');
+  const authToken = getCookie('token');
+  
   // 请求拦截器
   instance.interceptors.request.use(
-    (config) => config,
+    (config: any) => {
+      // 添加 CSRF 令牌到请求头
+      if (csrfToken) {
+        config.headers = {
+          ...config.headers,
+          'X-CSRFToken': csrfToken
+        };
+      }
+      // 添加认证令牌到请求头
+      if (authToken) {
+        config.headers = {
+          ...config.headers,
+          'Authorization': `Token ${authToken}`
+        };
+      }
+      return config
+    },
     (error) => {
       if (process.env.NODE_ENV === 'development') {
         console.error('请求拦截异常信息', error);
