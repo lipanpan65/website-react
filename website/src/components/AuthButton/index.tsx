@@ -1,38 +1,57 @@
-import React, { useState, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, ReactNode, cloneElement } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import LoginModal from './LoginModal';
 
 interface AuthButtonProps {
-  isAuthenticated: boolean;       // 用户是否已认证
-  requiredRole?: string;          // 需要的权限角色
-  userRole?: string;              // 用户当前角色
-  button?: ReactNode;             // 自定义按钮作为参数
-  children?: ReactNode;           // 支持传递子组件
+  isAuthenticated: boolean;
+  requiredRole?: string;
+  userRole?: string;
+  button?: ReactNode;
+  children?: ReactNode;
 }
 
-const AuthButton: React.FC<AuthButtonProps> = ({ isAuthenticated, requiredRole, userRole, button, children }) => {
+const AuthButton: React.FC<AuthButtonProps> = ({
+  isAuthenticated,
+  requiredRole,
+  userRole,
+  button,
+  children
+}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigate = useNavigate();
 
-  // 点击按钮时的权限检查逻辑
-  const handleButtonClick = () => {
+  // const handleButtonClick = () => {
+  //   if (!isAuthenticated || (requiredRole && userRole !== requiredRole)) {
+  //     setIsModalVisible(true);
+  //   } else {
+  //     navigate('/protected-route');
+  //   }
+  // };
+
+  const handleButtonClick = (e: React.MouseEvent) => {
+    // 权限不足时阻止默认行为
     if (!isAuthenticated || (requiredRole && userRole !== requiredRole)) {
-      setIsModalVisible(true);  // 显示登录模态框
-    } else {
-      navigate('/protected-route');  // 跳转到受保护的路由
+      e.preventDefault(); // 阻止 Link 或 a 标签的默认跳转
+      setIsModalVisible(true);
     }
+    // 权限通过时不阻止，让 Link 或 a 标签自行跳转
   };
 
-  // 渲染按钮，并注入 handleButtonClick 到 onClick 属性
   const renderButton = () => {
-    // 优先渲染自定义按钮
     if (button) {
-      return React.cloneElement(button as React.ReactElement, {
-        onClick: handleButtonClick,  // 注入 handleButtonClick
+      // 判断是否为 Link 组件
+      const isLink = (button as React.ReactElement).type === Link;
+      
+      return cloneElement(button as React.ReactElement, {
+        onClick: (e: any) => {
+          handleButtonClick(e); // 先执行权限校验
+          if (isLink && isAuthenticated && requiredRole === userRole) {
+            // 权限通过时，手动触发 Link 的跳转（可选）
+            // 或依赖 Link 自身的 to 属性跳转
+          }
+        },
       });
     }
-
-    // 如果没有传递 button，渲染 children
     return (
       <button onClick={handleButtonClick}>
         {children || '登陆'}
@@ -40,15 +59,15 @@ const AuthButton: React.FC<AuthButtonProps> = ({ isAuthenticated, requiredRole, 
     );
   };
 
+
   const handleLoginSuccess = () => {
-    setIsModalVisible(false);    // 登录成功后关闭模态框
-    navigate('/protected-route');  // 跳转到受保护页面
+    setIsModalVisible(false);
+    navigate('/protected-route');
   };
 
   return (
     <>
       {renderButton()}
-
       <LoginModal
         open={isModalVisible}
         onClose={() => setIsModalVisible(false)}

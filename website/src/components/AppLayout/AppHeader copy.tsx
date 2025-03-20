@@ -23,7 +23,6 @@ import {
   IdcardOutlined
 } from '@ant-design/icons';
 
-{/* <InteractionOutlined /> */ }
 
 const UserList = ['U', 'Lucy', 'Tom', 'Edward'];
 const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
