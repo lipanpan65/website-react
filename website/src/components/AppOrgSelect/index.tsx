@@ -28,6 +28,7 @@ const AppOrgSelect: React.FC<AppOrgSelectProps> = ({ value, onChange, onDataLoad
     data.map((node: any) => ({
       ...node,
       title: node.org_name,
+      // title: node.org_fullname,
       value: node.org_id,
       key: node.org_id,      // key 必须唯一，通常与 value 一致
       children: node.children ? mapTreeData(node.children) : undefined,
@@ -72,7 +73,7 @@ const AppOrgSelect: React.FC<AppOrgSelectProps> = ({ value, onChange, onDataLoad
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   // 监听 value 变化，确保数据加载后更新 initialValue
   useEffect(() => {

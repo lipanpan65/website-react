@@ -39,24 +39,26 @@ const { confirm } = Modal;
 interface AppUserInfoSearchProps {
   showModel: (event: React.MouseEvent<HTMLElement>, data: any) => void;
   onFormInstanceReady: (instance: FormInstance<any>) => void;
-  setQqueryParams: (params: any) => void;
+  setQueryParams: (params: any) => void;
 }
 
 const AppUserInfoSearch: React.FC<AppUserInfoSearchProps> = ({
   showModel,
   onFormInstanceReady,
-  setQqueryParams,
+  setQueryParams,
 }) => {
-  const [form] = Form.useForm();
 
-  React.useEffect(() => {
-    onFormInstanceReady(form);
-  }, []);
+  // 我想把 这个 state 同时也传递给 AppSearch 然后同时更新 state 中的 parasm 的参数
+  const { state } = useUserInfo();
 
-  const handleSearchClick = (event: React.MouseEvent<HTMLElement>) => {
-    console.log('搜索按钮点击');
-    // 你可以在这里添加显示模态框的逻辑，例如调用 showModel
+  // 使用 useRef 创建 form 实例的引用
+  const formRef = React.useRef<FormInstance | null>(null);
+
+  const handleFormInstanceReady = (form: FormInstance) => { // 该 form 为 AppSearchForm 中的实例
+    formRef.current = form; // 将 AppSearchForm 中的 form 传递给当前组件
+    onFormInstanceReady(form); // 将 form 实例传递给父组件
   };
+
 
   const buttonConfig = {
     label: '添加',
@@ -72,8 +74,9 @@ const AppUserInfoSearch: React.FC<AppUserInfoSearchProps> = ({
       <AppContent>
         <AppSearch
           buttonConfig={buttonConfig}  // 动态按钮配置
-          onFormInstanceReady={(form) => console.log('Form instance ready:', form)}
-          setQueryParams={(params) => console.log('Query params:', params)}
+          onFormInstanceReady={handleFormInstanceReady}
+          setQueryParams={setQueryParams}
+          initialParams={state.params}
           formItems={[
             {
               name: 'search',
@@ -81,15 +84,15 @@ const AppUserInfoSearch: React.FC<AppUserInfoSearchProps> = ({
               type: 'input',
             },
             {
-              name: 'category',
-              placeholder: '请选择分类',
+              name: 'enable',
+              placeholder: '请选择状态',
               type: 'select',
               width: 150,
               selectConfig: {
                 allowClear: true,
                 options: [
-                  { label: '科技', value: 'tech' },
-                  { label: '健康', value: 'health' },
+                  { label: '启用', value: 1 },
+                  { label: '禁用', value: 0 },
                 ],
               },
             },
@@ -183,18 +186,22 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
     } catch (error) {
       message.error('获取角色数据失败');
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
   React.useEffect(() => {
-    handleRoleChange(record.role_type)
-  }, [open])
+    if (open) { // 新增条件
+      handleRoleChange(record.role_type);
+    }
+  }, [open]); // 依赖 open 和 role_type 的变化
+
 
   // 使用 useCallback 缓存回调函数
   const handleOrgDataLoaded = React.useCallback((loaded: boolean) => {
-    console.log("loaded", loaded)
+    console.log("数据加载完成", loaded)
     setIsOrgDataLoaded(loaded);
+    // setLoading(!!loaded)
   }, []);
 
   const fields: any = [
@@ -316,6 +323,7 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
   const onCancel = () => {
     formInstance?.resetFields();
     setOpen(false)
+    setIsOrgDataLoaded(false)
   }
 
   React.useImperativeHandle(ref, () => ({
@@ -323,7 +331,7 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
     onCancel
   }));
 
-  console.log("isOrgDataLoaded===>", isOrgDataLoaded)
+  // console.log("isOrgDataLoaded===>", isOrgDataLoaded)
 
   return (
     <React.Fragment>
@@ -334,7 +342,7 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
         onCancel={onCancel}
         open={open}
         onSubmit={handleSubmit}
-      // loading={isOrgDataLoaded}
+      // loading={loading}
       >
       </AppDialog>
     </React.Fragment>
@@ -345,12 +353,20 @@ const AppUserInfo = () => {
   const navigate = useNavigate()
   const { state, enhancedDispatch } = useUserInfo();
   const dialogRef: any = React.useRef()
-  const [formInstance, setFormInstance] = React.useState<FormInstance>();
-  const [queryParams, setQqueryParams] = React.useState<any>({})
+  const searchFormRef = React.useRef<FormInstance | null>(null);
+  const [queryParams, setQueryParams] = React.useState<any>({})
   const [loading, setLoading] = React.useState<boolean>()
   const [roleTypes, setRoleTypes] = React.useState<any[]>([]); // 新增角色类型状态
+  
+  const onFormInstanceReady = (form: FormInstance) => {
+    searchFormRef.current = form; // 将 form 实例存储到 ref
+  };
 
-  console.log("AppUserInfo")
+  React.useEffect(() => {
+    if (Object.keys(queryParams).length > 0) {
+      enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
+    }
+  }, [queryParams]);
 
   // 获取角色数据
   const queryRoles = async () => {
@@ -372,16 +388,9 @@ const AppUserInfo = () => {
   * 按照顺序执行
   */
   React.useEffect(() => {
-    console.log("加载数据")
     queryRoles();
   }, [])
 
-  /**
-  * 按照顺序执行
-  */
-  React.useEffect(() => {
-    console.log("加载数据")
-  }, [queryParams])
 
   const columns: TableProps<any>['columns'] = [
     {
@@ -457,17 +466,17 @@ const AppUserInfo = () => {
     },
   ];
 
-  const onChange = (pagination: any) => {
-    setLoading(true)
 
-    setQqueryParams((preQueryParams: any) => {
+  const onChange = (pagination: any) => {
+    setQueryParams((preQueryParams: any) => {
       return {
         ...preQueryParams,
         page: pagination.current,
         pageSize: pagination.pageSize,
         total: pagination.total
       }
-    })
+    }
+    )
   }
 
   const showModel = (_: any, data?: any) => {
@@ -539,10 +548,8 @@ const AppUserInfo = () => {
     <AppContainer>
       <AppUserInfoSearch
         showModel={showModel}
-        onFormInstanceReady={(instance: any) => {
-          setFormInstance(instance);
-        }}
-        setQqueryParams={setQqueryParams}
+        onFormInstanceReady={onFormInstanceReady}
+        setQueryParams={setQueryParams}
       />
       <AppUserInfoTable
         onChange={onChange}

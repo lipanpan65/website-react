@@ -85,7 +85,7 @@ const AppRoleSearch: React.FC<AppRoleSearchProps> = ({
             },
             {
               name: 'enable',
-              placeholder: '请选择角色类型',
+              placeholder: '请选择状态',
               type: 'select',
               width: 150,
               selectConfig: {
