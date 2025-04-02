@@ -65,6 +65,7 @@ import AppDeveloper from '@/pages/operator/system/developer'
 import OrganizationTree from '@/pages/operator/system/organization'
 import EditorLayout from '@/components/EditorLayout'
 import AppTasks from '@/pages/operator/system/tasks'
+import AppPermission from '@/pages/operator/system/permission'
 
 
 export const AppRoute: any = [
@@ -235,8 +236,8 @@ export const AdminRoute: any = [
         id: "313",
         name: "权限管理",
         icon: <VerifiedOutlined />,
-        url: '/operator/system/role',
-        hash: '#/operator/system/role',
+        url: '/operator/system/permission',
+        hash: '#/operator/system/permission',
       },
       {
         id: "314",
@@ -282,7 +283,7 @@ const Routes = () => {
   // const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
   // const isAuthenticated = false;
   const isAuthenticated = true;
-  
+
   return useRoutes(
     [
       {
@@ -407,6 +408,7 @@ const Routes = () => {
               { index: true, element: <Navigate to="account" /> }, // 使用 index 路由来表示默认路径
               { path: 'account', element: <AppUserInfo /> },
               { path: 'role', element: <AppRole /> },
+              { path: 'permission', element: <AppPermission /> },
               { path: 'dict', element: <AppGlobalDict /> },
               { path: 'menu', element: <AppMenu /> },
               { path: 'organization', element: <OrganizationTree /> },
