@@ -79,7 +79,6 @@ const AppPermissionSearch: React.FC<AppPermissionSearchProps> = ({
   )
 }
 
-
 const AppPermissonTable: React.FC<TableProps<PermissionData>> = ({
   columns = [], // 设置默认值为空数组
   onChange
@@ -215,7 +214,6 @@ const AppPermissonDialog = React.forwardRef((props: any, ref) => {
     </React.Fragment>
   );
 });
-
 
 
 const AppPermission: React.FC<any> = (props) => {
