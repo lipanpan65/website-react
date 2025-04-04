@@ -107,7 +107,6 @@ const AppPermissonTable: React.FC<TableProps<PermissionData>> = ({
   )
 }
 
-
 const AppPermissonDialog = React.forwardRef((props: any, ref) => {
   const [open, setOpen] = React.useState<boolean>(false);
   const { onSubmit, initialValues } = props
@@ -215,12 +214,15 @@ const AppPermissonDialog = React.forwardRef((props: any, ref) => {
   );
 });
 
-
 const AppPermission: React.FC<any> = (props) => {
   const { state, enhancedDispatch } = usePermission();
   const { dialogRef, showModel } = useDialog();
   const searchFormRef = React.useRef<FormInstance | null>(null);
   const [queryParams, setQueryParams] = React.useState<any>({})
+
+  const onFormInstanceReady = (form: FormInstance) => {
+    searchFormRef.current = form; // 将 form 实例存储到 ref
+  };
 
   const onChange = (pagination: any) => {
     setQueryParams((preQueryParams: any) => {
@@ -229,22 +231,14 @@ const AppPermission: React.FC<any> = (props) => {
         page: pagination.current,
         pageSize: pagination.pageSize,
         total: pagination.total
-      }
-    })
+      }})
   }
-
+  
   React.useEffect(() => {
     if (Object.keys(queryParams).length > 0) {
       enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
     }
   }, [queryParams]);
-
-
-
-  const onFormInstanceReady = (form: FormInstance) => {
-    searchFormRef.current = form; // 将 form 实例存储到 ref
-  };
-
 
   const queryPermissions = async () => {
     try {
@@ -291,14 +285,11 @@ const AppPermission: React.FC<any> = (props) => {
       const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
       message[response?.success ? 'success' : 'error'](messageText);
     } catch (error) {
-      console.error('提交出错:', error);
       message.error('提交出错，请检查网络或稍后重试');
     } finally {
       await queryPermissions();
     }
   };
-
-
 
   const columns = [
     {
@@ -339,7 +330,6 @@ const AppPermission: React.FC<any> = (props) => {
       await queryPermissions();
     })();
   }, [state.params]);
-
 
   return (
     <AppContainer>
