@@ -13,7 +13,9 @@ const initialState: State<PermissionData> = {
   record: {} as PermissionData,
   page: { total: 0, current: 0, pageSize: 5 },
   data: [],
-  params: {},
+  params: {
+    enable: 1
+  },
 };
 
 type ActionType =
@@ -74,6 +76,7 @@ const reducer = (state: State, action: ActionType): State => {
           ...state.params,
           ...(action.payload.params ?? {}), // 安全地合并 `params`
         },
+        loading: true,
       };
     default:
       return state;

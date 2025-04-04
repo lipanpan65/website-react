@@ -284,8 +284,7 @@ const AppRole: React.FC<AppProps> = (props) => {
         pageSize: pagination.pageSize,
         total: pagination.total
       }
-    }
-    )
+    })
   }
 
   const showModel = (_: any, data?: any) => {

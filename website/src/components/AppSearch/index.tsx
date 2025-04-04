@@ -49,23 +49,42 @@ const AppSearch: React.FC<AppSearchProps> = ({
   itemSpacing = 16,
   innerSpacing = 16,
 }) => {
+  // const [form] = Form.useForm();
+
   const [form] = Form.useForm();
+  const formRef = React.useRef(form);
+
+  const memoizedOnFormInstanceReady = React.useCallback(() => {
+    onFormInstanceReady(formRef.current);
+  }, [onFormInstanceReady]);
 
   useEffect(() => {
-    onFormInstanceReady(form);
+    memoizedOnFormInstanceReady();
     if (Object.keys(initialParams).length > 0) {
-      form.setFieldsValue(initialParams);
+      formRef.current.setFieldsValue(initialParams);
     }
-  }, [form, onFormInstanceReady, initialParams]);
+  }, [memoizedOnFormInstanceReady, initialParams]);
 
+  // useEffect(() => {
+  //   onFormInstanceReady(form);
+  //   if (Object.keys(initialParams).length > 0) {
+  //     form.setFieldsValue(initialParams);
+  //   }
+  // }, [form, onFormInstanceReady, initialParams]);
+
+  // handlePressEnter 函数处理搜索输入框按下回车键的事件
+  // 参数:
+  // - key: 表单字段名称
+  // - event: 键盘事件对象
   const handlePressEnter = (key: string, event: React.KeyboardEvent<HTMLInputElement>) => {
-    event.preventDefault(); // 防止默认提交行为
-    const value = event.currentTarget.value.trim(); // 去掉输入的空格
+    event.preventDefault(); // 阻止表单默认提交行为
+    const value = event.currentTarget.value.trim(); // 获取输入值并去除首尾空格
 
+    // 如果传入了 setQueryParams 函数,则更新查询参数
     if (setQueryParams) {
       setQueryParams((prevQueryParams: Record<string, any>) => ({
-        ...prevQueryParams,
-        [key]: value,
+        ...prevQueryParams, // 保留之前的查询参数
+        [key]: value, // 使用当前字段名和值更新参数
       }));
     }
   };
