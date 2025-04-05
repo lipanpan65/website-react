@@ -66,6 +66,7 @@ import OrganizationTree from '@/pages/operator/system/organization'
 import EditorLayout from '@/components/EditorLayout'
 import AppTasks from '@/pages/operator/system/tasks'
 import AppPermission from '@/pages/operator/system/permission'
+import { useAuth } from '@/hooks/useAuth'
 
 
 export const AppRoute: any = [
@@ -289,7 +290,9 @@ const Routes = () => {
 
   // const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
   // const isAuthenticated = false;
-  const isAuthenticated = true;
+  // const isAuthenticated = true;
+
+  const { isAuthenticated, userInfoObj, userRole } = useAuth();
 
   return useRoutes(
     [

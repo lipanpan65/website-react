@@ -3,6 +3,8 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 const RequireAuth = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
     const location = useLocation();
+    // const { isAuthenticated, userInfoObj, userRole } = useAuth();
+
 
     return isAuthenticated ? (
         <Outlet />

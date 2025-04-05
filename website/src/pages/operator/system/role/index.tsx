@@ -317,7 +317,6 @@ const AppRole: React.FC<AppProps> = (props) => {
       const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
       message[response?.success ? 'success' : 'error'](messageText);
     } catch (error) {
-      console.error('提交出错:', error);
       message.error('提交出错，请检查网络或稍后重试');
     } finally {
       await queryRole();

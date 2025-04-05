@@ -58,8 +58,6 @@ type ActionType =
 type EnhancedDispatch = (action: ActionType | ((dispatch: Dispatch<ActionType>) => void)) => void;
 
 
-
-
 const reducer = (state: StateType, action: ActionType): StateType => {
   switch (action.type) {
     case 'READ':

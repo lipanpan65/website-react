@@ -9,7 +9,7 @@ import {
   InteractionOutlined
 } from '@ant-design/icons';
 import AuthButton from '../AuthButton';
-import { getCookie } from '@/utils';
+import { useAuth } from '@/hooks/useAuth';
 
 const { Header } = Layout;
 
@@ -30,19 +30,16 @@ interface AppHeaderProps {
 const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
   const { topMenu = [], topActive } = appMenu;
   const navigate = useNavigate();
+  const { isAuthenticated, userInfoObj, userRole } = useAuth();
 
-  const csrfToken = getCookie('csrftoken');
-  const authToken = getCookie('token');
-  const sessionId = getCookie('sessionid')
-  // const curRole = getCookie('')
+  console.log("isAuthenticated===>",isAuthenticated)
 
   // const isAuthenticated = !!(csrfToken && authToken) // 模拟用户未登录
-  const isAuthenticated = false // 模拟用户未登录
-  console.log("isAuthenticated===>",isAuthenticated)
-  const userRole = 'user';        // 模拟用户角色
+  // console.log("isAuthenticated===>",isAuthenticated)
+  // const userRole = 'user';        // 模拟用户角色
   const requiredRole = 'admin';   // 需要的角色
 
-  console.log("AppHeader.AppHeader", topActive)
+  // console.log("AppHeader.AppHeader", topActive)
 
   // 动态生成菜单项
   const items = React.useMemo(() => (
@@ -75,7 +72,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
           isAuthenticated={isAuthenticated}
           requiredRole={requiredRole}
           userRole={userRole}
-          button={
+          link={
             <Link to="/user/article/editor/new">写文章</Link>
           }
         >
@@ -91,7 +88,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
           isAuthenticated={isAuthenticated}
           requiredRole={requiredRole}
           userRole={userRole}
-          button={
+          link={
             <Link to="/user/creator/overview">创作者中心</Link>
           }
         >
@@ -130,6 +127,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
             userRole={userRole}
             button={
               <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button>
+              // <Link to="/user/article/editor/new">写文章</Link>
             }
           >
           </AuthButton>
