@@ -26,8 +26,6 @@ const AppTable = <T extends { id?: string | number }>({
   rowKey = (record) => record?.id ?? `row-${Math.random()}`, // 修改为不使用 index
 }: AppTableProps<T>) => {
 
-  console.log("AppTable", page, data)
-    
   // 分页参数
   const pagination = {
     total: page?.total || 0,

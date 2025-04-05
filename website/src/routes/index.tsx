@@ -65,6 +65,8 @@ import AppDeveloper from '@/pages/operator/system/developer'
 import OrganizationTree from '@/pages/operator/system/organization'
 import EditorLayout from '@/components/EditorLayout'
 import AppTasks from '@/pages/operator/system/tasks'
+import AppPermission from '@/pages/operator/system/permission'
+import { useAuth } from '@/hooks/useAuth'
 
 
 export const AppRoute: any = [
@@ -233,41 +235,48 @@ export const AdminRoute: any = [
       },
       {
         id: "313",
-        name: "权限管理",
-        icon: <VerifiedOutlined />,
+        name: "角色管理",
+        icon: <SafetyOutlined />,
         url: '/operator/system/role',
         hash: '#/operator/system/role',
       },
       {
         id: "314",
+        name: "权限管理",
+        icon: <VerifiedOutlined />,
+        url: '/operator/system/permission',
+        hash: '#/operator/system/permission',
+      },
+      {
+        id: "315",
         name: "字典管理",
         icon: <ReadOutlined />,
         url: '/operator/system/dict',
         hash: '#/operator/system/dict',
       },
       {
-        id: "315",
+        id: "316",
         name: "菜单管理",
         url: "/operator/system/menu",
         hash: "#/operator/system/menu",
         icon: <MenuOutlined />,
       },
       {
-        id: "316",
+        id: "317",
         name: "组织架构",
         url: "/operator/system/organization",
         hash: "#/operator/system/organization",
         icon: <ApartmentOutlined />,
       },
       {
-        id: "317",
+        id: "318",
         name: "任务管理",
         icon: <ClockCircleOutlined />,
         url: '/operator/system/tasks',
         hash: '#/operator/system/tasks'
       },
       {
-        id: "318",
+        id: "399",
         name: "开发者中心",
         url: "/operator/system/developer",
         hash: "#/operator/system/developer",
@@ -281,8 +290,10 @@ const Routes = () => {
 
   // const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
   // const isAuthenticated = false;
-  const isAuthenticated = true;
-  
+  // const isAuthenticated = true;
+
+  const { isAuthenticated, userInfoObj, userRole } = useAuth();
+
   return useRoutes(
     [
       {
@@ -407,6 +418,7 @@ const Routes = () => {
               { index: true, element: <Navigate to="account" /> }, // 使用 index 路由来表示默认路径
               { path: 'account', element: <AppUserInfo /> },
               { path: 'role', element: <AppRole /> },
+              { path: 'permission', element: <AppPermission /> },
               { path: 'dict', element: <AppGlobalDict /> },
               { path: 'menu', element: <AppMenu /> },
               { path: 'organization', element: <OrganizationTree /> },

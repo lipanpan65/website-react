@@ -12,7 +12,72 @@ import AppSearch from '@/components/AppSearch';
 import { api } from '@/api';
 import StatusTag from '@/components/StatusTag';
 import ConfirmableButton from '@/components/ConfirmableButton';
+import { createContext, useContext, useCallback, useReducer, ReactNode, Dispatch } from 'react';
+import { usePagination } from '@/hooks/usePagination';
 
+// 定义 State 类型
+interface StateType {
+  loading: boolean;
+  open: boolean;
+  record: Record<string, any>;
+  page: { total: number; current: number; pageSize: number };
+  data: any[];
+  params: Record<string, any>;
+  error: string | null;
+}
+
+// 定义 Action 类型
+type ActionType =
+  | { type: 'UPDATE_PARAMS'; payload: { params: Record<string, any> } }
+  | { type: 'CREATE'; payload: { data: Record<string, any> } }
+  | { type: 'UPDATE'; payload: { data: Record<string, any> } }
+  | { type: 'DELETE'; payload: { id: number } }
+  | { type: 'READ_DONE'; payload: { data: any[]; page: StateType['page'] } }
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null };
+
+// 初始状态
+const initialState: StateType = {
+  loading: false,
+  open: false,
+  record: {},
+  page: { total: 0, current: 1, pageSize: 10 },
+  data: [],
+  params: {},
+  error: null,
+};
+
+// reducer 函数
+const reducer = (state: StateType, action: ActionType): StateType => {
+  switch (action.type) {
+    case 'UPDATE_PARAMS':
+      return { ...state, params: action.payload.params, error: null };
+    case 'CREATE':
+      return { ...state, data: [...state.data, action.payload.data], error: null };
+    case 'UPDATE':
+      return {
+        ...state,
+        data: state.data.map((item) =>
+          item.id === action.payload.data.id ? action.payload.data : item
+        ),
+        error: null
+      };
+    case 'DELETE':
+      return {
+        ...state,
+        data: state.data.filter((item) => item.id !== action.payload.id),
+        error: null
+      };
+    case 'READ_DONE':
+      return { ...state, data: action.payload.data, page: action.payload.page, error: null };
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload };
+    case 'SET_ERROR':
+      return { ...state, error: action.payload };
+    default:
+      return state;
+  }
+};
 
 const layout = {
   labelCol: { span: 8 },
@@ -230,6 +295,57 @@ interface DataType {
   tags: string[];
 }
 
+// 1. 定义更严格的类型
+type ContextType = {
+  state: StateType;
+  dispatch: Dispatch<ActionType>;
+};
+
+// 2. 创建带默认值的 Context
+const TopicsContext = createContext<ContextType>({
+  state: initialState,
+  dispatch: () => {},
+});
+
+// 3. 创建增强的 Hook
+export const useTopics = () => {
+  const context = useContext(TopicsContext);
+  
+  // 4. 添加中间件支持
+  const enhancedDispatch = useCallback(
+    (action: ActionType | ((dispatch: Dispatch<ActionType>) => void)) => {
+      if (typeof action === 'function') {
+        action(context.dispatch);
+      } else {
+        context.dispatch(action);
+      }
+    },
+    [context.dispatch]
+  );
+
+  // 5. 添加其他功能
+  const setLoading = useCallback((loading: boolean) => {
+    context.dispatch({ type: 'SET_LOADING', payload: loading });
+  }, [context.dispatch]);
+
+  return {
+    state: context.state,
+    enhancedDispatch,
+    setLoading,
+    // ... 其他功能
+  };
+};
+
+// 6. 简化 Provider
+export const TopicsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <TopicsContext.Provider value={{ state, dispatch }}>
+      {children}
+    </TopicsContext.Provider>
+  );
+};
 
 const AppTopic = () => {
   const {
@@ -240,7 +356,17 @@ const AppTopic = () => {
 
   const dialogRef: any = React.useRef()
   const searchFormRef = React.useRef<FormInstance | null>(null);
-  const [queryParams, setQueryParams] = React.useState<any>({})
+  
+  const { queryParams, setQueryParams, handlePaginationChange } = usePagination({
+    dispatch: enhancedDispatch,
+    actionType: 'UPDATE_PARAMS'
+  });
+
+  const showModel = (event: React.MouseEvent<HTMLElement>, data?: any) => {
+    if (dialogRef.current) {
+      dialogRef.current.showModel(true, data);
+    }
+  };
 
   const columns: TableProps<DataType>['columns'] = [
     {
@@ -298,10 +424,6 @@ const AppTopic = () => {
     searchFormRef.current = form; // 将 form 实例存储到 ref
   };
 
-  const showModel = (_: any, data?: any) => {
-    dialogRef.current.showModel(true, data)
-  }
-
   const onSubmit = async (
     actionType: 'CREATE' | 'UPDATE' | 'DELETE',
     data: Record<string, any>
@@ -338,14 +460,7 @@ const AppTopic = () => {
   };
 
   const onChange = (pagination: any) => {
-    setQueryParams((preQueryParams: any) => {
-      return {
-        ...preQueryParams,
-        page: pagination.current,
-        pageSize: pagination.pageSize,
-        total: pagination.total
-      }
-    })
+    handlePaginationChange(pagination);
   }
 
   const queryTopics = async () => {

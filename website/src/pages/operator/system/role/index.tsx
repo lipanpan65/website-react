@@ -11,6 +11,7 @@ import { api } from '@/api';
 import AppDialog from '@/components/AppDialog';
 import StatusTag from '@/components/StatusTag';
 import ConfirmableButton from '@/components/ConfirmableButton';
+import { Pagination } from '@/types/common';
 
 interface AppProps {
 
@@ -22,26 +23,13 @@ interface AppRoleSearchProps {
   setQueryParams: (params: any) => void;
 }
 
-// 定义分页和表格数据的类型
-interface PaginationProps {
-  total: number;
-  current: number;
-  pageSize: number;
-}
-
-interface DataItem {
-  id: number;
-  name: string;
-  description: string;
-}
-
 interface AppRoleTableProps {
   data?: {
-    page: PaginationProps;
+    page: Pagination;
     data: any[];  // 数据数组，包含 id, name, description
   };
   columns?: any;  // 设置可选
-  onChange?: (pagination: PaginationProps, filters?: any, sorter?: any) => void;  // 新增 onChange 属性
+  onChange?: (pagination: Pagination, filters?: any, sorter?: any) => void;  // 新增 onChange 属性
 }
 
 const AppRoleSearch: React.FC<AppRoleSearchProps> = ({
@@ -68,7 +56,7 @@ const AppRoleSearch: React.FC<AppRoleSearchProps> = ({
     disabled: false,
     icon: <PlusCircleOutlined />,  // 例如使用 Ant Design 的图标
   };
-  
+
   return (
     <React.Fragment>
       <AppContent>
@@ -85,7 +73,7 @@ const AppRoleSearch: React.FC<AppRoleSearchProps> = ({
             },
             {
               name: 'enable',
-              placeholder: '请选择角色类型',
+              placeholder: '请选择状态',
               type: 'select',
               width: 150,
               selectConfig: {
@@ -110,7 +98,7 @@ const AppRoleTable: React.FC<AppRoleTableProps> = ({
   const { state } = useRole();
 
   const { page = { total: 0, current: 1, pageSize: 10 }, data = [], loading } = state;
-  
+
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
     if (onChange) {
       onChange(pagination, filters, sorter);  // 确保 onChange 已定义
@@ -181,7 +169,6 @@ const AppRoleDialog = React.forwardRef((props: any, ref) => {
   // 监听 record 变化并更新表单
   React.useEffect(() => {
     if (formInstance && record) {
-      console.log("Updating form with record:", record);
       formInstance.setFieldsValue(record);
     }
   }, [record, formInstance]);
@@ -220,7 +207,7 @@ const AppRoleDialog = React.forwardRef((props: any, ref) => {
     onCancel,
     setOpen,
   }));
-  
+
   return (
     <React.Fragment>
       <AppDialog
@@ -254,7 +241,7 @@ const AppRole: React.FC<AppProps> = (props) => {
       enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
     }
   }, [queryParams]);
-  
+
   const columns = [
     {
       title: '角色名称',
@@ -297,14 +284,13 @@ const AppRole: React.FC<AppProps> = (props) => {
         pageSize: pagination.pageSize,
         total: pagination.total
       }
-    }
-    )
+    })
   }
 
   const showModel = (_: any, data?: any) => {
     dialogRef.current.showModel(true, data)
   }
-  
+
   const onSubmit = async (
     actionType: 'CREATE' | 'UPDATE' | 'DELETE',
     data: Record<string, any>
@@ -325,13 +311,12 @@ const AppRole: React.FC<AppProps> = (props) => {
 
     // 执行状态更新
     enhancedDispatch({ type: actionType, payload: { data } });
-    
+
     try {
       const response = await requestAction(data);
       const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
       message[response?.success ? 'success' : 'error'](messageText);
     } catch (error) {
-      console.error('提交出错:', error);
       message.error('提交出错，请检查网络或稍后重试');
     } finally {
       await queryRole();
@@ -362,7 +347,7 @@ const AppRole: React.FC<AppProps> = (props) => {
       await queryRole();
     })();
   }, [state.params]);
-  
+
   return (
     <AppContainer>
       <AppRoleSearch

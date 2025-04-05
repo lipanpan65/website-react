@@ -21,6 +21,7 @@ import ConfirmableButton from '@/components/ConfirmableButton';
 import CodeMirrorEditor from '@/components/CodeMirrorEditor';
 import { useGlobalDict, GlobalProvider } from '@/hooks/state/useGlobalDict';
 import StatusTag from '@/components/StatusTag';
+import { useDialog } from '@/hooks/useDialog';
 
 interface AppGlobalDictSearchProps {
   showModel: (event: React.MouseEvent<HTMLElement>, data: any) => void;
@@ -267,41 +268,24 @@ const AppGlobalDictTable: React.FC<AppGlobalDictProps> = ({
   )
 }
 
-const AppGlobalDict = () => {
+const AppGlobalDict: React.FC<any> = (props) => {
   const { state, enhancedDispatch } = useGlobalDict();
-  const dialogRef: any = React.useRef()
+  const { dialogRef, showModel } = useDialog();
   const dataTableRef: any = React.useRef()
   const navigate = useNavigate()
-  // const [formInstance, setFormInstance] = React.useState<FormInstance>();
   const searchFormRef = React.useRef<FormInstance | null>(null);
   const [queryParams, setQueryParams] = React.useState<any>({})
 
-  // console.log("Initial state at render:", state);
-
-  // const handleSetQueryParams = (newParams: any) => {
-  //   console.log("Received newParams:", newParams);
-  //   console.log("Type of newParams:", typeof newParams);
-
-  //   setQueryParams((prevQueryParams: any) => {
-  //     // 检查 newParams 是否是函数，如果是，调用它并传入当前状态
-  //     const resolvedParams = typeof newParams === 'function' ? newParams(prevQueryParams) : newParams;
-
-  //     // 合并参数
-  //     const queryParams = { ...prevQueryParams, ...resolvedParams };
-  //     console.log("Updated Params in handleSetQueryParams:", queryParams);
-
-  //     // 调用 enhancedDispatch 更新全局 state
-  //     enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
-  //     return queryParams;
-  //   });
-  // };
-
-  const handleSetQueryParams = (newParams: any) => {
-    setQueryParams((prevQueryParams: any) => {
-      const resolvedParams = typeof newParams === 'function' ? newParams(prevQueryParams) : newParams;
-      return { ...prevQueryParams, ...resolvedParams };
-    });
-  };
+  const onChange = (pagination: any) => {
+    setQueryParams((preQueryParams: any) => {
+      return {
+        ...preQueryParams,
+        page: pagination.current,
+        pageSize: pagination.pageSize,
+        total: pagination.total
+      }
+    })
+  }
 
   // 使用 useEffect 监听 queryParams 变化并触发 enhancedDispatch
   React.useEffect(() => {
@@ -387,21 +371,6 @@ const AppGlobalDict = () => {
     }
   };
 
-  const showModel = (_: any, data?: any) => {
-    dialogRef.current.showModel(true, data)
-  }
-
-  const onChange = (pagination: any) => {
-    setQueryParams((preQueryParams: any) => {
-      return {
-        ...preQueryParams,
-        page: pagination.current,
-        pageSize: pagination.pageSize,
-        total: pagination.total
-      }
-    })
-  }
-
   const queryGlobalDict = async () => {
     try {
       const { params } = state;
@@ -426,35 +395,6 @@ const AppGlobalDict = () => {
       await queryGlobalDict();
     })();
   }, [state.params]);
-
-
-
-  // 示例：获取表单值
-  const handleGetFormValues = () => {
-    if (searchFormRef.current) {
-      const values = searchFormRef.current.getFieldsValue();
-      console.log('获取到的表单值:', values);
-    }
-  };
-
-  // 示例：设置表单值
-  const handleSetFormValues = () => {
-    if (searchFormRef.current) {
-      searchFormRef.current.setFieldsValue({
-        search: '示例搜索',
-        category: 'tech',
-      });
-      console.log('表单值已设置');
-    }
-  };
-
-  // 示例：重置表单
-  const handleResetForm = () => {
-    if (searchFormRef.current) {
-      searchFormRef.current.resetFields();
-      console.log('表单已重置');
-    }
-  };
 
   return (
     <AppContainer>

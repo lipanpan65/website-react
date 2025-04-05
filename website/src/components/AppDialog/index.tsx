@@ -14,6 +14,7 @@ interface AppDialogProps extends Omit<ModalProps, 'onOk' | 'onCancel'> {
   onOk?: () => void; // 可选的 onOk
   onCancel?: () => void; // 可选的 onCancel
   isEditing?: boolean; // 是否为编辑模式，用于控制变化检测
+  loading?: boolean;
 }
 
 const AppDialog = forwardRef((props: AppDialogProps, ref) => {
@@ -29,6 +30,7 @@ const AppDialog = forwardRef((props: AppDialogProps, ref) => {
     onOk: propsOnOk,
     onCancel: propsOnCancel,
     isEditing = false,
+    loading = false, // 新增 loading 状态，默认值为 false
     ...modalProps
   } = props;
 
@@ -89,6 +91,7 @@ const AppDialog = forwardRef((props: AppDialogProps, ref) => {
     <Modal
       open={open}
       title={title}
+      loading={loading}
       okButtonProps={{ disabled: isEditing && !isFormChanged }} // 初次打开时禁用按钮，仅在编辑模式检查变化状态
       onCancel={handleCancel}
       onOk={handleOk}
