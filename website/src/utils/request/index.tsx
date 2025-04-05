@@ -87,8 +87,8 @@ export const request = async <T = any>(cfg: AxiosRequestConfig, options?: AxiosR
   // 响应拦截器
   instance.interceptors.response.use(
     (response: AxiosResponse<any>): AxiosResponse<any> | Promise<AxiosResponse<any>> => {
-      console.log("interceptors", response);
-      console.log("interceptors.data", response.data);
+      // console.log("interceptors", response);
+      // console.log("interceptors.data", response.data);
       const { status, statusText } = response;
       const contentType = response.headers['content-type'];
 

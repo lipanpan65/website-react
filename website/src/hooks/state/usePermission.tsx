@@ -6,6 +6,16 @@ export interface PermissionData {
 
 }
 
+interface StateType {
+  loading: boolean;
+  open: boolean;
+  record: Record<string, any>;
+  page: { total: number; current: number; pageSize: number };
+  data: any[];
+  params: Record<string, any>;
+}
+
+
 // 初始化 state
 const initialState: State<PermissionData> = {
   loading: true,
@@ -17,6 +27,7 @@ const initialState: State<PermissionData> = {
     enable: 1
   },
 };
+
 
 type ActionType =
   | { type: 'READ'; payload: { params: Record<string, any> } }
@@ -46,7 +57,10 @@ type ActionType =
 
 type EnhancedDispatch = (action: ActionType | ((dispatch: Dispatch<ActionType>) => void)) => void;
 
-const reducer = (state: State, action: ActionType): State => {
+
+
+
+const reducer = (state: StateType, action: ActionType): StateType => {
   switch (action.type) {
     case 'READ':
       return { ...state, loading: true, params: action.payload.params };
@@ -82,6 +96,44 @@ const reducer = (state: State, action: ActionType): State => {
       return state;
   }
 };
+
+
+// const reducer = (state: State, action: ActionType): State => {
+//   switch (action.type) {
+//     case 'READ':
+//       return { ...state, loading: true, params: action.payload.params };
+//     case 'READ_DONE':
+//       return { ...state, loading: false, data: action.payload.data, page: action.payload.page };
+//     case 'OPEN_DIALOG':
+//       return { ...state, open: action.payload.open, record: action.payload.record };
+//     case 'CREATE':
+//     case 'UPDATE':
+//       return {
+//         ...state,
+//         loading: true,
+//         params: {
+//           ...state.params, // 保留旧的参数
+//           ...(action.payload.params ?? {}), // 安全地合并 `params`
+//         },
+//       };
+//     case 'DELETE':
+//       return {
+//         ...state,
+//         loading: true,
+//       };
+//     case 'UPDATE_PARAMS':
+//       return {
+//         ...state,
+//         params: {
+//           ...state.params,
+//           ...(action.payload.params ?? {}), // 安全地合并 `params`
+//         },
+//         loading: true,
+//       };
+//     default:
+//       return state;
+//   }
+// };
 
 // 创建上下文
 export const PermissionContext = createContext<{

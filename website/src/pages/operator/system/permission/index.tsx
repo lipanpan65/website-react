@@ -115,16 +115,23 @@ const AppPermissonDialog = React.forwardRef((props: any, ref) => {
 
   const fields = [
     {
-      label: '角色名称',
-      name: 'role_name',
-      rules: [{ required: true, message: '请输入角色名称' }],
-      component: <Input placeholder="请输入角色名称" />,
-      span: 24,  // 使字段占据一半宽度
+      label: '权限名称',
+      name: 'name',
+      rules: [{ required: true, message: '请输入权限名称' }],
+      component: <Input placeholder="请输入权限名称" />,
+      span: 12,  // 使字段占据一半宽度
+    },
+    {
+      label: '权限唯一标识',
+      name: 'code',
+      rules: [{ required: true, message: '请输入权限唯一标识' }],
+      component: <Input placeholder="请输入权限唯一标识" />,
+      span: 12,  // 使字段占据一半宽度
     },
     {
       label: '状态',
       name: 'enable',
-      rules: [{ required: true, message: '请输入角色类型' }],
+      rules: [{ required: true, message: '请输入权限状态' }],
       component: (
         <Select placeholder="请选择状态" allowClear>
           <Select.Option value={1}>启用</Select.Option>
@@ -134,14 +141,14 @@ const AppPermissonDialog = React.forwardRef((props: any, ref) => {
       span: 12,
     },
     {
-      label: '角色类型',
-      name: 'role_type',
-      rules: [{ required: true, message: '请输入角色类型' }],
+      label: '权限类型',
+      name: 'category',
+      rules: [{ required: true, message: '请输入权限类型' }],
       component: (
         <Select placeholder="请选择角色类型" allowClear>
-          <Select.Option value={0}>普通用户</Select.Option>
-          <Select.Option value={1}>管理员</Select.Option>
-          <Select.Option value={2}>超级管理员</Select.Option>
+          <Select.Option value={'user'}>普通用户</Select.Option>
+          <Select.Option value={'sss'}>管理员</Select.Option>
+          <Select.Option value={'sss'}>超级管理员</Select.Option>
         </Select>
       ),
       span: 12,
@@ -231,9 +238,10 @@ const AppPermission: React.FC<any> = (props) => {
         page: pagination.current,
         pageSize: pagination.pageSize,
         total: pagination.total
-      }})
+      }
+    })
   }
-  
+
   React.useEffect(() => {
     if (Object.keys(queryParams).length > 0) {
       enhancedDispatch({ type: 'UPDATE_PARAMS', payload: { params: queryParams } });
@@ -243,7 +251,7 @@ const AppPermission: React.FC<any> = (props) => {
   const queryPermissions = async () => {
     try {
       const { params } = state;
-      const response = await api.role.fetch(params);
+      const response = await api.permission.fetch(params);
       if (response && response.success) {
         const { data, page } = response.data;
         enhancedDispatch({
@@ -255,6 +263,7 @@ const AppPermission: React.FC<any> = (props) => {
         message.error(response?.message || '获取数据失败');
       }
     } catch (error) {
+      console.log("error", error)
       message.error('请求失败，请稍后重试');
     }
   };
@@ -266,10 +275,10 @@ const AppPermission: React.FC<any> = (props) => {
     // 确定请求方法
     const requestAction =
       actionType === 'DELETE'
-        ? () => api.role.delete(data.id)
+        ? () => api.permission.delete(data.id)
         : actionType === 'UPDATE'
-          ? api.role.update
-          : api.role.create;
+          ? api.permission.update
+          : api.permission.create;
 
     // 设定响应消息
     const responseMessages = {
@@ -282,25 +291,29 @@ const AppPermission: React.FC<any> = (props) => {
 
     try {
       const response = await requestAction(data);
+      debugger
+      console.log("response===>", response)
       const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
       message[response?.success ? 'success' : 'error'](messageText);
     } catch (error) {
+      console.error('提交出错:', error);
+
       message.error('提交出错，请检查网络或稍后重试');
     } finally {
-      await queryPermissions();
+      // await queryPermissions();
     }
   };
 
   const columns = [
     {
       title: '权限名称',
-      dataIndex: 'role_name',
+      dataIndex: 'name',
       key: 'role_name',
     },
     {
       title: '角色类型',
-      dataIndex: 'role_type_display',
-      key: 'role_type_display',
+      dataIndex: 'category',
+      key: 'category',
     },
     {
       title: '状态',
