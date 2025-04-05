@@ -6,10 +6,13 @@ import {
   IdcardOutlined,
   FileTextOutlined,
   HomeOutlined,
-  InteractionOutlined
+  InteractionOutlined,
+  LogoutOutlined
 } from '@ant-design/icons';
 import AuthButton from '../AuthButton';
 import { useAuth } from '@/hooks/useAuth';
+import { clearCookies } from '@/utils/cookie';
+import { api } from '@/api';
 
 const { Header } = Layout;
 
@@ -30,16 +33,15 @@ interface AppHeaderProps {
 const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
   const { topMenu = [], topActive } = appMenu;
   const navigate = useNavigate();
-  const { isAuthenticated, userInfoObj, userRole } = useAuth();
+  const { isAuthenticated, userRole, username, name } = useAuth();
 
-  console.log("isAuthenticated===>",isAuthenticated)
+  // console.log("isAuthenticated===>", isAuthenticated)
+  // console.log("username===>", username)
+  // console.log("name===>", name)
 
-  // const isAuthenticated = !!(csrfToken && authToken) // 模拟用户未登录
-  // console.log("isAuthenticated===>",isAuthenticated)
-  // const userRole = 'user';        // 模拟用户角色
   const requiredRole = 'admin';   // 需要的角色
 
-  // console.log("AppHeader.AppHeader", topActive)
+
 
   // 动态生成菜单项
   const items = React.useMemo(() => (
@@ -58,41 +60,61 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
     setSelectedKeys(activeItem ? [activeItem.id] : []);
   };
 
+  const handleLogout = async () => {
+    if (isAuthenticated) {
+      const data = {
+        username: username
+      }
+      const res = await api.auth.logout(data)
+      console.log("res===>", res)
+      if (res.success) {
+        clearCookies()
+        navigate('/')
+        window.location.reload()
+      }
+    }
+
+    // clearCookies()
+    // navigate('/')
+    // window.location.reload()
+  }
+
+  // const handleLogout = () => {
+  //   console.log("handleLogout")
+
+  //   clearCookies()
+  //   navigate('/')
+  //   window.location.reload()
+  // }
+
+
   const userMenuItems: MenuProps['items'] = [
     {
       key: 'user',
-      label: '李盼盼',
+      label: name,
       icon: <IdcardOutlined />,
     },
     {
       key: 'edit',
-      // label: <Link to="/user/article/editor/new">写文章</Link>,
       label: (
         <AuthButton
           isAuthenticated={isAuthenticated}
           requiredRole={requiredRole}
           userRole={userRole}
-          link={
-            <Link to="/user/article/editor/new">写文章</Link>
-          }
-        >
-        </AuthButton>
+          link={<Link to="/user/article/editor/new">写文章</Link>}
+        />
       ),
       icon: <FileTextOutlined />,
     },
     {
       key: 'creator',
-      // label: <Link to="/user/creator/overview">创作者中心</Link>,
       label: (
         <AuthButton
           isAuthenticated={isAuthenticated}
           requiredRole={requiredRole}
           userRole={userRole}
-          link={
-            <Link to="/user/creator/overview">创作者中心</Link>
-          }
-        >
-        </AuthButton>
+          link={<Link to="/user/creator/overview">创作者中心</Link>}
+        />
       ),
       icon: <HomeOutlined />,
     },
@@ -100,6 +122,11 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
       key: 'admin',
       label: <Link to="/operator/workbench">后台管理</Link>,
       icon: <InteractionOutlined />,
+    },
+    {
+      key: 'logout',
+      label: <span onClick={handleLogout} style={{ cursor: 'pointer' }}>退出</span>,
+      icon: <LogoutOutlined />,
     },
   ];
 
@@ -125,16 +152,13 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
             isAuthenticated={isAuthenticated}
             requiredRole={requiredRole}
             userRole={userRole}
-            button={
-              <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button>
-              // <Link to="/user/article/editor/new">写文章</Link>
-            }
-          >
-          </AuthButton>
-          {/* <Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button> */}
-          <Dropdown menu={{ items: userMenuItems }}>
-            <Avatar className="avatar">李</Avatar>
-          </Dropdown>
+            button={<Button type='primary' onClick={() => navigate(`/user/article/editor/new`)}>写文章</Button>}
+          />
+          {isAuthenticated && (
+            <Dropdown menu={{ items: userMenuItems }}>
+              <Avatar className="avatar">{name ? name[0] : ''}</Avatar>
+            </Dropdown>
+          )}
         </Space>
       </div>
     </Header>
@@ -142,3 +166,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
 };
 
 export default AppHeader;
+function handleLogout(): void {
+  throw new Error('Function not implemented.');
+}
+

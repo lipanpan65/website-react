@@ -12,7 +12,7 @@ export const getCookie: (any | null) = (name?: any) => {
 }
 // 清除所有 cookie
 //清空cookie
-export const clearCookie = () => {
+export const clearCookies = () => {
   let keys = document.cookie.match(/[^ =;]+(?=\=)/g)
   if (keys) {
     for (let i = keys.length; i--;) {
