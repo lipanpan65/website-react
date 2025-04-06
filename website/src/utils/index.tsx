@@ -4,7 +4,7 @@ import * as React from 'react';
 
 export { request } from './request'
 export { dateFormate, timedeltaFormate } from './date-formate'
-export { getCookie, clearCookie } from './cookie'
+export { getCookie, clearCookies } from './cookie'
 
 // TODO arrary 的
 // const list2Tree = (data:Array<{}>,id:any,pid:any)

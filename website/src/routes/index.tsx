@@ -292,7 +292,7 @@ const Routes = () => {
   // const isAuthenticated = false;
   // const isAuthenticated = true;
 
-  const { isAuthenticated, userInfoObj, userRole } = useAuth();
+  const { isAuthenticated, userRole } = useAuth();
 
   return useRoutes(
     [

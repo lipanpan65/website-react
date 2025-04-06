@@ -18,18 +18,6 @@ export const authApi = {
   login: (data: Partial<AuthRecord>): Promise<ApiResponse<AuthRecord>> =>
     request({ url: '/api/operator/v1/authentication/login/', method: 'POST', data }),
 
-  fetch: (params: any): Promise<ApiResponse<AuthRecord>> =>
-    request({ url: '/api/operator/v1/authentication/', method: 'GET', params }),
-
-  create: (data: Partial<AuthRecord>): Promise<ApiResponse<AuthRecord>> =>
-    request({ url: '/api/operator/v1/authentication/', method: 'POST', data }),
-
-  // update: (data: Partial<AuthRecord>): Promise<ApiResponse<AuthRecord>> =>
-  //   request({ url: `/api/user/v1/authentication/${data.id}/`, method: 'PUT', data }),
-
-  // record: (id: number): Promise<ApiResponse<AuthRecord>> =>
-  //   request({ url: `/api/user/v1/authentication/${id}`, method: 'GET' }),
-
-  // delete: (id: number): Promise<ApiResponse<null>> =>
-  //   request({ url: `/api/user/v1/authentication/${id}/`, method: 'DELETE' }),
+  logout: (data?: any): Promise<ApiResponse<AuthRecord>> =>
+    request({ url: '/api/operator/v1/authentication/logout/', method: 'POST', data }),
 };
