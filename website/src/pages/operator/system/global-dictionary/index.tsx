@@ -119,7 +119,7 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
       label: 'ckey',
       name: 'ckey',
       rules: [{ required: true, message: '请输入ckey' }],
-      component: <Input placeholder="请输入ckey" />,
+      component: <Input placeholder="请输入ckey" disabled={true} />,
       span: 12,  // 使字段占据一半宽度
     },
     {
@@ -182,7 +182,6 @@ const AppGlobalDictDialog = React.forwardRef((props: any, ref) => {
       } else {
         await onSubmit('CREATE', data); // 不再需要传递 `dispatch`
       }
-      // enhancedDispatch((dispatch) => onSubmit(dispatch, 'UPDATE', newRecord));
       setOpen(false);
     } catch (error: any) {
       console.error('捕获的异常:', error);
