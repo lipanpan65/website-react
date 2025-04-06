@@ -35,12 +35,8 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
   const navigate = useNavigate();
   const { isAuthenticated, userRole, username, name } = useAuth();
 
-  // console.log("isAuthenticated===>", isAuthenticated)
-  // console.log("username===>", username)
-  // console.log("name===>", name)
 
   const requiredRole = 'admin';   // 需要的角色
-
 
 
   // 动态生成菜单项
@@ -166,7 +162,4 @@ const AppHeader: React.FC<AppHeaderProps> = ({ appMenu }) => {
 };
 
 export default AppHeader;
-function handleLogout(): void {
-  throw new Error('Function not implemented.');
-}
 

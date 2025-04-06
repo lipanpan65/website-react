@@ -59,6 +59,7 @@ const DialogForm: React.FC<DialogFormProps> = ({
               name={field.name}
               label={field.label}
               rules={field.rules}
+              
             >
               {React.isValidElement(field.component) ? (
                 React.cloneElement(field.component as React.ReactElement, {

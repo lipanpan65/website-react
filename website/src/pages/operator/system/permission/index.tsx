@@ -116,14 +116,14 @@ const AppPermissonDialog = React.forwardRef((props: any, ref) => {
   const fields = [
     {
       label: '权限名称',
-      name: 'name',
+      name: 'permission_name',
       rules: [{ required: true, message: '请输入权限名称' }],
       component: <Input placeholder="请输入权限名称" />,
       span: 12,  // 使字段占据一半宽度
     },
     {
       label: '权限唯一标识',
-      name: 'code',
+      name: 'permission_code',
       rules: [{ required: true, message: '请输入权限唯一标识' }],
       component: <Input placeholder="请输入权限唯一标识" />,
       span: 12,  // 使字段占据一半宽度
@@ -145,10 +145,10 @@ const AppPermissonDialog = React.forwardRef((props: any, ref) => {
       name: 'category',
       rules: [{ required: true, message: '请输入权限类型' }],
       component: (
-        <Select placeholder="请选择角色类型" allowClear>
+        <Select placeholder="请选择权限类型" allowClear>
           <Select.Option value={'user'}>普通用户</Select.Option>
           <Select.Option value={'sss'}>管理员</Select.Option>
-          <Select.Option value={'sss'}>超级管理员</Select.Option>
+          <Select.Option value={'admin'}>超级管理员</Select.Option>
         </Select>
       ),
       span: 12,
@@ -182,9 +182,9 @@ const AppPermissonDialog = React.forwardRef((props: any, ref) => {
         const newRecord = { id: record.id, ...data };
         await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
       } else {
-        await onSubmit('CREATE', data); // 不再需要传递 `dispatch`
+        const newRecord = Object.assign({}, data, { ...record })
+        await onSubmit('CREATE', newRecord); // 不再需要传递 `dispatch`
       }
-      // enhancedDispatch((dispatch) => onSubmit(dispatch, 'UPDATE', newRecord));
       setOpen(false);
     } catch (error: any) {
       console.error('捕获的异常:', error);
@@ -206,7 +206,7 @@ const AppPermissonDialog = React.forwardRef((props: any, ref) => {
   return (
     <React.Fragment>
       <AppDialog
-        title='添加角色'
+        title='添加权限'
         fields={fields}
         record={record}
         onCancel={onCancel}
@@ -230,6 +230,12 @@ const AppPermission: React.FC<any> = (props) => {
   const onFormInstanceReady = (form: FormInstance) => {
     searchFormRef.current = form; // 将 form 实例存储到 ref
   };
+
+  const queryGlobalDict = async () => {
+    const response = await api.globalDict.get({ ckey: 'ROLE_TYPE' });
+    console.log("response===>", response)
+  }
+
 
   const onChange = (pagination: any) => {
     setQueryParams((preQueryParams: any) => {
@@ -291,7 +297,6 @@ const AppPermission: React.FC<any> = (props) => {
 
     try {
       const response = await requestAction(data);
-      debugger
       console.log("response===>", response)
       const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
       message[response?.success ? 'success' : 'error'](messageText);
@@ -300,18 +305,18 @@ const AppPermission: React.FC<any> = (props) => {
 
       message.error('提交出错，请检查网络或稍后重试');
     } finally {
-      // await queryPermissions();
+      await queryPermissions();
     }
   };
 
   const columns = [
     {
       title: '权限名称',
-      dataIndex: 'name',
-      key: 'role_name',
+      dataIndex: 'permission_name',
+      key: 'permission_name',
     },
     {
-      title: '角色类型',
+      title: '权限类型',
       dataIndex: 'category',
       key: 'category',
     },
@@ -325,7 +330,12 @@ const AppPermission: React.FC<any> = (props) => {
       title: '操作',
       key: 'action',
       render: (_: any, record: any) => (
-        <Space size="middle">
+        <Space size="small">
+          <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, {
+            parent_permission_id: record.id
+          })}>
+            添加子权限
+          </Button>
           <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
             编辑
           </Button>
@@ -341,6 +351,7 @@ const AppPermission: React.FC<any> = (props) => {
   React.useEffect(() => {
     (async () => {
       await queryPermissions();
+      await queryGlobalDict();
     })();
   }, [state.params]);
 

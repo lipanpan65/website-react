@@ -218,9 +218,7 @@ const AppRoleDialog = React.forwardRef((props: any, ref) => {
         open={open}
         onSubmit={handleSubmit}
         isEditing={!!record.id}
-        setFormInstance={(instance) => {
-          setFormInstance(instance);
-        }}
+        setFormInstance={(instance) => setFormInstance(instance)}
       />
     </React.Fragment>
   );
@@ -263,7 +261,10 @@ const AppRole: React.FC<AppProps> = (props) => {
       title: '操作',
       key: 'action',
       render: (_: any, record: any) => (
-        <Space size="middle">
+        <Space size="small">
+          <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
+            分配权限
+          </Button>
           <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
             编辑
           </Button>

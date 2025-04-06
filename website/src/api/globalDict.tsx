@@ -31,6 +31,8 @@ interface GlobalDictData {
 
 // 定义 API
 export const globalDictApi = {
+  get: (params: any): Promise<ApiResponse<GlobalDictData>> =>
+    request({ url: '/api/operator/v1/global/value', method: 'GET', params }),
   // 获取列表（带分页）
   fetch: (params: any): Promise<ApiResponse<GlobalDictData>> =>
     request({ url: '/api/operator/v1/global/', method: 'GET', params }),
