@@ -50,4 +50,8 @@ export const roleApi = {
   // 删除全局字典
   delete: (id: number): Promise<ApiResponse<null>> =>
     request({ url: `/api/operator/v1/role/${id}/`, method: 'DELETE' }),
+
+  // 给角色授权
+  grant: (data: Partial<RoleRecord>): Promise<ApiResponse<RoleRecord>> =>
+    request({ url: `/api/operator/v1/role/${data.id}/grant/`, method: 'POST', data }),
 };

@@ -15,6 +15,7 @@ interface RoleTableProps {
   columns?: any[]
   onChange?: (pagination: Pagination, filters?: any, sorter?: any) => void
   showModel: (event: any, data?: any) => void
+  showPermissionModel: (event: any, data?: any) => void
   onSubmit: (actionType: 'CREATE' | 'UPDATE' | 'DELETE', data: Record<string, any>) => Promise<void>
 }
 
@@ -22,6 +23,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
   columns = [],
   onChange,
   showModel,
+  showPermissionModel,
   onSubmit
 }) => {
   const { state } = useRole()
@@ -56,8 +58,8 @@ const RoleTable: React.FC<RoleTableProps> = ({
       key: 'action',
       render: (_: any, record: any) => (
         <Space size="small">
-          <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
-            分配权限
+          <Button size='small' color="primary" variant="link" onClick={(event: any) => showPermissionModel(event, record)}>
+            授权
           </Button>
           <Button size='small' color="primary" variant="link" onClick={(event: any) => showModel(event, record)}>
             编辑

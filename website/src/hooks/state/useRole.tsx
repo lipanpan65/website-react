@@ -34,7 +34,8 @@ type ActionType =
       data: Record<string, any>; // `data` 是 `DELETE` 操作时的必填字段
     };
   }
-  | { type: 'UPDATE_PARAMS'; payload: { params: Record<string, any> } };
+  | { type: 'UPDATE_PARAMS'; payload: { params: Record<string, any> } }
+  | { type: 'GRANT'; payload: { data: any; params?: any } };
 
 // 初始化 state
 const initialState: StateType = {
@@ -49,6 +50,9 @@ const initialState: StateType = {
 // 定义 enhancedDispatch 类型，支持 ActionType 和函数
 type EnhancedDispatch = (action: ActionType | ((dispatch: Dispatch<ActionType>) => void)) => void;
     
+
+
+
 const reducer = (state: StateType, action: ActionType): StateType => {
   switch (action.type) {
     case 'READ':
@@ -59,12 +63,13 @@ const reducer = (state: StateType, action: ActionType): StateType => {
       return { ...state, open: action.payload.open, record: action.payload.record };
     case 'CREATE':
     case 'UPDATE':
+    case 'GRANT':
       return {
         ...state,
         loading: true,
         params: {
-          ...state.params, // 保留旧的参数
-          ...(action.payload.params ?? {}), // 安全地合并 `params`
+          ...state.params,
+          ...(action.payload.params ?? {}),
         },
       };
     case 'DELETE':
@@ -77,7 +82,7 @@ const reducer = (state: StateType, action: ActionType): StateType => {
         ...state,
         params: {
           ...state.params,
-          ...(action.payload.params ?? {}), // 安全地合并 `params`
+          ...(action.payload.params ?? {}),
         },
         loading: true,
       };

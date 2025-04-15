@@ -6,12 +6,14 @@ import AppContainer from '@/components/AppContainer'
 import RoleSearch from './RoleSearch'
 import RoleTable from './RoleTable'
 import RoleDialog from './RoleDialog'
+import RolePermissionDialog from './RolePermissionDialog'
 
 interface RoleProps {}
 
 const Role: React.FC<RoleProps> = () => {
   const { state, enhancedDispatch } = useRole()
   const dialogRef = React.useRef<any>(null)
+  const permissionDialogRef = React.useRef<any>(null)
   const searchFormRef = React.useRef<FormInstance | null>(null)
   const [queryParams, setQueryParams] = React.useState<any>({})
 
@@ -40,8 +42,12 @@ const Role: React.FC<RoleProps> = () => {
     dialogRef.current.showModel(true, data)
   }
 
+  const showPermissionModel = (_: any, data?: any) => {
+    permissionDialogRef.current.showModel(true, data)
+  }
+
   const onSubmit = async (
-    actionType: 'CREATE' | 'UPDATE' | 'DELETE',
+    actionType: 'CREATE' | 'UPDATE' | 'DELETE' | 'GRANT',
     data: Record<string, any>
   ): Promise<void> => {
     // 确定请求方法
@@ -50,7 +56,9 @@ const Role: React.FC<RoleProps> = () => {
         ? () => api.role.delete(data.id)
         : actionType === 'UPDATE'
           ? api.role.update
-          : api.role.create
+          : actionType === 'GRANT'
+            ? api.role.grant
+            : api.role.create
 
     // 设定响应消息
     const responseMessages = {
@@ -71,6 +79,7 @@ const Role: React.FC<RoleProps> = () => {
       await queryRole()
     }
   }
+
 
   const queryRole = async () => {
     try {
@@ -107,10 +116,15 @@ const Role: React.FC<RoleProps> = () => {
       <RoleTable
         onChange={onChange}
         showModel={showModel}
+        showPermissionModel={showPermissionModel}
         onSubmit={onSubmit}
       />
       <RoleDialog
         ref={dialogRef}
+        onSubmit={onSubmit}
+      />
+      <RolePermissionDialog
+        ref={permissionDialogRef}
         onSubmit={onSubmit}
       />
     </AppContainer>

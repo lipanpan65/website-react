@@ -362,8 +362,6 @@ const OrganizationTree: React.FC<any> = ({ }) => {
           ? api.org.update
           : api.org.create;
 
-    console.log("onSubmit===>", data)
-
     // 设定响应消息
     const responseMessages = {
       success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
