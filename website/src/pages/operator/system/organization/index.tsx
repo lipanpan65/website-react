@@ -159,7 +159,6 @@ const OrganizationTreeDialog: React.FC<any> = React.forwardRef((props: any, ref)
   // 监听 record 变化并更新表单
   React.useEffect(() => {
     if (formInstance && record) {
-      console.log("Updating form with record:", record);
       formInstance.setFieldsValue(record);
     }
   }, [record, formInstance]);
@@ -215,9 +214,7 @@ const OrganizationTreeDialog: React.FC<any> = React.forwardRef((props: any, ref)
           open={open}
           onSubmit={handleSubmit}
           isEditing={!!record.id}
-          setFormInstance={(instance) => {
-            setFormInstance(instance);
-          }}
+          setFormInstance={(instance) => setFormInstance(instance)}
         />
       </React.Fragment>
     </div>
@@ -364,8 +361,6 @@ const OrganizationTree: React.FC<any> = ({ }) => {
         : actionType === 'UPDATE'
           ? api.org.update
           : api.org.create;
-
-    console.log("onSubmit===>", data)
 
     // 设定响应消息
     const responseMessages = {

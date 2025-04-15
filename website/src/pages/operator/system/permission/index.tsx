@@ -147,8 +147,8 @@ const AppPermissonDialog = React.forwardRef((props: any, ref) => {
       component: (
         <Select placeholder="请选择权限类型" allowClear>
           <Select.Option value={'user'}>普通用户</Select.Option>
-          <Select.Option value={'sss'}>管理员</Select.Option>
-          <Select.Option value={'admin'}>超级管理员</Select.Option>
+          <Select.Option value={'admin'}>管理员</Select.Option>
+          <Select.Option value={'server'}>服务器</Select.Option>
         </Select>
       ),
       span: 12,
@@ -183,6 +183,7 @@ const AppPermissonDialog = React.forwardRef((props: any, ref) => {
         await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
       } else {
         const newRecord = Object.assign({}, data, { ...record })
+        console.log("newRecord===>", newRecord)
         await onSubmit('CREATE', newRecord); // 不再需要传递 `dispatch`
       }
       setOpen(false);
@@ -213,9 +214,7 @@ const AppPermissonDialog = React.forwardRef((props: any, ref) => {
         open={open}
         onSubmit={handleSubmit}
         isEditing={!!record.id}
-        setFormInstance={(instance) => {
-          setFormInstance(instance);
-        }}
+        setFormInstance={(instance) => setFormInstance(instance)}
       />
     </React.Fragment>
   );
@@ -235,7 +234,6 @@ const AppPermission: React.FC<any> = (props) => {
     const response = await api.globalDict.get({ ckey: 'ROLE_TYPE' });
     console.log("response===>", response)
   }
-
 
   const onChange = (pagination: any) => {
     setQueryParams((preQueryParams: any) => {
@@ -297,7 +295,6 @@ const AppPermission: React.FC<any> = (props) => {
 
     try {
       const response = await requestAction(data);
-      console.log("response===>", response)
       const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
       message[response?.success ? 'success' : 'error'](messageText);
     } catch (error) {

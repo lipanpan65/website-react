@@ -331,7 +331,6 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
     onCancel
   }));
 
-  // console.log("isOrgDataLoaded===>", isOrgDataLoaded)
 
   return (
     <React.Fragment>
