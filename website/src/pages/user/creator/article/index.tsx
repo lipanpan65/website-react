@@ -43,7 +43,7 @@ const ArticleTitle = (article: any) => <Link
 
 // 接口返回的数据
 const initialState = {
-  loading: false,
+  loading: true,
   data: [], // 文章的数据
   page: {
     total: 0,
@@ -63,7 +63,8 @@ const reducer = (state: any, action: any) => {
       const { payload: { data, page } } = action
       return {
         ...state,
-        data, page
+        data, page,
+        loading: false,
       }
     default:
       return state
@@ -154,8 +155,8 @@ const CratorArticle: React.FC<CratorArticleProps> = ({
   }
 
   const handleClickDropDown = ({ key }: any, article: any) => {
-    console.log('key', key)
-    console.log('item', article)
+    // console.log('key', key)
+    // console.log('item', article)
     if (key === "edit") {
       redirectEditorPage(article)
     } else if (key === "delete") {
@@ -182,6 +183,7 @@ const CratorArticle: React.FC<CratorArticleProps> = ({
         background: colorBgContainer,
       }}>
         <List
+          
           loading={state.loading}
           itemLayout="horizontal"
           dataSource={state.data}

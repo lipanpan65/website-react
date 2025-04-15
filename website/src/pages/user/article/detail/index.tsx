@@ -162,7 +162,8 @@ const ArticleDetail: React.FC = () => {
           </div>
           <div className="right-column">
             <Card title="目录" style={{
-              width: '100%'
+              width: '100%',
+              overflowY: 'auto'
             }}>
               {state.article.content &&
                 <div className="navigation">
