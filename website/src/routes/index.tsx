@@ -25,8 +25,9 @@ import {
   SafetyOutlined,
   VerifiedOutlined,
   IdcardOutlined,
-  ApartmentOutlined
+  ApartmentOutlined,
 } from '@ant-design/icons'
+
 
 
 
@@ -235,10 +236,10 @@ export const AdminRoute: any = [
       },
       {
         id: "313",
-        name: "角色管理",
-        icon: <SafetyOutlined />,
-        url: '/operator/system/role',
-        hash: '#/operator/system/role',
+        name: "工单管理",
+        icon: <OrderedListOutlined />,
+        url: '/operator/system/order',
+        hash: '#/operator/system/order',
       },
       {
         id: "314",
@@ -320,11 +321,19 @@ const Routes = () => {
         children: [
           {
             path: '/user/article',
-            element: <Navigate to='/user/article/overview' />
+            element: <Navigate to='/user/article/recommended' />
           },
           {
-            path: '/user/article/overview',
-            element: <Article />
+            path: '/user/article/recommended',
+            element: <Article category="recommended" />
+          },
+          {
+            path: '/user/article/backend',
+            element: <Article category="backend" />
+          },
+          {
+            path: '/user/article/frontend',
+            element: <Article category="frontend" />
           },
           {
             path: '/user/article/detail/:id',

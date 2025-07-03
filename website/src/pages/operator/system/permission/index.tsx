@@ -42,7 +42,12 @@ const AppPermissionSearch: React.FC<AppPermissionSearchProps> = ({
     type: 'primary' as const,  // 明确指定类型以符合 ButtonConfig
     onClick: (event: React.MouseEvent<HTMLElement>) => showModel(event, {}),
     disabled: false,
-    icon: <PlusCircleOutlined />,  // 例如使用 Ant Design 的图标
+    icon: <PlusCircleOutlined />,
+    // requiredRoles: ['admin'],
+    requiredPermissions: ['user:create'],
+    permissionOptions: {
+      strict: false,  // 宽松模式：具有任意一个角色和权限即可
+    }
   };
 
   return (
