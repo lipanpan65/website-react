@@ -34,7 +34,6 @@ const AppTable = <T extends { id?: string | number }>({
     showTotal: (total: number) => `总共 ${total} 条数据`,
   };
 
-
   React.useEffect(() => {
     if (data.length > pagination.pageSize && data.length < pagination.total) {
       console.warn("数据长度和分页配置可能不一致", data.length, pagination);
