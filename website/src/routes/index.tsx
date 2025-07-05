@@ -43,6 +43,9 @@ import CratorArticle from '@/pages/user/creator/article'
 // TODO 后期集成 AppLayout
 import NotFound from '@/components/NotFound'
 
+
+// 重新命名
+import OperatorArticleList from '@/pages/operator/article/overview'
 import ArticleCategory from '@/pages/operator/article/category'
 import Subject from '@/pages/user/subjects/overview'
 import SubjectDetail from '@/pages/user/subjects/detail'
@@ -410,7 +413,7 @@ const Routes = () => {
             element: <AdminLayout />,
             children: [
               { index: true, element: <Navigate to="article" /> }, // 使用 index 路由来表示默认路径
-              { path: 'article', element: <ArticleCategory /> },
+              { path: 'article', element: <OperatorArticleList /> },
               { path: 'category', element: <ArticleCategory /> },
               { path: 'topics', element: <AppTopic /> },
             ],
