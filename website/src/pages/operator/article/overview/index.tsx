@@ -3,7 +3,7 @@ import * as React from 'react'
 import AppContainer from '@/components/AppContainer'
 import AppContent from '@/components/AppContent'
 import AppSearch from '@/components/AppSearch'
-import { FormInstance } from 'antd';
+import { FormInstance, message } from 'antd';
 import AppTable from '@/components/AppTable';
 import AppDialog from '@/components/AppDialog';
 import { useArticleList, ArticleListProvider } from '@/hooks/state/useArticleList';
@@ -145,46 +145,46 @@ const ArticleList: React.FC = () => {
   const [queryParams, setQueryParams] = React.useState<any>({});
   const [searchParams, setSearchParams] = React.useState<any>({});
 
-  const onSubmit = async (
+  // 最佳实践示例
+  const onSubmit = React.useCallback(async (
     actionType: 'CREATE' | 'UPDATE' | 'DELETE',
     data: Record<string, any>
   ) => {
-    // 确定请求方法
-    const requestAction =
-      actionType === 'DELETE'
-        ? () => api.articleCategory.delete(data.id)
-        : actionType === 'UPDATE'
-          ? api.articleCategory.update
-          : api.articleCategory.create;
+    try {
+      switch (actionType) {
+        case 'CREATE':
+          await actions.create(data);
+          message.success('创建成功');
+          break;
+        case 'UPDATE':
+          await actions.update(data);
+          message.success('更新成功');
+          break;
+        case 'DELETE':
+          await actions.delete(data);
+          message.success('删除成功');
+          break;
+        default:
+          // 这里 TypeScript 会提示这是不可达代码，因为已经穷尽了所有可能
+          const _exhaustiveCheck: never = actionType;
+          throw new Error(`未处理的操作类型: ${_exhaustiveCheck}`);
+      }
+    } catch (error: any) {
+      console.error('提交出错:', error);
+      message.error(error.message || '操作失败，请重试');
+    }
+  }, [actions]);
 
-    // 设定响应消息
-    const responseMessages = {
-      success: actionType === 'UPDATE' ? '更新成功' : actionType === 'DELETE' ? '删除成功' : '创建成功',
-      error: actionType === 'UPDATE' ? '更新失败，请重试' : actionType === 'DELETE' ? '删除失败，请重试' : '创建失败，请重试',
-    };
-
-    // // 执行状态更新
-    // enhancedDispatch({ type: actionType, payload: { data } });
-
-    // try {
-    //   const response = await requestAction(data);
-    //   const messageText = response?.success ? responseMessages.success : response?.message || responseMessages.error;
-    //   message[response?.success ? 'success' : 'error'](messageText);
-    // } catch (error) {
-    //   console.error('提交出错:', error);
-    //   message.error('提交出错，请检查网络或稍后重试');
-    // } finally {
-    //   await queryArticleCategory();
-    // }
-  };
 
   const onFormInstanceReady = (form: FormInstance) => {
     searchFormRef.current = form; // 将 form 实例存储到 ref
   };
 
-  const showModel = (event: any, data?: any) => {
-    dialogRef.current.showModel(true, data)
-  }
+
+  // 使用 Context 中的 open/record 状态
+  const showModel = React.useCallback((event: any, data: any) => {
+    actions.openDialog(true, data);
+  }, [actions]);
 
   return (
     <AppContainer>
@@ -200,7 +200,6 @@ const ArticleList: React.FC = () => {
       />
     </AppContainer>
   )
-
 }
 
 const apiService = {
