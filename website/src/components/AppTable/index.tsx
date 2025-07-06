@@ -48,6 +48,8 @@ const AppTable = <T extends { id?: string | number }>({
       columns={columns}
       dataSource={data}
       rowKey={rowKey}
+      // todo 外层设置后无法进行滚动
+      scroll={{ x: 1200 }} // 关键：设置横向滚动的最小宽度
     />
   );
 };

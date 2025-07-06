@@ -1,9 +1,9 @@
 export interface ApiResponse<T = any> {
-  code: number;
-  message: string;
+  code?: number;
+  message?: string;
   data: T;
-  success: boolean;
-  timestamp: string;
+  success?: boolean;
+  timestamp?: string;
 }
 
 export interface ApiError {

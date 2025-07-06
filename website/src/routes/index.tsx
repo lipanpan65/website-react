@@ -71,6 +71,7 @@ import EditorLayout from '@/components/EditorLayout'
 import AppTasks from '@/pages/operator/system/tasks'
 import AppPermission from '@/pages/operator/system/permission'
 import { useAuth } from '@/hooks/useAuth'
+import ArticleList from '@/pages/operator/article/overview'
 
 
 export const AppRoute: any = [
@@ -413,7 +414,7 @@ const Routes = () => {
             element: <AdminLayout />,
             children: [
               { index: true, element: <Navigate to="article" /> }, // 使用 index 路由来表示默认路径
-              { path: 'article', element: <OperatorArticleList /> },
+              { path: 'article', element: <ArticleList /> },
               { path: 'category', element: <ArticleCategory /> },
               { path: 'topics', element: <AppTopic /> },
             ],
