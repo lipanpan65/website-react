@@ -34,7 +34,6 @@ const AppTable = <T extends { id?: string | number }>({
     showTotal: (total: number) => `总共 ${total} 条数据`,
   };
 
-
   React.useEffect(() => {
     if (data.length > pagination.pageSize && data.length < pagination.total) {
       console.warn("数据长度和分页配置可能不一致", data.length, pagination);
@@ -49,6 +48,8 @@ const AppTable = <T extends { id?: string | number }>({
       columns={columns}
       dataSource={data}
       rowKey={rowKey}
+      // todo 外层设置后无法进行滚动
+      scroll={{ x: 1200 }} // 关键：设置横向滚动的最小宽度
     />
   );
 };

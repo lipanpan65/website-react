@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Form, Input, Row, Col, Button, FormInstance, Select, ButtonProps, SelectProps } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-
+import { PermissionOptions, usePermission } from '@/hooks/usePermission';
 const { Option } = Select;
 
 // 表单项配置接口
@@ -22,6 +22,9 @@ interface FormItemConfig {
 // 按钮配置接口
 interface ButtonConfig extends Omit<ButtonProps, 'children'> {
   label: string;
+  requiredRoles?: string[];
+  requiredPermissions?: string[];
+  permissionOptions?: PermissionOptions;
 }
 
 // Select 配置接口
@@ -49,10 +52,16 @@ const AppSearch: React.FC<AppSearchProps> = ({
   itemSpacing = 16,
   innerSpacing = 16,
 }) => {
-  // const [form] = Form.useForm();
-
+  const { hasAccess } = usePermission();
   const [form] = Form.useForm();
   const formRef = React.useRef(form);
+
+  const hasButtonPermission = hasAccess(
+    buttonConfig.requiredRoles,
+    buttonConfig.requiredPermissions,
+    buttonConfig.permissionOptions
+  );
+
 
   const memoizedOnFormInstanceReady = React.useCallback(() => {
     onFormInstanceReady(formRef.current);
@@ -98,12 +107,14 @@ const AppSearch: React.FC<AppSearchProps> = ({
     }
   };
 
+  console.log("hasButtonPermission", hasButtonPermission)
+
   return (
     <Form form={form}>
       {/* gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} */}
       <Row gutter={[innerSpacing, 16]} className="app-search" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
         <Col>
-          <Button icon={buttonConfig.icon || <SearchOutlined />} {...buttonConfig}>
+          <Button icon={buttonConfig.icon || <SearchOutlined />} {...buttonConfig} disabled={!hasButtonPermission}>
             {buttonConfig.label}
           </Button>
         </Col>

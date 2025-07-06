@@ -52,10 +52,10 @@ export const request = async <T = any>(cfg: AxiosRequestConfig, options?: AxiosR
     headers: { 'Content-Type': 'application/json' },
     ...options,
   });
-  
+
   const csrfToken = getCookie('csrftoken');
   const authToken = getCookie('token');
-  
+
   // 请求拦截器
   instance.interceptors.request.use(
     (config: any) => {
@@ -124,10 +124,15 @@ export const request = async <T = any>(cfg: AxiosRequestConfig, options?: AxiosR
     (error) => httpStatusHandler(error)
   );
 
-
   // 发起请求
   try {
-    const response: AxiosResponse<T> = await instance(cfg);
+    // const response: AxiosResponse<T> = await instance(cfg);
+
+    // 在发起请求时传递 signal
+    const response: AxiosResponse<T> = await instance({
+      ...cfg,
+      signal: cfg.signal || options?.signal, // 添加这一行
+    });
 
     if (process.env.NODE_ENV === 'development') {
       console.log('response.node-env', response);

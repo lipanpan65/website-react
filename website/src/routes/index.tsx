@@ -25,8 +25,9 @@ import {
   SafetyOutlined,
   VerifiedOutlined,
   IdcardOutlined,
-  ApartmentOutlined
+  ApartmentOutlined,
 } from '@ant-design/icons'
+
 
 
 
@@ -42,6 +43,9 @@ import CratorArticle from '@/pages/user/creator/article'
 // TODO 后期集成 AppLayout
 import NotFound from '@/components/NotFound'
 
+
+// 重新命名
+import OperatorArticleList from '@/pages/operator/article/overview'
 import ArticleCategory from '@/pages/operator/article/category'
 import Subject from '@/pages/user/subjects/overview'
 import SubjectDetail from '@/pages/user/subjects/detail'
@@ -67,6 +71,7 @@ import EditorLayout from '@/components/EditorLayout'
 import AppTasks from '@/pages/operator/system/tasks'
 import AppPermission from '@/pages/operator/system/permission'
 import { useAuth } from '@/hooks/useAuth'
+import ArticleList from '@/pages/operator/article/overview'
 
 
 export const AppRoute: any = [
@@ -235,10 +240,10 @@ export const AdminRoute: any = [
       },
       {
         id: "313",
-        name: "角色管理",
-        icon: <SafetyOutlined />,
-        url: '/operator/system/role',
-        hash: '#/operator/system/role',
+        name: "工单管理",
+        icon: <OrderedListOutlined />,
+        url: '/operator/system/order',
+        hash: '#/operator/system/order',
       },
       {
         id: "314",
@@ -320,11 +325,19 @@ const Routes = () => {
         children: [
           {
             path: '/user/article',
-            element: <Navigate to='/user/article/overview' />
+            element: <Navigate to='/user/article/recommended' />
           },
           {
-            path: '/user/article/overview',
-            element: <Article />
+            path: '/user/article/recommended',
+            element: <Article category="recommended" />
+          },
+          {
+            path: '/user/article/backend',
+            element: <Article category="backend" />
+          },
+          {
+            path: '/user/article/frontend',
+            element: <Article category="frontend" />
           },
           {
             path: '/user/article/detail/:id',
@@ -401,7 +414,7 @@ const Routes = () => {
             element: <AdminLayout />,
             children: [
               { index: true, element: <Navigate to="article" /> }, // 使用 index 路由来表示默认路径
-              { path: 'article', element: <ArticleCategory /> },
+              { path: 'article', element: <ArticleList /> },
               { path: 'category', element: <ArticleCategory /> },
               { path: 'topics', element: <AppTopic /> },
             ],

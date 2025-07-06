@@ -32,7 +32,8 @@ import ConfirmableButton from '@/components/ConfirmableButton';
 import AppPassInput from '@/components/AppPassInput';
 import AppOrgSelect from '@/components/AppOrgSelect';
 import StatusTag from '@/components/StatusTag';
-
+import { usePermission } from '@/hooks/usePermission';
+import { useAuth } from '@/hooks/useAuth';
 const { confirm } = Modal;
 
 
@@ -47,10 +48,10 @@ const AppUserInfoSearch: React.FC<AppUserInfoSearchProps> = ({
   onFormInstanceReady,
   setQueryParams,
 }) => {
-
-  // 我想把 这个 state 同时也传递给 AppSearch 然后同时更新 state 中的 parasm 的参数
   const { state } = useUserInfo();
-
+  const { isAuthenticated, userRole, permissions } = useAuth();
+  const { hasAccess } = usePermission();
+  console.log("permissions===>", permissions)
   // 使用 useRef 创建 form 实例的引用
   const formRef = React.useRef<FormInstance | null>(null);
 
@@ -59,21 +60,40 @@ const AppUserInfoSearch: React.FC<AppUserInfoSearchProps> = ({
     onFormInstanceReady(form); // 将 form 实例传递给父组件
   };
 
+  // 检查是否有创建用户的权限
+  const hasCreateUserPermission = hasAccess(
+    // ['admin'],  // 需要 admin 角色
+    // ['user:create'],  // 需要 user:create 权限
+    permissions,  // 需要 user:create 权限
+    // { strict: false }  // 严格模式：必须同时满足角色和权限要求
+  );
+
+  // console.log('Create button permission check:', {
+  //   isAuthenticated,
+  //   userRole,
+  //   permissions,
+  //   hasCreateUserPermission
+  // });
 
   const buttonConfig = {
     label: '添加',
-    type: 'primary' as const,  // 明确指定类型以符合 ButtonConfig
-    onClick: (event: React.MouseEvent<HTMLElement>) => showModel(event, {}),
-    // 你可以添加更多的 Button 属性，如 disabled, icon 等
-    disabled: false,
-    icon: <PlusCircleOutlined />,  // 例如使用 Ant Design 的图标
+    type: 'primary' as const,
+    onClick: (event: React.MouseEvent<HTMLElement>) => {
+      if (!hasCreateUserPermission) {
+        message.error('您没有创建用户的权限');
+        return;
+      }
+      showModel(event, {});
+    },
+    // disabled: !hasCreateUserPermission,
+    icon: <PlusCircleOutlined />,
   };
 
   return (
     <React.Fragment>
       <AppContent>
         <AppSearch
-          buttonConfig={buttonConfig}  // 动态按钮配置
+          buttonConfig={buttonConfig}
           onFormInstanceReady={handleFormInstanceReady}
           setQueryParams={setQueryParams}
           initialParams={state.params}
@@ -341,7 +361,6 @@ const AppUserInfoDialog = React.forwardRef((props: any, ref) => {
         onCancel={onCancel}
         open={open}
         onSubmit={handleSubmit}
-      // loading={loading}
       >
       </AppDialog>
     </React.Fragment>
@@ -356,7 +375,7 @@ const AppUserInfo = () => {
   const [queryParams, setQueryParams] = React.useState<any>({})
   const [loading, setLoading] = React.useState<boolean>()
   const [roleTypes, setRoleTypes] = React.useState<any[]>([]); // 新增角色类型状态
-  
+
   const onFormInstanceReady = (form: FormInstance) => {
     searchFormRef.current = form; // 将 form 实例存储到 ref
   };
@@ -568,3 +587,4 @@ export default () => (
     <AppUserInfo />
   </UserInfoProvider>
 );
+
