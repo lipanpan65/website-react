@@ -11,6 +11,7 @@ import { api } from '@/api';
 import { DeleteOutlined, EditOutlined, EyeOutlined, FileTextOutlined, TagOutlined } from '@ant-design/icons';
 import Paragraph from 'antd/es/skeleton/Paragraph';
 import ConfirmableButton from '@/components/ConfirmableButton';
+import SearchForm from '@/components/SearchForm';
 
 const { Text } = Typography;
 
@@ -295,42 +296,83 @@ export const createArticleColumns = (
 
 
 
-
-
-
+// interface ArticleSearchProps {
+//   showModel: (event: any, data: any) => void;
+//   onFormInstanceReady: (form: FormInstance) => void;
+// }
 
 interface ArticleSearchProps {
   showModel: (event: React.MouseEvent<HTMLElement>, data: any) => void;
   onFormInstanceReady: (form: FormInstance<any>) => void;
-  setQueryParams: (params: any) => void;
+  // setQueryParams: (params: any) => void;
 }
 
-// 搜索
 const ArticleSearch: React.FC<ArticleSearchProps> = ({
   showModel,
   onFormInstanceReady,
-  setQueryParams,
 }) => {
-  const [formInstance, setFormInstance] = React.useState<FormInstance<any> | null>(null);
-  const [searchParams, setSearchParams] = React.useState<any>({});
-  const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
+  const { state, actions } = useArticleList();
 
-  const onSearch = (values: any) => {
-    console.log(values);
-  }
+  // 搜索处理
+  const handleSearch = React.useCallback((values: any) => {
+    console.log('搜索参数:', values);
 
+    // 搜索时重置到第一页
+    const searchParams = {
+      ...values,
+      page: 1,
+      pageSize: state.params.pageSize || 10,
+    };
+
+    console.log('searchParams', searchParams);
+    actions.read(searchParams);
+  }, [actions, state.params.pageSize]);
+
+  // 重置处理
+  const handleReset = React.useCallback(() => {
+    const resetParams = {
+      page: 1,
+      pageSize: state.params.pageSize || 10,
+    };
+
+    actions.read(resetParams);
+  }, [actions, state.params.pageSize]);
+
+  // 字段变化处理（可选，用于实时搜索）
+  const handleFieldChange = React.useCallback((fieldName: string, value: any, allValues: any) => {
+    console.log(`字段 ${fieldName} 变化:`, value);
+
+    // 如果是搜索框，可以实现防抖搜索
+    if (fieldName === 'search' && value?.length > 2) {
+      // 这里可以实现防抖逻辑
+      const searchParams = {
+        ...allValues,
+        page: 1,
+        pageSize: state.params.pageSize || 10,
+      };
+
+      // 延迟搜索，避免频繁请求
+      setTimeout(() => {
+        actions.read(searchParams);
+      }, 300);
+    }
+  }, [actions, state.params.pageSize]);
 
   return (
     <AppContent>
-      <AppSearch
+      <SearchForm
         onFormInstanceReady={onFormInstanceReady}
-        setQueryParams={setSearchParams}
-        initialParams={searchParams}
+        onSearch={handleSearch}
+        onReset={handleReset}
+        onFieldChange={handleFieldChange}
+        initialValues={state.params}
+        loading={state.loading}
         formItems={[
           {
             name: 'search',
-            placeholder: '请输入...',
+            placeholder: '请输入搜索关键词...',
             type: 'input',
+            width: 250,
           },
           {
             name: 'enable',
@@ -345,15 +387,116 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({
               ],
             },
           },
+          {
+            name: 'category',
+            placeholder: '请选择分类',
+            type: 'select',
+            width: 150,
+            selectConfig: {
+              allowClear: true,
+              options: [
+                { label: '技术', value: 'tech' },
+                { label: '生活', value: 'life' },
+                { label: '其他', value: 'other' },
+              ],
+            },
+          },
         ]}
-        buttonConfig={{
+        searchButton={{
           label: '搜索',
-          onClick: onSearch,
+          // requiredPermissions: ['article:read'],
         }}
+        resetButton={{
+          label: '重置',
+        }}
+        extraButtons={[
+          {
+            label: '新建文章',
+            type: 'primary',
+            onClick: (formValues) => {
+              // 新建时可以携带当前搜索条件
+              console.log('当前搜索条件:', formValues);
+              // showModel({}, {}); // 新建时可以携带当前搜索条件
+            },
+            requiredPermissions: ['article:create'],
+          },
+          {
+            label: '批量导出',
+            onClick: (formValues) => {
+              // 导出当前搜索结果
+              console.log('导出条件:', formValues);
+              // 实现导出逻辑
+            },
+            requiredPermissions: ['article:export'],
+          },
+        ]}
       />
     </AppContent>
-  )
-}
+  );
+};
+
+
+
+// // 搜索
+// const ArticleSearch: React.FC<ArticleSearchProps> = ({
+//   showModel,
+//   onFormInstanceReady,
+//   // setQueryParams,
+// }) => {
+//   const { state, actions } = useArticleList();
+//   const [formInstance, setFormInstance] = React.useState<FormInstance<any> | null>(null);
+//   const [searchParams, setSearchParams] = React.useState<any>({});
+//   const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
+
+//   const onSearch = (values: any) => {
+//     console.log(values);
+//   }
+
+//   const setQueryParams = (params: any) => {
+//     const newParams = {
+//       ...state.params,
+//       ...params,
+//     };
+//     actions.updateParams(newParams);
+//   }
+
+
+//   return (
+//     <AppContent>
+//       <AppSearch
+//         onFormInstanceReady={onFormInstanceReady}
+//         setQueryParams={setQueryParams}
+//         // setQueryParams={setSearchParams}
+//         // setQueryParams={setSearchParams}
+//         initialParams={state.params}
+//         formItems={[
+//           {
+//             name: 'search',
+//             placeholder: '请输入...',
+//             type: 'input',
+//           },
+//           {
+//             name: 'enable',
+//             placeholder: '请选择状态',
+//             type: 'select',
+//             width: 150,
+//             selectConfig: {
+//               allowClear: true,
+//               options: [
+//                 { label: '启用', value: 1 },
+//                 { label: '禁用', value: 0 },
+//               ],
+//             },
+//           },
+//         ]}
+//         buttonConfig={{
+//           label: '搜索',
+//           onClick: onSearch,
+//         }}
+//       />
+//     </AppContent>
+//   )
+// }
 
 interface ArticleTableProps {
   columns?: any[];
@@ -366,7 +509,6 @@ const ArticleTable: React.FC<ArticleTableProps> = ({
 }) => {
   const { state } = useArticleList();
   const { page = { total: 0, current: 1, pageSize: 10 }, data = [], loading } = state;
-  // const { page = { total: 0, current: 1, pageSize: 10 }, data = [], loading } = state;
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
     if (onChange) {
       onChange(pagination, filters, sorter);  // 确保 onChange 已定义
@@ -381,13 +523,14 @@ const ArticleTable: React.FC<ArticleTableProps> = ({
         columns={columns}
         onChange={handleTableChange}
         loading={loading}
-        // scroll={{ x: 1200 }}
+      // scroll={{ x: 1200 }}
       />
     </AppContent>
   )
 }
 
 const ArticleDialog: any = React.forwardRef((props: any, ref: any) => {
+  const { state, actions } = useArticleList();
   const { onSubmit } = props;
   const [formInstance, setFormInstance] = React.useState<FormInstance<any> | null>(null);
 
@@ -429,10 +572,21 @@ const ArticleList: React.FC = () => {
   const { state, actions } = useArticleList();
   const dialogRef: any = React.useRef();
   const searchFormRef = React.useRef<FormInstance | null>(null);
-  const [queryParams, setQueryParams] = React.useState<any>({});
+  // const [queryParams, setQueryParams] = React.useState<any>({});
   const [searchParams, setSearchParams] = React.useState<any>({});
 
-  // 最佳实践示例
+  const onChange = React.useCallback((pagination: any) => {
+    const newParams = {
+      ...state.params,
+      page: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+
+    // 直接读取数据，read 方法内部会调用 updateParams
+    actions.read(newParams);
+  }, [state.params, actions]);
+
+  // 提交表单
   const onSubmit = React.useCallback(async (
     actionType: 'CREATE' | 'UPDATE' | 'DELETE',
     data: Record<string, any>
@@ -471,37 +625,81 @@ const ArticleList: React.FC = () => {
     actions.openDialog(true, data);
   }, [actions]);
 
-  // 组件挂载时加载初始数据
-  React.useEffect(() => {
-    actions.read(queryParams);
-  }, []); // 空依赖数组
+  // 搜索表单提交处理
+  const handleSearch = React.useCallback((searchParams: any) => {
+    const newParams = {
+      ...searchParams,
+      page: 1, // 搜索时重置到第一页
+      pageSize: state.params.pageSize || 10,
+    };
 
-  // 查询参数变化时重新加载
-  React.useEffect(() => {
-    if (Object.keys(queryParams).length > 0) {
-      actions.read(queryParams);
+    actions.read(newParams);
+  }, [state.params.pageSize, actions]);
+
+  // 重置搜索
+  const handleReset = React.useCallback(() => {
+    const resetParams = {
+      page: 1,
+      pageSize: state.params.pageSize || 10,
+    };
+
+    // 清空搜索表单
+    searchFormRef.current?.resetFields();
+
+    actions.read(resetParams);
+  }, [state.params.pageSize, actions]);
+
+  // 删除后的分页处理
+  const handleDeletePagination = React.useCallback(() => {
+    const currentPage = state.page.current || 1;
+    const pageSize = state.page.pageSize || 10;
+    const currentTotal = state.page.total || 0;
+
+    // 计算删除一条记录后的总数和最大页数
+    const newTotal = Math.max(0, currentTotal - 1);
+    const maxPage = Math.ceil(newTotal / pageSize) || 1;
+
+    // 如果当前页超出了最大页数，跳转到最后一页
+    if (currentPage > maxPage) {
+      const newParams = {
+        ...state.params,
+        page: maxPage,
+      };
+      actions.read(newParams);
+    } else {
+      // 否则刷新当前页
+      actions.refresh();
     }
-  }, [queryParams]); // 只依赖 queryParams
+  }, [state.page, state.params, actions]);
 
+
+  React.useEffect(() => {
+    const initialParams = {
+      page: 1,
+      pageSize: 10,
+    };
+    actions.read(initialParams);
+  }, []); // 空依赖数组，只执行一次
 
   const handleEdit = (record: ArticleDataType) => {
     actions.openDialog(true, record);
   };
-  
+
   const handleDelete = (record: ArticleDataType) => {
     actions.delete(record);
   };
-  
+
   const handleView = (record: ArticleDataType) => {
     // 查看详情逻辑
     console.log('查看文章:', record);
   };
-  
+
   const handlePreview = (record: ArticleDataType) => {
     // 预览文章逻辑
     window.open(`/article/preview/${record.id}`, '_blank');
   };
-  
+
+  // 创建表格列
   const columns = createArticleColumns(handleEdit, handleDelete, handleView, handlePreview);
 
 
@@ -510,10 +708,10 @@ const ArticleList: React.FC = () => {
       <ArticleSearch
         showModel={showModel}
         onFormInstanceReady={onFormInstanceReady}
-        setQueryParams={setQueryParams}
+      // setQueryParams={setQueryParams}
       />
       <div style={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
-        <ArticleTable columns={columns} />
+        <ArticleTable columns={columns} onChange={onChange} />
       </div>
       <ArticleDialog
         ref={dialogRef}
