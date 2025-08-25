@@ -1,11 +1,5 @@
 import { request } from '@/utils/request'
-
-interface ApiResponse<T> {
-  code: number;
-  success: boolean;
-  message: string;
-  data: T;
-}
+import { ApiResponse } from '@/types/core'
 
 // 全局字典数据类型
 interface Organization {

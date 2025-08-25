@@ -1,11 +1,6 @@
 import { request } from '@/utils/request'
+import { ApiResponse } from '@/types/core'
 
-interface ApiResponse<T> {
-  code: number;
-  success: boolean;
-  message: string;
-  data: T;
-}
 
 interface Page {
   total: number;

@@ -70,10 +70,22 @@ export const useAppMenu = (
     return { topMenu, topActive, leftMenu, leftActive };
   }, [window.location.hash, hiddenMenuIds, visibleMenuIds]);
 
+  // // 判断是否需要隐藏 AppHeader
+  // const shouldHideHeader = useMemo(() => {
+  //   const hiddenPaths = ['/user/article/editor/new', '/login', '/forgot-password'];
+  //   return hiddenPaths.includes(location.pathname);
+  // }, [location.pathname]);
+
   // 判断是否需要隐藏 AppHeader
   const shouldHideHeader = useMemo(() => {
-    const hiddenPaths = ['/user/article/editor/new', '/login', '/forgot-password'];
-    return hiddenPaths.includes(location.pathname);
+    // 使用正则表达式匹配路径模式
+    const hiddenPathPatterns = [
+      /^\/login$/,
+      /^\/forgot-password$/,
+      /^\/user\/article\/editor\/.+$/ // 匹配 /user/article/editor/ 开头的任意路径
+    ];
+
+    return hiddenPathPatterns.some(pattern => pattern.test(location.pathname));
   }, [location.pathname]);
 
   return { appMenu, shouldHideHeader };

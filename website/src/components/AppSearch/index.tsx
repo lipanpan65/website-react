@@ -74,12 +74,6 @@ const AppSearch: React.FC<AppSearchProps> = ({
     }
   }, [memoizedOnFormInstanceReady, initialParams]);
 
-  // useEffect(() => {
-  //   onFormInstanceReady(form);
-  //   if (Object.keys(initialParams).length > 0) {
-  //     form.setFieldsValue(initialParams);
-  //   }
-  // }, [form, onFormInstanceReady, initialParams]);
 
   // handlePressEnter 函数处理搜索输入框按下回车键的事件
   // 参数:
