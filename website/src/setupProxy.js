@@ -23,19 +23,18 @@ module.exports = function (app) {
   app.use(
     '/api/v1',
     createProxyMiddleware({
-      target: 'http://127.0.0.1:9001', // 代理的地址
+      target: 'http://127.0.0.1:9899', // 代理的地址
       changeOrigin: true,
       pathRewrite: {
         '^/api/v1': '/api/v1',  // 保持请求路径中的 "/api/v1"
       }
     })
   );
-
   // 处理 /api 的请求
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'http://127.0.0.1:9000', // 另一个代理的地址
+      target: 'http://127.0.0.1:9798', // 另一个代理的地址
       changeOrigin: true,
       pathRewrite: {
         '^/api': '/api',  // 保持请求路径中的 "/api"

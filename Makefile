@@ -68,3 +68,16 @@ shell:
 # 重启开发环境
 restart: down up
 	@echo "🔄 开发环境已重启！"
+
+# 更新依赖
+update-deps:
+	@echo "📦 更新项目依赖..."
+	cd website && pnpm install
+	@echo "✅ 依赖更新完成！"
+
+# 重新生成lockfile
+regenerate-lockfile:
+	@echo "🔄 重新生成pnpm-lock.yaml..."
+	cd website && rm -f pnpm-lock.yaml && pnpm install
+	@echo "✅ lockfile重新生成完成！"
+

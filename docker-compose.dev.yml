@@ -8,20 +8,44 @@ services:
     ports:
       - "3000:3000"
     volumes:
+      # 挂载源代码目录，实现实时同步
       - .:/app
+      # 排除 node_modules，使用容器内的依赖
       - /app/node_modules
       - /app/website/node_modules
+      # 挂载 pnpm 缓存，提升安装速度
+      - pnpm-cache:/root/.pnpm-store
     environment:
+      # 开发环境标识
       - NODE_ENV=development
+      # 启用文件系统轮询，解决Docker容器内文件监听问题
       - CHOKIDAR_USEPOLLING=true
+      # 启用Webpack文件监听轮询
       - WATCHPACK_POLLING=true
+      # 启用React Fast Refresh热重载
       - FAST_REFRESH=true
+      # WebSocket连接主机配置
+      - WDS_SOCKET_HOST=localhost
+      # WebSocket连接端口配置
+      - WDS_SOCKET_PORT=3000
     stdin_open: true
     tty: true
     networks:
       - website-dev-network
+    # 开发环境命令
     command: sh -c "cd website && pnpm start"
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  pnpm-cache:
 
 networks:
   website-dev-network:
     driver: bridge
+
