@@ -1,43 +1,55 @@
 
 require('dotenv').config({ path: '.env' })
 const { createProxyMiddleware } = require('http-proxy-middleware');
-// 使用
-console.log(process.env.HOST) // localhost
-console.log(process.env.PORT) // 3000
-console.log(process.env.MONGOOSE_URL) // mongodb://localhost:27017/test
+
+// 在Docker容器中访问宿主机服务
+// 使用 host.docker.internal (macOS/Windows) 或 host-gateway (Linux)
+const getHostUrl = () => {
+  // 检测是否在Docker容器中运行
+  if (process.env.DOCKER_ENV === 'true') {
+    // Docker容器中访问宿主机
+    return 'http://host.docker.internal';
+  }
+  // 宿主机本地访问
+  return 'http://127.0.0.1';
+};
+
+const hostUrl = getHostUrl();
+
+console.log('🔗 代理配置:');
+console.log('宿主机地址:', hostUrl);
+console.log('Django后端:', `${hostUrl}:9798`);
+console.log('Gin后端:', `${hostUrl}:9899`);
 
 module.exports = function (app) {
-  // app.use(
-  //   '/api',
-  //   createProxyMiddleware({
-  //     // target: 'http://localhost:1337', //代理的地址
-  //     target: 'http://127.0.0.1:9000', //代理的地址
-  //     changeOrigin: true,
-  //     // pathRewrite: {
-  //     //   '^/api': ''  // 将请求路径中的 "/api" 替换为 ""
-  //     // }
-  //   })
-  // )
-
-  // 处理 /api/v1 的请求
+  // 处理 /api/v1 的请求 (Gin后端)
   app.use(
     '/api/v1',
     createProxyMiddleware({
-      target: 'http://127.0.0.1:9899', // 代理的地址
+      target: `${hostUrl}:9899`,
       changeOrigin: true,
       pathRewrite: {
-        '^/api/v1': '/api/v1',  // 保持请求路径中的 "/api/v1"
+        '^/api/v1': '/api/v1',
+      },
+      logLevel: 'debug',
+      onError: (err, req, res) => {
+        console.error('🚨 代理错误 (Gin):', err.message);
       }
     })
   );
-  // 处理 /api 的请求
+
+  // 处理 /api 的请求 (Django后端)
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'http://127.0.0.1:9798', // 另一个代理的地址
+      target: `${hostUrl}:9798`,
       changeOrigin: true,
       pathRewrite: {
-        '^/api': '/api',  // 保持请求路径中的 "/api"
+        '^/api': '/api',
+      },
+      logLevel: 'debug',
+      onError: (err, req, res) => {
+        console.error('🚨 代理错误 (Django):', err.message);
       }
     })
   );

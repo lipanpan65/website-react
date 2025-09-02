@@ -2,11 +2,12 @@ version: '3.8'
 
 services:
   website-react-dev:
+    container_name: website-react-dev
     build:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       # 挂载源代码目录，实现实时同步
       - .:/app
@@ -27,7 +28,9 @@ services:
       # WebSocket连接主机配置
       - WDS_SOCKET_HOST=localhost
       # WebSocket连接端口配置
-      - WDS_SOCKET_PORT=3000
+      - WDS_SOCKET_PORT=3001
+      # Docker环境标识，用于代理配置
+      - DOCKER_ENV=true
     stdin_open: true
     tty: true
     networks:
@@ -47,5 +50,6 @@ volumes:
 
 networks:
   website-dev-network:
+    name: website-dev-network
     driver: bridge
 
