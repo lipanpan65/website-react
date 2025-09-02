@@ -11,6 +11,7 @@ import './index.css';
 import { ArticleEditorProvider, useArticleEditor } from '@/hooks/state/useArticleEditor';
 import AppDialog from '@/components/AppDialog';
 import { api } from '@/api';
+import AppLayout from '@/components/AppLayout';
 
 const mdParser = new MarkdownIt();
 
@@ -83,30 +84,7 @@ export const EditArticleContext = createContext<{
   dispatch: () => { }
 });
 
-// const reducer = (state: any, action: any) => {
-//   switch (action.type) {
-//     case 'READ':
-//       return { ...state, loading: true };
-//     case 'READ_DONE':
-//       return { loading: false, article: action.payload.article };
-//     case 'UPDATE_TITLE':
-//       return { ...state, article: { ...state.article, title: action.payload.title } };
-//     case 'UPDATE_CONTENT':
-//       return {
-//         ...state,
-//         article: {
-//           ...state.article,
-//           content: action.payload.content,
-//           html: action.payload.html,
-//           summary: removeMarkdownSyntax(action.payload.content, 100),
-//         }
-//       };
-//     case 'UPDATE_ID':
-//       return { ...state, article: { ...state.article, id: action.payload.id } };
-//     default:
-//       return state;
-//   }
-// };
+
 
 const ArticlePublishDialog = React.forwardRef((props: any, ref) => {
   const [open, setOpen] = React.useState<boolean>(false);
@@ -181,22 +159,6 @@ const ArticlePublishDialog = React.forwardRef((props: any, ref) => {
     }
   };
 
-  // const handleSubmit = async () => {
-  //   try {
-  //     const data = await formInstance?.validateFields();
-  //     if (!!record.id) {
-  //       const newRecord = { id: record.id, ...data };
-  //       await onSubmit('UPDATE', newRecord); // 不再需要传递 `dispatch`
-  //     } else {
-  //       await onSubmit('CREATE', data); // 不再需要传递 `dispatch`
-  //     }
-  //     // enhancedDispatch((dispatch) => onSubmit(dispatch, 'UPDATE', newRecord));
-  //     setOpen(false);
-  //   } catch (error: any) {
-  //     console.error('捕获的异常:', error);
-  //     message.error(error.message || '表单验证失败，请检查输入内容。');
-  //   }
-  // };
 
   const handleSubmit = async () => {
     try {
@@ -268,7 +230,7 @@ const ArticleEditor = () => {
   const params = useParams();
   // const navigate = useNavigate();
   const navigator = useNavigate()
-  // const [state, dispatch] = useReducer(reducer, initialState);
+
   const { state, enhancedDispatch } = useArticleEditor();
   const [saveStatus, setSaveStatus] = useState('文章将自动保存到草稿箱');
   const dialogRef: any = React.useRef()
@@ -429,6 +391,6 @@ const ArticleEditor = () => {
 
 export default () => (
   <ArticleEditorProvider>
-    <ArticleEditor />
-  </ArticleEditorProvider>
+      <ArticleEditor />
+  </ArticleEditorProvider>  
 );

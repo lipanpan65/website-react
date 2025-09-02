@@ -42,18 +42,7 @@ const initialState: StateType = {
   },
 };
 
-// const reducer = (state: StateType, action: ActionType): StateType => {
-//   switch (action.type) {
-//     case 'READ':
-//       return { ...state, loading: true };
-//     case 'READ_DONE':
-//       return { ...state, loading: false, article: action.payload.article };
-//     case 'UPDATE_ARTICLE':
-//       return { ...state, article: { ...state.article, ...action.payload } };
-//     default:
-//       return state;
-//   }
-// };
+
 
 // Reducer 函数
 const reducer = (state: StateType, action: ActionType): StateType => {
